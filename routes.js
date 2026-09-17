@@ -9,7 +9,16 @@ router.use(requireAuth);
 router.get('/centers', async (req, res) => res.json(await Center.findAll()));
 router.post('/centers', requireRole('admin'), async (req, res) => res.json(await Center.create(req.body)));
 
-// Students
+// Users (admin only — list teachers/students/admins)
+router.get('/users', requireRole('admin'), async (req, res) => {
+  const { role } = req.query;
+  res.json(await User.findAll({
+    where: role ? { role } : {},
+    attributes: { exclude: ['passwordHash'] },
+  }));
+});
+
+// Students (admin + teacher)
 router.get('/students', requireRole('admin', 'teacher'), async (req, res) => {
   res.json(await User.findAll({ where: { role: 'student' }, attributes: { exclude: ['passwordHash'] } }));
 });
@@ -25,7 +34,7 @@ router.get('/attendance', requireRole('admin', 'teacher'), async (req, res) => {
   res.json(await Attendance.findAll({ where: studentId ? { studentId } : {} }));
 });
 
-// Assessments (weekly Saturday tests)
+// Assessments
 router.post('/assessments', requireRole('admin', 'teacher'), async (req, res) => {
   const { studentId, date, subject, score, maxScore, remarks } = req.body;
   const record = await Assessment.create({ studentId, date, subject, score, maxScore, remarks, recordedBy: req.user.id });
@@ -36,7 +45,7 @@ router.get('/assessments', requireRole('admin', 'teacher'), async (req, res) => 
   res.json(await Assessment.findAll({ where: studentId ? { studentId } : {} }));
 });
 
-// Monthly progress notes
+// Progress notes
 router.post('/progress', requireRole('admin', 'teacher'), async (req, res) => {
   const { studentId, month, year, summary } = req.body;
   const record = await ProgressNote.create({ studentId, month, year, summary, recordedBy: req.user.id });
