@@ -1,8 +1,9 @@
 # AADI demo stack for a single VPS:
 #  - aadi-cloud : the central brain (demo data, 10 hamlets)
 #  - aadi-hub   : a simulated centre hub for Pachakkudi, syncing to the cloud — shows offline/sync live
-#  - caddy      : HTTPS reverse proxy with automatic Let's Encrypt certificates
-# Usage: copy .env.example to .env, set the domains + secret, then:  docker compose up -d --build
+#  - caddy      : HTTPS reverse proxy (only on servers with no web server yet: --profile caddy)
+# AADI listens on 127.0.0.1:8181 (cloud) and 127.0.0.1:8182 (hub) so an existing web server
+# on the VPS (e.g. a system Caddy or nginx) can proxy to it. deploy/install.sh picks the right mode.
 services:
   aadi-cloud:
     build: ..
@@ -13,6 +14,7 @@ services:
       AADI_DEMO: "1"
       AADI_SYNC_KEY: ${AADI_SYNC_KEY}
       PORT: 8080
+    ports: ["127.0.0.1:${AADI_CLOUD_PORT:-8181}:8080"]
     volumes: [cloud-data:/app/data]
     command: sh -c "[ -f /app/data/cloud-1.db ] || node --disable-warning=ExperimentalWarning scripts/seed.js; exec node --disable-warning=ExperimentalWarning server.js"
   aadi-hub:
@@ -27,9 +29,11 @@ services:
       AADI_SYNC_KEY: ${AADI_SYNC_KEY}
       AADI_HUB_HAMLETS: ${AADI_HUB_HAMLETS:-}
       PORT: 8080
+    ports: ["127.0.0.1:${AADI_HUB_PORT:-8182}:8080"]
     volumes: [hub-data:/app/data]
   caddy:
     image: caddy:2-alpine
+    profiles: [caddy]
     restart: unless-stopped
     ports: ["80:80", "443:443"]
     environment:
