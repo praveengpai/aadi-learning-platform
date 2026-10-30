@@ -15,7 +15,7 @@ left out.
 ```
             ┌───────────── services (modules) ─────────────┐
  learning · exams · language · lifeskills · counselling · safeguarding
- community · marketplace · operations · analytics · channels (SMS/IVR)
+ community · marketplace · operations · analytics · channels (SMS/IVR) · translation
             └───────────────────┬──────────────────────────┘
                                 │  narrow, policy-checked SDK
                         ┌───────▼────────┐
@@ -85,6 +85,9 @@ certificates automatically. Backups: `deploy/backup.sh` (cron, keeps 14 days).
 | `AADI_DEMO` | `1` shows demo sign-in buttons. **Never set in production.** |
 | `AADI_DB` | Path to the SQLite file (default `data/<node>.db`) |
 | `PORT` | HTTP port (default 8080) |
+| `SARVAM_API_KEY` | Sarvam AI key for English→Malayalam translation (Mayura, everyday style). Empty = memory only |
+| `AADI_TRANSLATE_MODE` | `modern-colloquial` (default), `classic-colloquial`, `code-mixed`, `formal` |
+| `AADI_TRANSLATE_MONTHLY_CAP` | Max characters sent to Sarvam per month (default 500000 ≈ ₹1,000) |
 
 ## From demo to production
 

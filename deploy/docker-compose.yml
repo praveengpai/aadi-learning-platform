@@ -10,6 +10,9 @@ services:
     restart: unless-stopped
     environment:
       AADI_NODE: cloud-1
+      SARVAM_API_KEY: ${SARVAM_API_KEY:-}
+      AADI_TRANSLATE_MODE: ${AADI_TRANSLATE_MODE:-modern-colloquial}
+      AADI_TRANSLATE_MONTHLY_CAP: ${AADI_TRANSLATE_MONTHLY_CAP:-500000}
       AADI_ROLE: cloud
       AADI_DEMO: "1"
       AADI_SYNC_KEY: ${AADI_SYNC_KEY}
@@ -23,6 +26,9 @@ services:
     depends_on: [aadi-cloud]
     environment:
       AADI_NODE: hub-pachakkudi
+      SARVAM_API_KEY: ${SARVAM_API_KEY:-}
+      AADI_TRANSLATE_MODE: ${AADI_TRANSLATE_MODE:-modern-colloquial}
+      AADI_TRANSLATE_MONTHLY_CAP: ${AADI_TRANSLATE_MONTHLY_CAP:-500000}
       AADI_ROLE: hub
       AADI_DEMO: "1"
       AADI_UPSTREAM: http://aadi-cloud:8080
