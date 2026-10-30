@@ -14,8 +14,8 @@ const CSS = `
 .translation-setup code{background:#fff;padding:2px 6px;border-radius:4px}
 `;
 const MODE_LABEL = {
-  'modern-colloquial': ['Everyday (recommended)', 'സാധാരണ സംസാരഭാഷ'],
-  'classic-colloquial': ['Gentle traditional', 'പരമ്പരാഗത സംസാരം'],
+  'classic-colloquial': ['Everyday Malayalam (recommended)', 'സാധാരണ സംസാരഭാഷ'],
+  'modern-colloquial': ['Everyday with many English words', 'ഇംഗ്ലീഷ് വാക്കുകൾ കൂടുതലുള്ള'],
   'code-mixed': ['Mixed with English (youth)', 'ഇംഗ്ലീഷ് കലർന്ന'],
   formal: ['Formal (official letters)', 'ഔപചാരികം'],
 };
@@ -34,7 +34,7 @@ export default {
       k.style(CSS, 'translation');
       const st = await k.api.get('/status');
       el.append(k.h('h1', null, k.t('Translate to everyday Malayalam', 'സാധാരണ മലയാളത്തിലേക്ക്')),
-        k.h('p', { class: 'muted' }, k.t('Write in English. AADI translates into the Malayalam people actually speak — warm and simple, not formal or Sanskrit-heavy. Words in the AADI glossary (ഊര്, ഊരുകൂട്ടം, PSC…) are always kept right.', 'ഇംഗ്ലീഷിൽ എഴുതുക. ആളുകൾ സംസാരിക്കുന്ന ലളിതമായ മലയാളത്തിലേക്ക് മാറ്റും.')));
+        k.h('p', { class: 'muted' }, k.t('Write in English. AADI translates into the Malayalam people actually speak — warm and simple, not formal or Sanskrit-heavy. PSC, SSLC and similar stay in English; if a glossary word (ഊര്, ഊരുകൂട്ടം…) is missed, you will see a hint to fix it.', 'ഇംഗ്ലീഷിൽ എഴുതുക. ആളുകൾ സംസാരിക്കുന്ന ലളിതമായ മലയാളത്തിലേക്ക് മാറ്റും.')));
       const note = setupNote(k, st); if (note) el.append(note);
       const src = k.h('textarea', { placeholder: k.t('e.g. Tomorrow\'s class starts at 4 pm. Please bring your notebook.', 'ഉദാ: Tomorrow\'s class starts at 4 pm.'), 'aria-label': 'English text' });
       const out = k.h('div', { class: 'translation-out empty', 'aria-live': 'polite' }, k.t('The Malayalam will appear here.', 'മലയാളം ഇവിടെ കാണാം.'));
@@ -48,7 +48,7 @@ export default {
           last = await k.api.post('/translate', { text: src.value, mode: modeSel.value, context: 'manual', fresh });
           out.textContent = last.target;
           const s = STATUS[last.status] || [last.status, ''];
-          meta.replaceChildren(k.ui.badge(k.t(s[0], s[0]), s[1]), last.cached ? k.ui.badge(k.t('From memory — no cost', 'മെമ്മറിയിൽ നിന്ന്'), 'info') : null,
+          meta.replaceChildren(k.ui.badge(k.t(s[0], s[0]), s[1]), ...(last.hints || []).map((x) => k.ui.badge(x, 'warn')), last.cached ? k.ui.badge(k.t('From memory — no cost', 'മെമ്മറിയിൽ നിന്ന്'), 'info') : null,
             k.ui.speakBtn(last.target, 'ml'),
             k.ui.button('📋 ' + k.t('Copy', 'പകർത്തുക'), async () => { await navigator.clipboard.writeText(last.target); k.toast(k.t('Copied.', 'പകർത്തി.'), 'good'); }, { small: true }),
             last.cached ? k.ui.button(k.t('Translate again', 'വീണ്ടും'), () => go(true), { small: true, tone: 'ghost' }) : null);
@@ -89,7 +89,7 @@ async function list(k, box, status) {
     const card = k.h('div', { class: 'translation-row' },
       k.h('div', { class: 'en' }, r.source),
       status ? ta : k.h('div', { class: 'ml' }, r.target),
-      k.h('div', { class: 'translation-meta' }, k.ui.badge(s[0], s[1]), k.h('span', { class: 'small muted' }, [r.mode, r.provider, r.reviewed_by_name ? '· ' + r.reviewed_by_name : '', r.uses ? `· used ${r.uses}×` : ''].filter(Boolean).join(' ')),
+      k.h('div', { class: 'translation-meta' }, k.ui.badge(s[0], s[1]), ...(Array.isArray(r.hints) ? r.hints : []).map((x) => k.ui.badge(x, 'warn')), k.h('span', { class: 'small muted' }, [r.mode, r.provider, r.reviewed_by_name ? '· ' + r.reviewed_by_name : '', r.uses ? `· used ${r.uses}×` : ''].filter(Boolean).join(' ')),
         k.ui.speakBtn(r.target, 'ml'),
         status ? k.ui.button('✓ ' + k.t('Approve', 'ശരി'), async () => { await k.api.post(`/memory/${r.id}/review`, { target: ta.value }); k.toast(k.t('Saved.', 'സേവ് ചെയ്തു.'), 'good'); card.remove(); }, { tone: 'primary', small: true }) : null,
         k.ui.button(k.t('Remove', 'നീക്കുക'), async () => { if (await k.ui.confirm(k.t('Remove this translation from memory?', 'നീക്കണോ?'))) { await k.api.del('/memory/' + r.id); card.remove(); } }, { tone: 'ghost', small: true })));
@@ -98,7 +98,9 @@ async function list(k, box, status) {
 }
 
 async function glossary(k, box) {
-  const rows = await k.api.get('/glossary');
+  const all = await k.api.get('/glossary');
+  const rows = all.filter((g) => (g.kind || 'term') === 'term');
+  const fixes = all.filter((g) => g.kind === 'fix');
   box.append(k.h('p', { class: 'small muted' }, k.t('These words are always translated this way (or kept in English). Add the words your hamlets actually use.', 'ഈ വാക്കുകൾ എപ്പോഴും ഇങ്ങനെ.')));
   box.append(k.ui.table([
     { key: 'term', label: 'English' },
@@ -106,6 +108,19 @@ async function glossary(k, box) {
     { key: 'note', label: k.t('Note', 'കുറിപ്പ്') },
     { key: 'x', label: '', render: (g) => k.ui.button(k.t('Delete', 'നീക്കുക'), async () => { await k.api.del('/glossary/' + g.id); k.refresh(); }, { small: true, tone: 'ghost' }) },
   ], rows));
+  box.append(k.h('h3', { style: 'margin-top:22px' }, k.t('Automatic fixes', 'സ്വയം തിരുത്തലുകൾ')),
+    k.h('p', { class: 'small muted' }, k.t('Applied to every machine translation — e.g. the distant "താങ്കൾ" becomes the warm "നിങ്ങൾ", English day names become Malayalam.', 'ഓരോ പരിഭാഷയിലും സ്വയം മാറ്റുന്നു.')),
+    k.ui.table([
+      { key: 'term', label: k.t('Machine writes', 'മെഷീൻ എഴുതുന്നത്'), render: (g) => k.h('span', { class: 'ml' }, g.term) },
+      { key: 'preferred', label: k.t('Change to', 'ഇങ്ങനെ മാറ്റുക'), render: (g) => k.h('span', { class: 'ml' }, g.preferred) },
+      { key: 'note', label: k.t('Note', 'കുറിപ്പ്') },
+      { key: 'x', label: '', render: (g) => k.ui.button(k.t('Delete', 'നീക്കുക'), async () => { await k.api.del('/glossary/' + g.id); k.refresh(); }, { small: true, tone: 'ghost' }) },
+    ], fixes),
+    k.ui.card({ title: k.t('Add a fix', 'തിരുത്തൽ ചേർക്കുക'), body: k.ui.form([
+      { name: 'term', label: k.t('Malayalam the machine writes', 'മെഷീൻ എഴുതുന്നത്'), required: true },
+      { name: 'preferred', label: k.t('Replace with', 'പകരം'), required: true },
+      { name: 'note', label: k.t('Note (optional)', 'കുറിപ്പ്') },
+    ], async (v) => { await k.api.post('/glossary', { ...v, kind: 'fix' }); k.toast(k.t('Added.', 'ചേർത്തു.'), 'good'); k.refresh(); }, { submitLabel: k.t('Add fix', 'ചേർക്കുക') }) }));
   box.append(k.ui.card({ title: k.t('Add a word', 'വാക്ക് ചേർക്കുക'), body: k.ui.form([
     { name: 'term', label: 'English', required: true },
     { name: 'preferred', label: 'മലയാളം' },

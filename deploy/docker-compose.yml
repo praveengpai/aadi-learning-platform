@@ -11,7 +11,7 @@ services:
     environment:
       AADI_NODE: cloud-1
       SARVAM_API_KEY: ${SARVAM_API_KEY:-}
-      AADI_TRANSLATE_MODE: ${AADI_TRANSLATE_MODE:-modern-colloquial}
+      AADI_TRANSLATE_MODE: ${AADI_TRANSLATE_MODE:-classic-colloquial}
       AADI_TRANSLATE_MONTHLY_CAP: ${AADI_TRANSLATE_MONTHLY_CAP:-500000}
       AADI_ROLE: cloud
       AADI_DEMO: "1"
@@ -27,7 +27,7 @@ services:
     environment:
       AADI_NODE: hub-pachakkudi
       SARVAM_API_KEY: ${SARVAM_API_KEY:-}
-      AADI_TRANSLATE_MODE: ${AADI_TRANSLATE_MODE:-modern-colloquial}
+      AADI_TRANSLATE_MODE: ${AADI_TRANSLATE_MODE:-classic-colloquial}
       AADI_TRANSLATE_MONTHLY_CAP: ${AADI_TRANSLATE_MONTHLY_CAP:-500000}
       AADI_ROLE: hub
       AADI_DEMO: "1"

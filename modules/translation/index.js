@@ -1,18 +1,22 @@
 'use strict';
 // AADI translation module — English → natural everyday Malayalam.
-// Provider: Sarvam AI "Mayura" (mayura:v1) in modern-colloquial mode (configurable).
+// Provider: Sarvam AI "Mayura" (mayura:v1) in classic-colloquial mode (configurable).
 // Everything translated lands in a shared, event-sourced translation memory, so:
 //   * the same sentence is never paid for twice,
 //   * hubs get approved translations through normal sync and can use them offline,
 //   * a native speaker reviews and corrects; approved versions always win over machine output.
 // Configuration (environment):
 //   SARVAM_API_KEY             — key from https://dashboard.sarvam.ai (required for live translation)
-//   AADI_TRANSLATE_MODE        — modern-colloquial (default) | classic-colloquial | formal | code-mixed
+//   AADI_TRANSLATE_MODE        — classic-colloquial (default) | modern-colloquial | code-mixed | formal
 //   AADI_TRANSLATE_MONTHLY_CAP — max characters sent per calendar month (default 500000 ≈ ₹1,000)
 //   AADI_TRANSLATE_MOCK=1      — tests/offline demos: fake provider, no network
 const crypto = require('crypto');
 
-const MODES = ['modern-colloquial', 'classic-colloquial', 'formal', 'code-mixed'];
+// Order = preference. Live test on 30 Oct 2026 (20 AADI sentences): Sarvam's "modern-colloquial"
+// output is heavily English-mixed ("ലെസ്സൺ സ്റ്റാർട്ട് ചെയ്യാം"), nearly identical to code-mixed.
+// "classic-colloquial" gave the plain, warm everyday Malayalam AADI needs ("ഇന്നത്തെ പാഠം തുടങ്ങാം").
+const MODES = ['classic-colloquial', 'modern-colloquial', 'code-mixed', 'formal'];
+const DEFAULT_MODE = 'classic-colloquial';
 const PRICE_INR_PER_10K = 20; // Sarvam list price, Oct 2026 — check dashboard for your plan
 const CHUNK = 900;           // Mayura accepts 1,000 characters per request; leave headroom for placeholders
 
@@ -29,6 +33,19 @@ const SEED_GLOSSARY = [
   ['UPI', 'UPI', 1, ''],
   ['Childline', 'ചൈൽഡ്‌ലൈൻ', 0, 'Always with the number 1098.'],
   ['mentor', 'മെന്റർ', 0, ''],
+];
+// After-translation fixes (Malayalam → Malayalam), applied to every machine translation.
+// Prefix-safe: "ഫ്രൈഡേ"→"വെള്ളിയാഴ്ച" also turns "ഫ്രൈഡേയ്ക്ക്" into "വെള്ളിയാഴ്ചയ്ക്ക്".
+const SEED_FIXES = [
+  ['താങ്കളുടെ', 'നിങ്ങളുടെ', 'Use the warm "നിങ്ങൾ", not the distant "താങ്കൾ".'],
+  ['താങ്കൾക്ക്', 'നിങ്ങൾക്ക്', ''], ['താങ്കളോട്', 'നിങ്ങളോട്', ''], ['താങ്കളെ', 'നിങ്ങളെ', ''], ['താങ്കൾ', 'നിങ്ങൾ', ''],
+  ['മൺഡേ', 'തിങ്കളാഴ്ച', 'Day names in Malayalam.'], ['ട്യൂസ്ഡേ', 'ചൊവ്വാഴ്ച', ''], ['വെനസ്ഡേ', 'ബുധനാഴ്ച', ''], ['വെഡ്നസ്ഡേ', 'ബുധനാഴ്ച', ''],
+  ['തേർസ്ഡേ', 'വ്യാഴാഴ്ച', ''], ['ഫ്രൈഡേ', 'വെള്ളിയാഴ്ച', ''], ['സാറ്റർഡേ', 'ശനിയാഴ്ച', ''], ['സൺഡേ', 'ഞായറാഴ്ച', ''],
+  ['ഡ്യൂ ആണ്', 'മുമ്പ് തീർക്കണം', '"due" → finish before'],
+  ['വിത്ത്ഡ്രോ ചെയ്യാം', 'പിൻവലിക്കാം', ''],
+  ['ആഡ് ചെയ്യാമെന്ന്', 'കൂട്ടാമെന്ന്', ''], ['ആഡ് ചെയ്യാൻ', 'കൂട്ടാൻ', ''],
+  ['വെൽ ഡൺ', 'നന്നായി', ''],
+  ['ഒ ക്ലോക്കിന്', 'മണിക്ക്', ''],
 ];
 // Reviewed examples of the target register (natural, warm, everyday).
 const SEED_MEMORY = [
@@ -62,7 +79,7 @@ module.exports = function init(ctx) {
   const cfg = () => ({
     key: process.env.SARVAM_API_KEY || '',
     mock: process.env.AADI_TRANSLATE_MOCK === '1',
-    mode: MODES.includes(process.env.AADI_TRANSLATE_MODE) ? process.env.AADI_TRANSLATE_MODE : 'modern-colloquial',
+    mode: MODES.includes(process.env.AADI_TRANSLATE_MODE) ? process.env.AADI_TRANSLATE_MODE : DEFAULT_MODE,
     cap: Number(process.env.AADI_TRANSLATE_MONTHLY_CAP || 500000),
   });
   const configured = () => !!(cfg().key || cfg().mock);
@@ -71,7 +88,9 @@ module.exports = function init(ctx) {
   // by numbered tokens before sending, then restored. If a provider mangles a token we fall back
   // to inserting the term after the fact, so glossary words are never lost.
   function protect(text) {
-    const terms = data.find('translation_glossary', {}, { limit: 500 }).sort((a, b) => b.term.length - a.term.length);
+    // Only "keep as is" terms (PSC, SSLC…) are shielded. Preferred Malayalam words are NOT pre-inserted:
+    // Malayalam inflects nouns (ഊര് → ഊരിലെ), so a pasted-in word breaks the grammar. They become reviewer hints.
+    const terms = data.find('translation_glossary', {}, { limit: 500 }).filter((g) => g.keep_as_is && (g.kind || 'term') === 'term').sort((a, b) => b.term.length - a.term.length);
     const map = [];
     let out = text;
     for (const g of terms) {
@@ -85,6 +104,19 @@ module.exports = function init(ctx) {
   }
   // tolerant of providers adding spaces inside the token, e.g. "[ [0] ]"
   const restore = (text, map) => map.reduce((s, m, i) => s.replace(new RegExp(`\\[\\s*\\[\\s*${i}\\s*\\]\\s*\\]`, 'g'), m.value), text);
+
+  function polish(text) {
+    const fixes = data.find('translation_glossary', { kind: 'fix' }, { limit: 500 }).sort((a, b) => b.term.length - a.term.length);
+    let out = text;
+    for (const f of fixes) out = out.split(f.term).join(f.preferred);
+    return out;
+  }
+  function hintsFor(src, target) {
+    const terms = data.find('translation_glossary', {}, { limit: 500 }).filter((g) => !g.keep_as_is && (g.kind || 'term') === 'term');
+    const stem = (w) => w.replace(/[്ംഃ]$/u, '').slice(0, Math.max(2, w.length - 1));
+    return terms.filter((g) => new RegExp(`(?<![\\w])${escRe(g.term)}(?![\\w])`, 'i').test(src) && !target.includes(stem(g.preferred)))
+      .map((g) => `Glossary: "${g.term}" should be ${g.preferred}`);
+  }
 
   function usage() {
     const m = monthKey();
@@ -142,25 +174,35 @@ module.exports = function init(ctx) {
     addUsage(src.length, false, user);
     let target = restore(parts.join(' '), map);
     // any glossary token the provider dropped entirely: leave the restored text as is (nothing to insert at a known position)
-    target = target.replace(/\[\[\d+\]\]/g, '').replace(/\s{2,}/g, ' ').trim();
+    target = polish(target.replace(/\[\[\d+\]\]/g, '').replace(/\s{2,}/g, ' ').trim());
+    const hints = hintsFor(src, target);
     const row = data.put('translation_memory', {
       ...(hit || {}), source_key: key, source: src, target, machine_target: target, source_lang: 'en-IN', target_lang: 'ml-IN', mode,
-      provider: c.mock ? 'mock' : 'sarvam:mayura:v1', status: 'machine', context: context || null,
+      provider: c.mock ? 'mock' : 'sarvam:mayura:v1', status: 'machine', context: context || null, hints,
       requested_by: user && user.id, requested_by_name: user && user.display_name, chars: src.length, created_at: new Date().toISOString(), uses: 1,
     }, user);
     emit('translation.translated', { id: row.id, chars: src.length, mode }, user);
-    return { id: row.id, source: src, target, status: 'machine', provider: row.provider, mode, cached: false };
+    return { id: row.id, source: src, target, status: 'machine', provider: row.provider, mode, cached: false, hints };
   }
 
   // Starter style guide (glossary + reviewed examples). Runs once on any node — demo or production —
   // only on the cloud (hubs receive it by sync), and only if the glossary is still empty.
   function bootstrap() {
     if (ctx.brain.nodeRole === 'hub') return;
-    if ((sqlOne('SELECT COUNT(*) n FROM translation_glossary') || {}).n) return;
     const now = new Date().toISOString();
+    if (!(sqlOne("SELECT COUNT(*) n FROM translation_glossary WHERE kind='fix'") || {}).n) {
+      tx(() => { for (const [term, preferred, note] of SEED_FIXES) data.put('translation_glossary', { kind: 'fix', term, preferred, keep_as_is: 0, note, added_by_name: 'AADI style guide', created_at: now }); });
+    }
+    tx(() => { // reviewed style examples for the current default style (added once per style)
+      for (const [en, ml] of SEED_MEMORY) {
+        const key = keyOf(en, DEFAULT_MODE);
+        if (data.find('translation_memory', { source_key: key })[0]) continue;
+        data.put('translation_memory', { source_key: key, source: en, target: ml, machine_target: ml, source_lang: 'en-IN', target_lang: 'ml-IN', mode: DEFAULT_MODE, provider: 'style-guide', status: 'approved', context: 'AADI style examples', reviewed_by_name: 'AADI style guide', reviewed_at: now, chars: en.length, created_at: now, uses: 0 });
+      }
+    });
+    if ((sqlOne("SELECT COUNT(*) n FROM translation_glossary WHERE COALESCE(kind,'term')='term'") || {}).n) return;
     tx(() => {
-      for (const [term, preferred, keep, note] of SEED_GLOSSARY) data.put('translation_glossary', { term, preferred, keep_as_is: keep, note, added_by_name: 'AADI style guide', created_at: now });
-      for (const [en, ml] of SEED_MEMORY) data.put('translation_memory', { source_key: keyOf(en, 'modern-colloquial'), source: en, target: ml, machine_target: ml, source_lang: 'en-IN', target_lang: 'ml-IN', mode: 'modern-colloquial', provider: 'style-guide', status: 'approved', context: 'AADI style examples', reviewed_by_name: 'AADI style guide', reviewed_at: now, chars: en.length, created_at: now, uses: 0 });
+      for (const [term, preferred, keep, note] of SEED_GLOSSARY) data.put('translation_glossary', { kind: 'term', term, preferred, keep_as_is: keep, note, added_by_name: 'AADI style guide', created_at: now });
     });
   }
   try { bootstrap(); } catch (e) { ctx.log('style guide bootstrap skipped:', e.message); }
@@ -225,10 +267,11 @@ module.exports = function init(ctx) {
   router.post('/glossary', requires('content.review', 'platform.manage'), (req, res) => {
     const term = norm(req.body.term);
     if (!term) throw httpError(400, 'Enter the English term.');
-    const ex = data.find('translation_glossary', {}).find((g) => g.term.toLowerCase() === term.toLowerCase());
-    const keep = req.body.keep_as_is ? 1 : 0;
+    const kind = req.body.kind === 'fix' ? 'fix' : 'term';
+    const ex = data.find('translation_glossary', {}).find((g) => (g.kind || 'term') === kind && g.term.toLowerCase() === term.toLowerCase());
+    const keep = kind === 'term' && req.body.keep_as_is ? 1 : 0;
     if (!keep && !norm(req.body.preferred)) throw httpError(400, 'Enter the Malayalam word, or tick "keep as is".');
-    res.json(data.put('translation_glossary', { ...(ex || {}), term, preferred: keep ? term : norm(req.body.preferred), keep_as_is: keep, note: req.body.note || '', added_by_name: req.user.display_name, created_at: ex ? ex.created_at : new Date().toISOString() }, req.user));
+    res.json(data.put('translation_glossary', { ...(ex || {}), kind, term, preferred: keep ? term : norm(req.body.preferred), keep_as_is: keep, note: req.body.note || '', added_by_name: req.user.display_name, created_at: ex ? ex.created_at : new Date().toISOString() }, req.user));
   });
   router.delete('/glossary/:id', requires('content.review', 'platform.manage'), (req, res) => { data.del('translation_glossary', req.params.id, req.user); res.json({ ok: true }); });
 
