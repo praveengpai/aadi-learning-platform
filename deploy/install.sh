@@ -78,7 +78,7 @@ elif [ "$MODE" != "own-caddy" ]; then
 fi
 
 echo "==> Nightly backups at 02:15"
-( crontab -l 2>/dev/null | grep -v aadi/deploy/backup.sh; echo "15 2 * * * $DIR/deploy/backup.sh >> /var/log/aadi-backup.log 2>&1" ) | crontab -
+{ crontab -l 2>/dev/null | grep -v aadi/deploy/backup.sh || true; echo "15 2 * * * $DIR/deploy/backup.sh >> /var/log/aadi-backup.log 2>&1"; } | crontab -
 
 docker compose ps
 echo
