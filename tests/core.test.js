@@ -173,7 +173,7 @@ test('learning passport: award is idempotent and verifiable publicly with minima
 test('event chain is intact, and tampering is detected', async () => {
   const ok = N.brain.store.verifyChain();
   assert.equal(ok.ok, true);
-  const row = N.brain.db.prepare('SELECT seq FROM events WHERE node=? ORDER BY seq LIMIT 1 OFFSET 50').get(N.brain.nodeId);
+  const row = N.brain.db.prepare(`SELECT seq FROM events WHERE node=? AND payload LIKE '%"table":"persons"%' ORDER BY seq LIMIT 1 OFFSET 5`).get(N.brain.nodeId);
   const orig = N.brain.db.prepare('SELECT payload FROM events WHERE seq=?').get(row.seq).payload;
   N.brain.db.prepare('UPDATE events SET payload=? WHERE seq=?').run(orig.replace(/"name":"[^"]*"/, '"name":"Tampered"'), row.seq);
   const bad = N.brain.store.verifyChain();

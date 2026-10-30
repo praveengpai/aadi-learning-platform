@@ -152,6 +152,19 @@ module.exports = function init(ctx) {
     return { id: row.id, source: src, target, status: 'machine', provider: row.provider, mode, cached: false };
   }
 
+  // Starter style guide (glossary + reviewed examples). Runs once on any node — demo or production —
+  // only on the cloud (hubs receive it by sync), and only if the glossary is still empty.
+  function bootstrap() {
+    if (ctx.brain.nodeRole === 'hub') return;
+    if ((sqlOne('SELECT COUNT(*) n FROM translation_glossary') || {}).n) return;
+    const now = new Date().toISOString();
+    tx(() => {
+      for (const [term, preferred, keep, note] of SEED_GLOSSARY) data.put('translation_glossary', { term, preferred, keep_as_is: keep, note, added_by_name: 'AADI style guide', created_at: now });
+      for (const [en, ml] of SEED_MEMORY) data.put('translation_memory', { source_key: keyOf(en, 'modern-colloquial'), source: en, target: ml, machine_target: ml, source_lang: 'en-IN', target_lang: 'ml-IN', mode: 'modern-colloquial', provider: 'style-guide', status: 'approved', context: 'AADI style examples', reviewed_by_name: 'AADI style guide', reviewed_at: now, chars: en.length, created_at: now, uses: 0 });
+    });
+  }
+  try { bootstrap(); } catch (e) { ctx.log('style guide bootstrap skipped:', e.message); }
+
   const WRITERS = ['teach', 'ops', 'agency.manage', 'counsel', 'hamlet.coordinate', 'content.review'];
 
   router.get('/status', requires(...WRITERS, 'content.review'), (req, res) => {
@@ -222,12 +235,7 @@ module.exports = function init(ctx) {
   return {
     translate, // other modules may call through the brain later
     health: () => ({ configured: configured(), memory: (sqlOne('SELECT COUNT(*) n FROM translation_memory WHERE deleted=0') || {}).n || 0, chars_this_month: usage().chars || 0 }),
-    seed: async (demo) => {
-      tx(() => {
-        for (const [term, preferred, keep, note] of SEED_GLOSSARY) data.put('translation_glossary', { term, preferred, keep_as_is: keep, note, added_by_name: 'AADI style guide', created_at: demo.daysAgo(30) });
-        for (const [en, ml] of SEED_MEMORY) data.put('translation_memory', { source_key: keyOf(en, 'modern-colloquial'), source: en, target: ml, machine_target: ml, source_lang: 'en-IN', target_lang: 'ml-IN', mode: 'modern-colloquial', provider: 'style-guide', status: 'approved', context: 'AADI style examples', reviewed_by_name: 'AADI style guide', reviewed_at: demo.daysAgo(20), chars: en.length, created_at: demo.daysAgo(20), uses: 0 });
-      });
-    },
+    seed: async () => bootstrap(),
   };
 };
 
