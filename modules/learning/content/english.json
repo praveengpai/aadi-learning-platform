@@ -1,0 +1,110 @@
+{
+  "subject": "english",
+  "lessons": [
+    {
+      "id": "eng-1-1", "class": 1, "icon": "🔤", "minutes": 15, "competencies": ["ENG.1"], "scert": "Class 1 · Letters and sounds",
+      "title": "ABC: letters and their sounds", "title_ml": "ABC: അക്ഷരങ്ങളും ശബ്ദങ്ങളും",
+      "body": "A is for Apple, B is for Ball, C is for Cat, D is for Dog, E is for Elephant. Each letter has a name and a sound. Say the sound: a-a-apple, b-b-ball.",
+      "body_ml": "A — Apple (ആപ്പിൾ), B — Ball (പന്ത്), C — Cat (പൂച്ച), D — Dog (നായ), E — Elephant (ആന). ഓരോ അക്ഷരത്തിനും പേരും ശബ്ദവുമുണ്ട്.",
+      "audio_en": "A is for apple. B is for ball. C is for cat. D is for dog. E is for elephant.",
+      "activity": "Sing the alphabet song; children point to objects in the room for each sound.",
+      "activity_ml": "അക്ഷരമാല പാട്ട് പാടുക; ഓരോ ശബ്ദത്തിനും മുറിയിലെ വസ്തുക്കൾ ചൂണ്ടിക്കാണിക്കുക.",
+      "bridge": { "languages": ["Muthuvan", "Paniya", "Irula", "Kanikkar"], "note": "Three languages at once is a lot. Explain in the home language, show the Malayalam word, then the English word — always with a picture or real object.", "note_ml": "മൂന്ന് ഭാഷ ഒരുമിച്ച് ബുദ്ധിമുട്ടാണ്. വീട്ടുഭാഷയിൽ വിശദീകരിക്കുക, മലയാള വാക്ക് കാണിക്കുക, പിന്നെ ഇംഗ്ലീഷ് — എപ്പോഴും ചിത്രമോ വസ്തുവോ സഹിതം." },
+      "questions": [
+        { "q": "🐘 starts with which letter?", "q_ml": "🐘 (Elephant) ഏത് അക്ഷരത്തിൽ തുടങ്ങുന്നു?", "o": ["A", "E", "D", "B"], "a": 1, "x": "E for Elephant.", "x_ml": "E — Elephant.", "d": true },
+        { "q": "B is for …", "q_ml": "B — ?", "o": ["🍎 Apple", "⚽ Ball", "🐱 Cat", "🐶 Dog"], "a": 1, "x": "B-b-ball.", "x_ml": "B — Ball (പന്ത്).", "d": true },
+        { "q": "Which letter comes after C?", "q_ml": "C കഴിഞ്ഞ് വരുന്ന അക്ഷരം?", "o": ["B", "D", "E", "A"], "a": 1, "x": "A, B, C, D.", "x_ml": "A, B, C, D." },
+        { "q": "'Cat' in Malayalam is:", "q_ml": "'Cat' — മലയാളം?", "o": ["നായ", "പൂച്ച", "ആന", "പന്ത്"], "a": 1, "x": "Cat = പൂച്ച.", "x_ml": "പൂച്ച." }
+      ]
+    },
+    {
+      "id": "eng-2-1", "class": 2, "icon": "👋", "minutes": 15, "competencies": ["ENG.1"], "scert": "Class 2 · Greetings",
+      "title": "Hello! Greeting and introducing yourself", "title_ml": "ഹലോ! അഭിവാദ്യവും സ്വയം പരിചയപ്പെടുത്തലും",
+      "body": "Good morning! My name is Anu. I am eight years old. I live in Pachakkudi. I like mangoes. What is your name? — Nice to meet you!",
+      "body_ml": "Good morning (സുപ്രഭാതം)! My name is Anu (എന്റെ പേര് അനു). I am eight years old (എനിക്ക് എട്ട് വയസ്സ്). I live in Pachakkudi (ഞാൻ പച്ചക്കുടിയിൽ താമസിക്കുന്നു).",
+      "audio_en": "Good morning! My name is Anu. I am eight years old. I live in Pachakkudi. What is your name?",
+      "activity": "Pair game: children greet and introduce themselves to 5 classmates.",
+      "activity_ml": "ജോടിക്കളി: 5 കൂട്ടുകാരോട് അഭിവാദ്യം ചെയ്ത് സ്വയം പരിചയപ്പെടുത്തുക.",
+      "bridge": { "languages": ["Muthuvan", "Paniya"], "note": "Ask how people greet each other at home; celebrate that the child already knows greetings in two languages.", "note_ml": "വീട്ടിൽ എങ്ങനെ അഭിവാദ്യം ചെയ്യുന്നു എന്ന് ചോദിക്കുക; കുട്ടിക്ക് ഇതിനകം രണ്ട് ഭാഷകൾ അറിയാമെന്ന് ആഘോഷിക്കുക." },
+      "questions": [
+        { "q": "How do you ask someone's name?", "q_ml": "ഒരാളുടെ പേര് ചോദിക്കുന്നത് എങ്ങനെ?", "o": ["How old?", "What is your name?", "Where go?", "Good night"], "a": 1, "x": "'What is your name?'", "x_ml": "'What is your name?' — നിന്റെ പേരെന്താണ്?", "d": true },
+        { "q": "In the morning we say:", "q_ml": "രാവിലെ നാം പറയുന്നത്:", "o": ["Good night", "Good morning", "Goodbye", "Sorry"], "a": 1, "x": "Good morning.", "x_ml": "Good morning — സുപ്രഭാതം.", "d": true },
+        { "q": "Complete: 'I ___ eight years old.'", "q_ml": "പൂരിപ്പിക്കുക: 'I ___ eight years old.'", "o": ["is", "am", "are", "be"], "a": 1, "x": "I am.", "x_ml": "'I'-യോടൊപ്പം 'am'." },
+        { "q": "'I live in Pachakkudi' means:", "q_ml": "'I live in Pachakkudi' എന്നാൽ:", "o": ["ഞാൻ പച്ചക്കുടിയിൽ താമസിക്കുന്നു", "എനിക്ക് മാങ്ങ ഇഷ്ടമാണ്", "എന്റെ പേര് അനു", "സുപ്രഭാതം"], "a": 0, "x": "live = താമസിക്കുക.", "x_ml": "live = താമസിക്കുക." }
+      ]
+    },
+    {
+      "id": "eng-3-1", "class": 3, "icon": "🏠", "minutes": 20, "competencies": ["ENG.1"], "scert": "Class 3 · Naming words (nouns)",
+      "title": "Naming words: people, places, things", "title_ml": "നാമപദങ്ങൾ: ആളുകൾ, സ്ഥലങ്ങൾ, വസ്തുക്കൾ",
+      "body": "A noun is a naming word. People: mother, teacher, Ravi. Places: hamlet, school, Munnar. Things: pot, book, drum. Animals: elephant, deer. Names of particular people and places start with a capital letter: Ravi, Wayanad.",
+      "body_ml": "നാമം പേര് പറയുന്ന വാക്കാണ്. ആളുകൾ: mother, teacher, Ravi. സ്ഥലങ്ങൾ: hamlet, school, Munnar. വസ്തുക്കൾ: pot, book, drum. പ്രത്യേക ആളുകളുടെയും സ്ഥലങ്ങളുടെയും പേര് വലിയ അക്ഷരത്തിൽ തുടങ്ങും: Ravi, Wayanad.",
+      "activity": "Noun walk around the hamlet; list 10 nouns in English with Malayalam meaning.",
+      "activity_ml": "ഊരിൽ നടന്ന് 10 ഇംഗ്ലീഷ് നാമങ്ങൾ മലയാള അർത്ഥത്തോടെ എഴുതുക.",
+      "questions": [
+        { "q": "Which is a noun?", "q_ml": "നാമം ഏത്?", "o": ["run", "happy", "river", "quickly"], "a": 2, "x": "River names a place/thing.", "x_ml": "River (പുഴ) — ഒരു സ്ഥലത്തിന്റെ/വസ്തുവിന്റെ പേര്.", "d": true },
+        { "q": "Which should begin with a capital letter?", "q_ml": "വലിയ അക്ഷരത്തിൽ തുടങ്ങേണ്ടത്?", "o": ["school", "wayanad", "book", "tree"], "a": 1, "x": "Wayanad is the name of a particular place.", "x_ml": "Wayanad — പ്രത്യേക സ്ഥലപ്പേര്." },
+        { "q": "Find the noun: 'The deer drinks water.'", "q_ml": "നാമം കണ്ടെത്തുക: 'The deer drinks water.'", "o": ["The", "deer", "drinks", "the"], "a": 1, "x": "deer (and water) are nouns.", "x_ml": "deer (മാൻ) — നാമം." },
+        { "q": "'teacher' is a naming word for a:", "q_ml": "'teacher' ഏത് തരം നാമം?", "o": ["person", "place", "animal", "action"], "o_ml": ["ആൾ", "സ്ഥലം", "മൃഗം", "പ്രവൃത്തി"], "a": 0, "x": "A teacher is a person.", "x_ml": "ടീച്ചർ — ആൾ." }
+      ]
+    },
+    {
+      "id": "eng-5-1", "class": 5, "icon": "🏃", "minutes": 20, "competencies": ["ENG.2"], "scert": "Class 5 · Verbs and tenses",
+      "title": "Action words and simple tenses", "title_ml": "ക്രിയാപദങ്ങളും ലളിത കാലങ്ങളും",
+      "body": "Verbs are action words: walk, climb, eat, read. Present: I walk to school every day. Past: I walked to school yesterday. Future: I will walk to school tomorrow. Some verbs change completely in the past: go → went, eat → ate.",
+      "body_ml": "ക്രിയാപദങ്ങൾ പ്രവൃത്തി കാണിക്കുന്നു: walk, climb, eat, read. വർത്തമാനം: I walk to school every day. ഭൂതം: I walked yesterday. ഭാവി: I will walk tomorrow. ചിലത് പൂർണമായി മാറും: go → went, eat → ate.",
+      "audio_en": "I walk to school every day. Yesterday I walked to school. Tomorrow I will walk to school.",
+      "activity": "Diary: write 3 sentences about yesterday, 3 about today and 3 about tomorrow.",
+      "activity_ml": "ഡയറി: ഇന്നലെ, ഇന്ന്, നാളെ എന്നിവയെക്കുറിച്ച് 3 വാക്യം വീതം.",
+      "questions": [
+        { "q": "Past tense of 'go':", "q_ml": "'go' — ഭൂതകാലം:", "o": ["goed", "went", "gone", "going"], "a": 1, "x": "go → went (irregular).", "x_ml": "go → went.", "d": true },
+        { "q": "Choose the verb: 'Birds fly over the hill.'", "q_ml": "ക്രിയ ഏത്: 'Birds fly over the hill.'", "o": ["Birds", "fly", "over", "hill"], "a": 1, "x": "fly is the action.", "x_ml": "fly (പറക്കുക) — പ്രവൃത്തി." },
+        { "q": "'I ___ my homework tomorrow.'", "o": ["did", "will do", "doing", "does"], "a": 1, "x": "Tomorrow → future: will do.", "x_ml": "നാളെ → ഭാവി: will do.", "d": true },
+        { "q": "'She eats rice' in past tense:", "q_ml": "'She eats rice' — ഭൂതകാലം:", "o": ["She eated rice", "She ate rice", "She eating rice", "She will eat rice"], "a": 1, "x": "eat → ate.", "x_ml": "eat → ate." }
+      ]
+    },
+    {
+      "id": "eng-6-1", "class": 6, "icon": "💬", "minutes": 25, "competencies": ["ENG.2"], "scert": "Class 6 · Conversation in daily situations",
+      "title": "Conversation: at the bus stop and the shop", "title_ml": "സംഭാഷണം: ബസ് സ്റ്റോപ്പിലും കടയിലും",
+      "body": "At the bus stop — A: Excuse me, which bus goes to Kalpetta? B: The red KSRTC bus at 9 o'clock. A: Thank you! At the shop — A: How much is this notebook? B: Thirty rupees. A: Can I have two, please?",
+      "body_ml": "ബസ് സ്റ്റോപ്പിൽ — A: Excuse me, കൽപ്പറ്റയ്ക്ക് ഏത് ബസ്? B: 9 മണിക്ക് ചുവന്ന KSRTC. A: Thank you! കടയിൽ — A: ഈ നോട്ട്ബുക്കിന് എത്ര? B: മുപ്പത് രൂപ. A: രണ്ടെണ്ണം തരാമോ?",
+      "audio_en": "Excuse me, which bus goes to Kalpetta? The red bus at nine o'clock. Thank you!",
+      "activity": "Role-play a bus stop, a shop and a hospital counter in pairs.",
+      "activity_ml": "ബസ് സ്റ്റോപ്പ്, കട, ആശുപത്രി കൗണ്ടർ — ജോടികളായി റോൾപ്ലേ.",
+      "questions": [
+        { "q": "A polite way to start asking a stranger:", "q_ml": "അപരിചിതനോട് മര്യാദയോടെ ചോദിച്ചു തുടങ്ങാൻ:", "o": ["Hey you!", "Excuse me,", "Give me", "Go away"], "a": 1, "x": "'Excuse me' is polite.", "x_ml": "'Excuse me' — മര്യാദ.", "d": true },
+        { "q": "How do you ask the price?", "q_ml": "വില ചോദിക്കുന്നത് എങ്ങനെ?", "o": ["How much is this?", "How many is this?", "What time is it?", "Where is this?"], "a": 0, "x": "'How much' is for price/amount.", "x_ml": "'How much' — വിലയ്ക്ക്." },
+        { "q": "Reply to 'Thank you':", "q_ml": "'Thank you'-ന് മറുപടി:", "o": ["You're welcome", "Sorry", "Goodbye", "Excuse me"], "a": 0, "x": "You're welcome.", "x_ml": "You're welcome — സാരമില്ല/സന്തോഷം." },
+        { "q": "'Can I have two, please?' is a:", "q_ml": "'Can I have two, please?' —", "o": ["polite request", "order shouted", "greeting", "complaint"], "o_ml": ["വിനയപൂർവമായ അഭ്യർത്ഥന", "ആജ്ഞ", "അഭിവാദ്യം", "പരാതി"], "a": 0, "x": "'please' makes it a polite request.", "x_ml": "'please' — വിനയം." }
+      ]
+    },
+    {
+      "id": "eng-8-1", "class": 8, "icon": "📰", "minutes": 25, "competencies": ["ENG.2"], "scert": "Class 8 · Reading comprehension",
+      "title": "Reading for meaning: a news report", "title_ml": "അർത്ഥം ഗ്രഹിച്ച് വായന: ഒരു വാർത്ത",
+      "body": "WAYANAD: Students of Kurumbakolly hamlet planted 500 bamboo saplings along the river bank on Saturday to prevent soil erosion. 'Bamboo roots hold the soil together,' said Sreeja, a Class 9 student. The forest department supplied the saplings.",
+      "body_ml": "വയനാട്: മണ്ണൊലിപ്പ് തടയാൻ കുറുമ്പക്കൊല്ലി ഊരിലെ വിദ്യാർത്ഥികൾ ശനിയാഴ്ച പുഴയോരത്ത് 500 മുളന്തൈകൾ നട്ടു. 'മുളയുടെ വേരുകൾ മണ്ണിനെ ചേർത്തുപിടിക്കും,' ഒമ്പതാം ക്ലാസുകാരി ശ്രീജ പറഞ്ഞു. വനംവകുപ്പാണ് തൈകൾ നൽകിയത്.",
+      "audio_en": "Students of Kurumbakolly hamlet planted five hundred bamboo saplings along the river bank to prevent soil erosion.",
+      "activity": "Answer the 5 Ws (who, what, when, where, why) and write a headline for a hamlet event.",
+      "activity_ml": "5 W ചോദ്യങ്ങൾക്ക് ഉത്തരം; ഊരിലെ ഒരു സംഭവത്തിന് തലക്കെട്ട് എഴുതുക.",
+      "questions": [
+        { "q": "Why did the students plant bamboo?", "q_ml": "വിദ്യാർത്ഥികൾ മുള നട്ടത് എന്തിന്?", "o": ["To sell it", "To prevent soil erosion", "To make houses", "For a festival"], "o_ml": ["വിൽക്കാൻ", "മണ്ണൊലിപ്പ് തടയാൻ", "വീട് പണിയാൻ", "ഉത്സവത്തിന്"], "a": 1, "x": "'to prevent soil erosion'.", "x_ml": "മണ്ണൊലിപ്പ് തടയാൻ.", "d": true },
+        { "q": "Who supplied the saplings?", "q_ml": "തൈകൾ നൽകിയത് ആര്?", "o": ["The school", "The forest department", "Sreeja", "The panchayat"], "o_ml": ["സ്കൂൾ", "വനംവകുപ്പ്", "ശ്രീജ", "പഞ്ചായത്ത്"], "a": 1, "x": "The forest department.", "x_ml": "വനംവകുപ്പ്." },
+        { "q": "'Erosion' most nearly means:", "q_ml": "'Erosion' എന്നാൽ:", "o": ["washing away of soil", "planting", "rain", "building"], "o_ml": ["മണ്ണൊലിപ്പ്", "നടീൽ", "മഴ", "നിർമ്മാണം"], "a": 0, "x": "Soil being washed or worn away.", "x_ml": "മണ്ണ് ഒലിച്ചുപോകൽ." },
+        { "q": "When did the event happen?", "q_ml": "സംഭവം എപ്പോൾ?", "o": ["Monday", "Saturday", "Sunday", "Not given"], "o_ml": ["തിങ്കൾ", "ശനി", "ഞായർ", "പറഞ്ഞിട്ടില്ല"], "a": 1, "x": "'on Saturday'.", "x_ml": "ശനിയാഴ്ച." }
+      ]
+    },
+    {
+      "id": "eng-10-1", "class": 10, "icon": "🎓", "minutes": 30, "competencies": ["ENG.2"], "scert": "SSLC · Grammar: reported speech & passive",
+      "title": "SSLC grammar: reported speech and passive voice", "title_ml": "SSLC വ്യാകരണം: പരോക്ഷ ആഖ്യാനവും കർമ്മണി പ്രയോഗവും",
+      "body": "Direct: Meera said, 'I am tired.' Reported: Meera said that she was tired (pronoun and tense shift back). Active: The farmers grow pepper. Passive: Pepper is grown by the farmers (object becomes subject; use be + past participle).",
+      "body_ml": "പ്രത്യക്ഷം: Meera said, 'I am tired.' പരോക്ഷം: Meera said that she was tired (സർവനാമവും കാലവും പിന്നോട്ട്). കർത്തരി: The farmers grow pepper. കർമ്മണി: Pepper is grown by the farmers (കർമ്മം കർത്താവാകും; be + past participle).",
+      "activity": "Convert 10 sentences from a newspaper into passive voice; check in pairs.",
+      "activity_ml": "പത്രത്തിലെ 10 വാക്യങ്ങൾ കർമ്മണിയാക്കി ജോടികളായി പരിശോധിക്കുക.",
+      "questions": [
+        { "q": "He said, 'I play football.' → He said that he ___ football.", "o": ["plays", "played", "will play", "playing"], "a": 1, "x": "Present shifts to past in reported speech.", "x_ml": "പരോക്ഷത്തിൽ വർത്തമാനം ഭൂതമാകുന്നു.", "d": true },
+        { "q": "Passive of 'Ravi wrote a letter':", "q_ml": "'Ravi wrote a letter' — കർമ്മണി:", "o": ["A letter is written by Ravi", "A letter was written by Ravi", "A letter wrote Ravi", "Ravi was written a letter"], "a": 1, "x": "Past → was + past participle.", "x_ml": "ഭൂതം → was + past participle.", "d": true },
+        { "q": "Passive of 'They are building a bridge':", "o": ["A bridge is built", "A bridge is being built by them", "A bridge was building", "A bridge has built"], "a": 1, "x": "Continuous → is being + past participle.", "x_ml": "തുടർച്ച → is being + past participle." },
+        { "q": "She said, 'I will come.' → She said that she ___ come.", "o": ["will", "would", "shall", "can"], "a": 1, "x": "will → would.", "x_ml": "will → would." }
+      ]
+    }
+  ]
+}

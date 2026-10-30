@@ -1,0 +1,26 @@
+{
+  "id": "operations", "version": "1.0.0",
+  "name": "Centre Operations", "name_ml": "കേന്ദ്ര പ്രവർത്തനം", "icon": "🏗️",
+  "description": "Multi-centre hierarchy, centre setup wizard, assets & repair tickets, hub health, staff duty roster, expenses vs budget, sliding-scale fees and a combined hamlet timetable.",
+  "tables": {
+    "operations_profiles": ["centre_id", "hamlet_id", "agency_id", "name", "kind", "model", "core_registered", "kit", "facilitator_ids", "opened_on", "status", "power", "connectivity", "storage_total_gb", "notes", "created_by"],
+    "operations_assets": ["centre_id", "hamlet_id", "agency_id", "kind", "label", "serial", "condition", "assigned_to", "assigned_name", "acquired_on", "funded_by", "value", "notes", "last_checked"],
+    "operations_tickets": ["asset_id", "centre_id", "hamlet_id", "agency_id", "title", "detail", "priority", "status", "opened_by_name", "opened_at", "assignee", "resolved_at", "resolution", "history"],
+    "operations_hub_health": ["centre_id", "hamlet_id", "agency_id", "at", "day", "power_source", "battery_pct", "connectivity", "signal_bars", "storage_total_gb", "storage_used_gb", "last_sync", "pending_events", "uptime_h", "temp_c", "source"],
+    "operations_duty": ["user_id", "user_name", "role", "agency_id", "centre_id", "hamlet_id", "weekday", "slot", "duty", "note"],
+    "operations_expenses": ["centre_id", "hamlet_id", "agency_id", "month", "date", "category", "amount", "receipt_note", "receipt_no", "recorded_by", "recorded_by_name"],
+    "operations_budgets": ["centre_id", "hamlet_id", "agency_id", "month", "lines", "total", "set_by"],
+    "operations_fees": ["person_id", "hamlet_id", "programme_id", "agency_id", "plan", "band", "monthly_fee", "reason", "sponsor", "start_month", "set_by_name", "notes"],
+    "operations_fee_payments": ["fee_id", "person_id", "hamlet_id", "programme_id", "agency_id", "month", "amount", "kind", "mode", "received_by_name", "at"]
+  },
+  "types": { "core_registered": "INTEGER", "value": "REAL", "amount": "REAL", "total": "REAL", "monthly_fee": "REAL", "battery_pct": "INTEGER", "signal_bars": "INTEGER", "storage_total_gb": "REAL", "storage_used_gb": "REAL", "pending_events": "INTEGER", "uptime_h": "REAL", "temp_c": "REAL" },
+  "emits": ["operations.centre_setup", "operations.ticket_opened", "operations.ticket_resolved"],
+  "subscribes": [],
+  "nav": [
+    { "view": "centres", "label": "Centres", "label_ml": "കേന്ദ്രങ്ങൾ", "icon": "🏗️", "roles": ["platform_admin", "agency_admin", "coordinator", "facilitator"], "section": "ops" },
+    { "view": "assets", "label": "Assets & Hub Health", "label_ml": "ഉപകരണങ്ങൾ, ഹബ് ആരോഗ്യം", "icon": "🔧", "roles": ["platform_admin", "agency_admin", "coordinator", "facilitator"], "section": "ops" },
+    { "view": "staff", "label": "Staff & Duty", "label_ml": "ജീവനക്കാർ, ഡ്യൂട്ടി", "icon": "🧑‍🤝‍🧑", "roles": ["platform_admin", "agency_admin", "coordinator", "facilitator"], "section": "ops" },
+    { "view": "finance", "label": "Expenses & Fees", "label_ml": "ചെലവുകൾ, ഫീസ്", "icon": "💰", "roles": ["platform_admin", "agency_admin", "coordinator", "facilitator"], "section": "ops" },
+    { "view": "timetable", "label": "Hamlet Timetable", "label_ml": "ഊര് സമയപ്പട്ടിക", "icon": "🗓️", "roles": ["learner", "guardian", "facilitator", "teacher", "coordinator", "agency_admin", "platform_admin", "counsellor", "mentor"], "section": "community" }
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "subject": "literacy",
+  "levels": [
+    { "level": 1, "key": "letters", "icon": "🔤", "title": "Letters", "title_ml": "അക്ഷരങ്ങൾ", "competency": "LIT.ADULT.1", "goal": "Recognise and write vowels and common consonants; write own name.", "goal_ml": "സ്വരങ്ങളും സാധാരണ വ്യഞ്ജനങ്ങളും തിരിച്ചറിയുക, എഴുതുക; സ്വന്തം പേരെഴുതുക." },
+    { "level": 2, "key": "words", "icon": "🧺", "title": "Words", "title_ml": "വാക്കുകൾ", "competency": "LIT.ADULT.2", "goal": "Read and write everyday words: names, places, items, numbers on money.", "goal_ml": "ദൈനംദിന വാക്കുകൾ വായിക്കുക, എഴുതുക: പേരുകൾ, സ്ഥലങ്ങൾ, സാധനങ്ങൾ, നോട്ടിലെ സംഖ്യകൾ." },
+    { "level": 3, "key": "sentences", "icon": "💬", "title": "Sentences", "title_ml": "വാക്യങ്ങൾ", "competency": "LIT.ADULT.3", "goal": "Read short sentences, bus boards and medicine labels; write a short message.", "goal_ml": "ചെറുവാക്യങ്ങൾ, ബസ് ബോർഡ്, മരുന്ന് ലേബൽ വായിക്കുക; ചെറിയ സന്ദേശം എഴുതുക." },
+    { "level": 4, "key": "forms", "icon": "📋", "title": "Notices & forms", "title_ml": "അറിയിപ്പുകളും ഫോമുകളും", "competency": "LIT.ADULT.4", "goal": "Read panchayat notices, ration cards, job-card entries; fill a simple form independently.", "goal_ml": "പഞ്ചായത്ത് അറിയിപ്പ്, റേഷൻ കാർഡ്, തൊഴിൽ കാർഡ് വായിക്കുക; ലളിതമായ ഫോം സ്വയം പൂരിപ്പിക്കുക." }
+  ],
+  "lessons": [
+    {
+      "id": "lit-1-1", "level": 1, "icon": "✋", "minutes": 20, "competencies": ["LIT.ADULT.1", "LIT.ML.1"],
+      "title": "Writing my own name", "title_ml": "എന്റെ പേര് എഴുതാം",
+      "body": "Your name is the first word you will write. The facilitator writes your name in big letters. Trace it with your finger, then with a pencil, 5 times. Say each letter as you write. Next week you will sign the attendance register with your name instead of a thumb impression.",
+      "body_ml": "നിങ്ങൾ ആദ്യം എഴുതുന്ന വാക്ക് നിങ്ങളുടെ പേരാണ്. ഫെസിലിറ്റേറ്റർ വലിയ അക്ഷരത്തിൽ പേരെഴുതും. വിരൽ കൊണ്ടും പിന്നെ പെൻസിൽ കൊണ്ടും 5 തവണ എഴുതുക. എഴുതുമ്പോൾ അക്ഷരം ഉറക്കെ പറയുക. അടുത്ത ആഴ്ച മുതൽ വിരലടയാളത്തിന് പകരം പേരെഴുതി ഒപ്പിടാം.",
+      "audio_ml": "നിങ്ങളുടെ പേര് വിരൽ കൊണ്ട് എഴുതി നോക്കൂ. അടുത്ത ആഴ്ച മുതൽ വിരലടയാളത്തിന് പകരം പേരെഴുതി ഒപ്പിടാം.",
+      "questions": [
+        { "q": "Which letter is അ?", "q_ml": "ഇവയിൽ 'അ' ഏത്?", "o": ["അ", "ആ", "ഇ", "എ"], "a": 0, "x": "അ — the first letter.", "x_ml": "അ — ആദ്യ അക്ഷരം.", "d": true },
+        { "q": "Which letter is മ?", "q_ml": "ഇവയിൽ 'മ' ഏത്?", "o": ["ന", "മ", "വ", "ര"], "a": 1, "x": "മ as in മരം.", "x_ml": "മ — മരം.", "d": true },
+        { "q": "Instead of a thumb impression, we will:", "q_ml": "വിരലടയാളത്തിന് പകരം:", "o": ["sign our name", "draw a circle", "leave it blank", "ask a child"], "o_ml": ["പേരെഴുതി ഒപ്പിടും", "വട്ടം വരയ്ക്കും", "ഒഴിച്ചിടും", "കുട്ടിയോട് ചോദിക്കും"], "a": 0, "x": "Signing your name is your right and pride.", "x_ml": "സ്വന്തം പേരെഴുതി ഒപ്പിടുന്നത് അഭിമാനമാണ്." }
+      ]
+    },
+    {
+      "id": "lit-1-2", "level": 1, "icon": "🔡", "minutes": 20, "competencies": ["LIT.ADULT.1", "LIT.ML.1"],
+      "title": "Letters in everyday words", "title_ml": "ദൈനംദിന വാക്കുകളിലെ അക്ഷരങ്ങൾ",
+      "body": "Find the letters you know in words you see every day: പാൽ (milk), അരി (rice), ബസ് (bus), റേഷൻ (ration). Circle the first letter of each word.",
+      "body_ml": "എല്ലാ ദിവസവും കാണുന്ന വാക്കുകളിൽ അറിയാവുന്ന അക്ഷരങ്ങൾ കണ്ടെത്തുക: പാൽ, അരി, ബസ്, റേഷൻ. ഓരോ വാക്കിന്റെയും ആദ്യ അക്ഷരത്തിന് വട്ടമിടുക.",
+      "audio_ml": "പാൽ. അരി. ബസ്. റേഷൻ. ഓരോ വാക്കിന്റെയും ആദ്യ അക്ഷരം കണ്ടെത്തൂ.",
+      "questions": [
+        { "q": "First letter of അരി:", "q_ml": "'അരി'-യുടെ ആദ്യ അക്ഷരം:", "o": ["അ", "ര", "ഇ", "ആ"], "a": 0, "x": "അ-രി.", "x_ml": "അ-രി.", "d": true },
+        { "q": "First letter of പാൽ:", "q_ml": "'പാൽ'-ന്റെ ആദ്യ അക്ഷരം:", "o": ["ബ", "പ", "ല", "മ"], "a": 1, "x": "പാ-ൽ.", "x_ml": "പാ-ൽ." },
+        { "q": "Which word starts with ബ?", "q_ml": "'ബ'-യിൽ തുടങ്ങുന്നത്?", "o": ["പാൽ", "ബസ്", "അരി", "റേഷൻ"], "a": 1, "x": "ബസ്.", "x_ml": "ബസ്." }
+      ]
+    },
+    {
+      "id": "lit-2-1", "level": 2, "icon": "🛒", "minutes": 25, "competencies": ["LIT.ADULT.2", "LIT.ML.2"],
+      "title": "Shopping words and money", "title_ml": "കടയിലെ വാക്കുകളും പണവും",
+      "body": "Read: അരി 5 കിലോ — ₹150. പഞ്ചസാര 1 കിലോ — ₹45. വെളിച്ചെണ്ണ 1 ലിറ്റർ — ₹180. Read the numbers on currency notes: ₹10, ₹20, ₹50, ₹100, ₹200, ₹500. Always count your change.",
+      "body_ml": "വായിക്കുക: അരി 5 കിലോ — ₹150. പഞ്ചസാര 1 കിലോ — ₹45. വെളിച്ചെണ്ണ 1 ലിറ്റർ — ₹180. നോട്ടുകളിലെ സംഖ്യകൾ വായിക്കുക: ₹10, ₹20, ₹50, ₹100, ₹200, ₹500. ബാക്കി എപ്പോഴും എണ്ണി വാങ്ങുക.",
+      "audio_ml": "അരി അഞ്ച് കിലോ, നൂറ്റമ്പത് രൂപ. പഞ്ചസാര ഒരു കിലോ, നാൽപ്പത്തഞ്ച് രൂപ.",
+      "questions": [
+        { "q": "How much is 5 kg rice?", "q_ml": "5 കിലോ അരിക്ക് എത്ര?", "o": ["₹45", "₹150", "₹180", "₹500"], "a": 1, "x": "അരി 5 കിലോ — ₹150.", "x_ml": "₹150.", "d": true },
+        { "q": "Which word means 'sugar'?", "q_ml": "പഞ്ചസാര ഏത്?", "o": ["അരി", "പഞ്ചസാര", "വെളിച്ചെണ്ണ", "ഉപ്പ്"], "a": 1, "x": "പഞ്ചസാര.", "x_ml": "പഞ്ചസാര." },
+        { "q": "You give ₹200 for ₹150 rice. Change?", "q_ml": "₹150-ന്റെ അരിക്ക് ₹200 കൊടുത്തു. ബാക്കി?", "o": ["₹30", "₹50", "₹70", "₹150"], "a": 1, "x": "200 − 150 = 50.", "x_ml": "200 − 150 = 50.", "d": true }
+      ]
+    },
+    {
+      "id": "lit-2-2", "level": 2, "icon": "🏷️", "minutes": 25, "competencies": ["LIT.ADULT.2", "LIT.ML.2"],
+      "title": "Names of places and offices", "title_ml": "സ്ഥലങ്ങളുടെയും ഓഫീസുകളുടെയും പേരുകൾ",
+      "body": "Read the boards: ആശുപത്രി (hospital), പഞ്ചായത്ത് ഓഫീസ്, റേഷൻ കട, ബാങ്ക്, പോസ്റ്റ് ഓഫീസ്, അങ്കണവാടി, പോലീസ് സ്റ്റേഷൻ. Match each board with its picture.",
+      "body_ml": "ബോർഡുകൾ വായിക്കുക: ആശുപത്രി, പഞ്ചായത്ത് ഓഫീസ്, റേഷൻ കട, ബാങ്ക്, പോസ്റ്റ് ഓഫീസ്, അങ്കണവാടി, പോലീസ് സ്റ്റേഷൻ. ഓരോ ബോർഡും ചിത്രവുമായി ചേർക്കുക.",
+      "audio_ml": "ആശുപത്രി. പഞ്ചായത്ത് ഓഫീസ്. റേഷൻ കട. ബാങ്ക്. അങ്കണവാടി.",
+      "questions": [
+        { "q": "🏥 is:", "q_ml": "🏥 —", "o": ["ബാങ്ക്", "ആശുപത്രി", "റേഷൻ കട", "അങ്കണവാടി"], "a": 1, "x": "ആശുപത്രി = hospital.", "x_ml": "ആശുപത്രി.", "d": true },
+        { "q": "Where do we buy rice on the ration card?", "q_ml": "റേഷൻ കാർഡിൽ അരി വാങ്ങുന്നത്?", "o": ["റേഷൻ കട", "ബാങ്ക്", "പോലീസ് സ്റ്റേഷൻ", "പോസ്റ്റ് ഓഫീസ്"], "a": 0, "x": "Ration shop.", "x_ml": "റേഷൻ കട." },
+        { "q": "Where are small children cared for in the day?", "q_ml": "ചെറിയ കുട്ടികളെ പകൽ പരിചരിക്കുന്നത്?", "o": ["അങ്കണവാടി", "ബാങ്ക്", "ആശുപത്രി", "പഞ്ചായത്ത്"], "a": 0, "x": "Anganwadi.", "x_ml": "അങ്കണവാടി." }
+      ]
+    },
+    {
+      "id": "lit-3-1", "level": 3, "icon": "🚌", "minutes": 25, "competencies": ["LIT.ADULT.3", "LIT.ML.2"],
+      "title": "Reading bus boards and timings", "title_ml": "ബസ് ബോർഡും സമയവും വായിക്കാം",
+      "body": "Board: 'അടിമാലി → മൂന്നാർ. രാവിലെ 7:30.' This bus goes from Adimali to Munnar at 7:30 in the morning. Read: 'ഇന്ന് വൈകിട്ട് 4 മണിക്ക് ബസ് ഇല്ല.' — There is no bus at 4 pm today.",
+      "body_ml": "ബോർഡ്: 'അടിമാലി → മൂന്നാർ. രാവിലെ 7:30.' ഈ ബസ് രാവിലെ 7:30-ന് അടിമാലിയിൽ നിന്ന് മൂന്നാറിലേക്ക്. വായിക്കുക: 'ഇന്ന് വൈകിട്ട് 4 മണിക്ക് ബസ് ഇല്ല.'",
+      "audio_ml": "അടിമാലി മുതൽ മൂന്നാർ വരെ. രാവിലെ ഏഴര. ഇന്ന് വൈകിട്ട് നാല് മണിക്ക് ബസ് ഇല്ല.",
+      "questions": [
+        { "q": "Where does the bus go?", "q_ml": "ബസ് എങ്ങോട്ട്?", "o": ["അടിമാലി", "മൂന്നാർ", "കൊച്ചി", "തൊടുപുഴ"], "a": 1, "x": "→ മൂന്നാർ.", "x_ml": "മൂന്നാർ.", "d": true },
+        { "q": "What time does it leave?", "q_ml": "എപ്പോൾ പുറപ്പെടും?", "o": ["7:30 morning", "4:00 evening", "12:00 noon", "9:00 night"], "o_ml": ["രാവിലെ 7:30", "വൈകിട്ട് 4", "ഉച്ചയ്ക്ക് 12", "രാത്രി 9"], "a": 0, "x": "രാവിലെ 7:30.", "x_ml": "രാവിലെ 7:30." },
+        { "q": "'ബസ് ഇല്ല' means:", "q_ml": "'ബസ് ഇല്ല' എന്നാൽ:", "o": ["bus is late", "there is no bus", "bus is free", "bus is full"], "o_ml": ["ബസ് വൈകും", "ബസ് ഇല്ല", "ബസ് സൗജന്യം", "ബസ് നിറഞ്ഞു"], "a": 1, "x": "No bus.", "x_ml": "ബസ് ഇല്ല." }
+      ]
+    },
+    {
+      "id": "lit-3-2", "level": 3, "icon": "💊", "minutes": 25, "competencies": ["LIT.ADULT.3", "LIT.ML.2"],
+      "title": "Reading a medicine label", "title_ml": "മരുന്ന് ലേബൽ വായിക്കാം",
+      "body": "Label: 'പാരസെറ്റമോൾ 500 mg. ദിവസം 3 നേരം, ഭക്ഷണശേഷം. കുട്ടികൾക്ക് ഡോക്ടറുടെ നിർദ്ദേശപ്രകാരം മാത്രം. കാലാവധി: 08/2027.' Take one tablet three times a day after food. Check the expiry date.",
+      "body_ml": "ലേബൽ: 'പാരസെറ്റമോൾ 500 mg. ദിവസം 3 നേരം, ഭക്ഷണശേഷം. കുട്ടികൾക്ക് ഡോക്ടറുടെ നിർദ്ദേശപ്രകാരം മാത്രം. കാലാവധി: 08/2027.' കാലാവധി തീയതി എപ്പോഴും നോക്കുക.",
+      "audio_ml": "ദിവസം മൂന്ന് നേരം, ഭക്ഷണശേഷം. കാലാവധി തീയതി നോക്കുക.",
+      "questions": [
+        { "q": "How many times a day?", "q_ml": "ദിവസം എത്ര നേരം?", "o": ["1", "2", "3", "5"], "a": 2, "x": "ദിവസം 3 നേരം.", "x_ml": "3 നേരം.", "d": true },
+        { "q": "Before or after food?", "q_ml": "ഭക്ഷണത്തിന് മുമ്പോ ശേഷമോ?", "o": ["Before", "After"], "o_ml": ["മുമ്പ്", "ശേഷം"], "a": 1, "x": "ഭക്ഷണശേഷം = after food.", "x_ml": "ഭക്ഷണശേഷം." },
+        { "q": "'കാലാവധി' means:", "q_ml": "'കാലാവധി' എന്നാൽ:", "o": ["price", "expiry date", "dose", "company"], "o_ml": ["വില", "ഉപയോഗിക്കാവുന്ന അവസാന തീയതി", "അളവ്", "കമ്പനി"], "a": 1, "x": "Do not use after this date.", "x_ml": "ഈ തീയതിക്ക് ശേഷം ഉപയോഗിക്കരുത്." }
+      ]
+    },
+    {
+      "id": "lit-4-1", "level": 4, "icon": "📢", "minutes": 30, "competencies": ["LIT.ADULT.4", "LIT.ML.3"],
+      "title": "Reading a panchayat notice", "title_ml": "പഞ്ചായത്ത് അറിയിപ്പ് വായിക്കാം",
+      "body": "NOTICE: 'ഊരുകൂട്ടം യോഗം — നവംബർ 12, ശനി, രാവിലെ 10 മണി, സാമൂഹിക പഠനകേന്ദ്രം. വിഷയം: കുടിവെള്ള പദ്ധതി, തൊഴിലുറപ്പ് ജോലി. എല്ലാ കുടുംബങ്ങളും പങ്കെടുക്കണം.' — Oorukootam meeting on Saturday 12 November at 10 am at the community learning centre, about the drinking-water scheme and MGNREGA work.",
+      "body_ml": "അറിയിപ്പ്: 'ഊരുകൂട്ടം യോഗം — നവംബർ 12, ശനി, രാവിലെ 10 മണി, സാമൂഹിക പഠനകേന്ദ്രം. വിഷയം: കുടിവെള്ള പദ്ധതി, തൊഴിലുറപ്പ് ജോലി. എല്ലാ കുടുംബങ്ങളും പങ്കെടുക്കണം.'",
+      "audio_ml": "ഊരുകൂട്ടം യോഗം. നവംബർ പന്ത്രണ്ട്, ശനിയാഴ്ച, രാവിലെ പത്ത് മണി. വിഷയം: കുടിവെള്ള പദ്ധതി, തൊഴിലുറപ്പ് ജോലി.",
+      "questions": [
+        { "q": "When is the meeting?", "q_ml": "യോഗം എപ്പോൾ?", "o": ["Nov 12, 10 am", "Nov 10, 12 pm", "Every day", "Not given"], "o_ml": ["നവംബർ 12, രാവിലെ 10", "നവംബർ 10, ഉച്ചയ്ക്ക് 12", "എല്ലാ ദിവസവും", "പറഞ്ഞിട്ടില്ല"], "a": 0, "x": "നവംബർ 12, ശനി, രാവിലെ 10.", "x_ml": "നവംബർ 12, രാവിലെ 10.", "d": true },
+        { "q": "One topic of the meeting is:", "q_ml": "യോഗത്തിലെ ഒരു വിഷയം:", "o": ["drinking-water scheme", "film show", "cricket", "wedding"], "o_ml": ["കുടിവെള്ള പദ്ധതി", "സിനിമ", "ക്രിക്കറ്റ്", "കല്യാണം"], "a": 0, "x": "കുടിവെള്ള പദ്ധതി.", "x_ml": "കുടിവെള്ള പദ്ധതി." },
+        { "q": "Who should attend?", "q_ml": "ആരൊക്കെ പങ്കെടുക്കണം?", "o": ["Only men", "All families", "Only children", "Only officials"], "o_ml": ["പുരുഷന്മാർ മാത്രം", "എല്ലാ കുടുംബങ്ങളും", "കുട്ടികൾ മാത്രം", "ഉദ്യോഗസ്ഥർ മാത്രം"], "a": 1, "x": "എല്ലാ കുടുംബങ്ങളും.", "x_ml": "എല്ലാ കുടുംബങ്ങളും." }
+      ]
+    },
+    {
+      "id": "lit-4-2", "level": 4, "icon": "📝", "minutes": 30, "competencies": ["LIT.ADULT.4", "LIT.ML.3"],
+      "title": "Filling a simple form", "title_ml": "ലളിതമായ ഫോം പൂരിപ്പിക്കാം",
+      "body": "Most forms ask: പേര് (name), വയസ്സ് (age), ആൺ/പെൺ (gender), വിലാസം (address), ഫോൺ നമ്പർ, ആധാർ നമ്പർ, ഒപ്പ് (signature), തീയതി (date). Write clearly in the boxes. Never sign a blank form. Ask the facilitator if any word is new.",
+      "body_ml": "മിക്ക ഫോമുകളിലും: പേര്, വയസ്സ്, ആൺ/പെൺ, വിലാസം, ഫോൺ നമ്പർ, ആധാർ നമ്പർ, ഒപ്പ്, തീയതി. കള്ളികളിൽ വ്യക്തമായി എഴുതുക. ഒഴിഞ്ഞ ഫോമിൽ ഒരിക്കലും ഒപ്പിടരുത്. പുതിയ വാക്ക് കണ്ടാൽ ഫെസിലിറ്റേറ്ററോട് ചോദിക്കുക.",
+      "audio_ml": "ഒഴിഞ്ഞ ഫോമിൽ ഒരിക്കലും ഒപ്പിടരുത്.",
+      "questions": [
+        { "q": "'വിലാസം' means:", "q_ml": "'വിലാസം' എന്നാൽ:", "o": ["address", "age", "signature", "date"], "o_ml": ["മേൽവിലാസം", "വയസ്സ്", "ഒപ്പ്", "തീയതി"], "a": 0, "x": "Address.", "x_ml": "താമസസ്ഥലത്തിന്റെ വിവരം.", "d": true },
+        { "q": "Should you sign a blank form?", "q_ml": "ഒഴിഞ്ഞ ഫോമിൽ ഒപ്പിടാമോ?", "o": ["Yes", "Never"], "o_ml": ["ഒപ്പിടാം", "ഒരിക്കലും പാടില്ല"], "a": 1, "x": "Someone could misuse it.", "x_ml": "ദുരുപയോഗം ചെയ്യപ്പെടാം.", "d": true },
+        { "q": "Where do you write your age?", "q_ml": "വയസ്സ് എഴുതേണ്ട കള്ളി:", "o": ["പേര്", "വയസ്സ്", "ഒപ്പ്", "വിലാസം"], "a": 1, "x": "വയസ്സ് box.", "x_ml": "വയസ്സ്." }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+# AADI demo stack for a single VPS:
+#  - aadi-cloud : the central brain (demo data, 10 hamlets)
+#  - aadi-hub   : a simulated centre hub for Pachakkudi, syncing to the cloud — shows offline/sync live
+#  - caddy      : HTTPS reverse proxy with automatic Let's Encrypt certificates
+# Usage: copy .env.example to .env, set the domains + secret, then:  docker compose up -d --build
+services:
+  aadi-cloud:
+    build: ..
+    restart: unless-stopped
+    environment:
+      AADI_NODE: cloud-1
+      AADI_ROLE: cloud
+      AADI_DEMO: "1"
+      AADI_SYNC_KEY: ${AADI_SYNC_KEY}
+      PORT: 8080
+    volumes: [cloud-data:/app/data]
+    command: sh -c "[ -f /app/data/cloud-1.db ] || node --disable-warning=ExperimentalWarning scripts/seed.js; exec node --disable-warning=ExperimentalWarning server.js"
+  aadi-hub:
+    build: ..
+    restart: unless-stopped
+    depends_on: [aadi-cloud]
+    environment:
+      AADI_NODE: hub-pachakkudi
+      AADI_ROLE: hub
+      AADI_DEMO: "1"
+      AADI_UPSTREAM: http://aadi-cloud:8080
+      AADI_SYNC_KEY: ${AADI_SYNC_KEY}
+      AADI_HUB_HAMLETS: ${AADI_HUB_HAMLETS:-}
+      PORT: 8080
+    volumes: [hub-data:/app/data]
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]
+    environment:
+      CLOUD_DOMAIN: ${CLOUD_DOMAIN}
+      HUB_DOMAIN: ${HUB_DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+    depends_on: [aadi-cloud, aadi-hub]
+volumes: { cloud-data: {}, hub-data: {}, caddy-data: {} }

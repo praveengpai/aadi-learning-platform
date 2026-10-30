@@ -1,0 +1,206 @@
+{
+  "subject": "math",
+  "lessons": [
+    {
+      "id": "math-1-1", "class": 1, "icon": "🔢", "minutes": 15, "competencies": ["NUM.1"], "scert": "Class 1 · Numbers up to 20",
+      "title": "Counting things around us (1–20)", "title_ml": "ചുറ്റുമുള്ളവ എണ്ണാം (1–20)",
+      "body": "We count to know how many. Count the mangoes in the basket: one, two, three, four, five. Touch each mango once as you count. The last number you say tells how many there are. After 10 comes 11, 12, 13 … up to 20.",
+      "body_ml": "എത്രയുണ്ട് എന്നറിയാനാണ് നാം എണ്ണുന്നത്. കൊട്ടയിലെ മാങ്ങകൾ എണ്ണാം: ഒന്ന്, രണ്ട്, മൂന്ന്, നാല്, അഞ്ച്. ഓരോ മാങ്ങയും ഒരിക്കൽ മാത്രം തൊട്ട് എണ്ണുക. അവസാനം പറയുന്ന സംഖ്യയാണ് ആകെ എണ്ണം. 10 കഴിഞ്ഞാൽ 11, 12, 13 … 20 വരെ.",
+      "audio_ml": "ഒന്ന്, രണ്ട്, മൂന്ന്, നാല്, അഞ്ച്. ഓരോ മാങ്ങയും തൊട്ട് എണ്ണാം.",
+      "activity": "Collect 20 seeds or pebbles. Children count them into groups of 5 and say the numbers aloud.",
+      "activity_ml": "20 കുരുക്കളോ കല്ലുകളോ ശേഖരിക്കുക. കുട്ടികൾ 5-ന്റെ കൂട്ടങ്ങളാക്കി ഉറക്കെ എണ്ണട്ടെ.",
+      "bridge": { "languages": ["Muthuvan", "Paniya", "Irula", "Kanikkar"], "note": "Let the child count first in the home language, then in Malayalam. Write both number-words side by side on the Bridge Chart; never correct the home-language word.", "note_ml": "കുട്ടി ആദ്യം വീട്ടുഭാഷയിൽ എണ്ണട്ടെ, പിന്നെ മലയാളത്തിൽ. രണ്ടും 'പാലം ചാർട്ടിൽ' അടുത്തടുത്ത് എഴുതുക; വീട്ടുഭാഷാ വാക്ക് തിരുത്തരുത്." },
+      "questions": [
+        { "q": "How many fingers are there on one hand?", "q_ml": "ഒരു കൈയിൽ എത്ര വിരലുകൾ?", "o": ["4", "5", "6", "10"], "a": 1, "x": "Count them: 1, 2, 3, 4, 5.", "x_ml": "എണ്ണി നോക്കൂ: 1, 2, 3, 4, 5.", "d": true },
+        { "q": "Which number comes after 12?", "q_ml": "12 കഴിഞ്ഞ് വരുന്ന സംഖ്യ ഏത്?", "o": ["11", "13", "14", "21"], "a": 1, "x": "12, then 13.", "x_ml": "12-ന് ശേഷം 13.", "d": true },
+        { "q": "🥭🥭🥭🥭🥭🥭🥭 — how many mangoes?", "q_ml": "🥭🥭🥭🥭🥭🥭🥭 — എത്ര മാങ്ങ?", "o": ["6", "7", "8", "9"], "a": 1, "x": "Touch and count each one: 7.", "x_ml": "ഓരോന്നും തൊട്ട് എണ്ണുക: 7." },
+        { "q": "Which is the biggest number?", "q_ml": "ഏറ്റവും വലിയ സംഖ്യ ഏത്?", "o": ["9", "19", "15", "11"], "a": 1, "x": "19 has 1 ten and 9 ones — more than the others.", "x_ml": "19-ൽ ഒരു പത്തും 9 ഒന്നുകളും — മറ്റുള്ളവയേക്കാൾ കൂടുതൽ." }
+      ]
+    },
+    {
+      "id": "math-1-2", "class": 1, "icon": "➕", "minutes": 15, "competencies": ["NUM.1", "NUM.2"], "scert": "Class 1 · Adding small numbers",
+      "title": "Putting together: adding within 10", "title_ml": "ചേർത്തുവയ്ക്കാം: 10 വരെ കൂട്ടൽ",
+      "body": "Adding means putting together. Amma has 3 bananas and gets 2 more. Put them together and count: 3 + 2 = 5. The sign + means 'and', the sign = means 'is the same as'.",
+      "body_ml": "കൂട്ടുക എന്നാൽ ഒരുമിച്ചു ചേർക്കുക. അമ്മയുടെ കയ്യിൽ 3 പഴം, 2 എണ്ണം കൂടി കിട്ടി. ഒരുമിച്ച് എണ്ണാം: 3 + 2 = 5. '+' എന്നാൽ 'കൂടി', '=' എന്നാൽ 'തുല്യം'.",
+      "audio_ml": "മൂന്ന് പഴവും രണ്ട് പഴവും ചേർന്നാൽ അഞ്ച് പഴം.",
+      "activity": "Use leaf-plates: put 4 seeds on one and 3 on another, then pour together and count.",
+      "activity_ml": "ഇലകളിൽ 4-ഉം 3-ഉം കുരുക്കൾ വയ്ക്കുക, ഒരുമിച്ചാക്കി എണ്ണുക.",
+      "bridge": { "languages": ["Muthuvan", "Paniya", "Irula"], "note": "Act out 'giving' and 'getting' with real objects and home-language verbs before introducing the + symbol.", "note_ml": "'+' ചിഹ്നം പരിചയപ്പെടുത്തും മുമ്പ് വീട്ടുഭാഷയിലെ 'കൊടുക്കുക / കിട്ടുക' വാക്കുകളോടെ വസ്തുക്കൾ കൊണ്ട് അഭിനയിക്കുക." },
+      "questions": [
+        { "q": "3 + 2 = ?", "o": ["4", "5", "6", "32"], "a": 1, "x": "3 and 2 more: 4, 5.", "x_ml": "3-ൽ നിന്ന് 2 എണ്ണം കൂടി: 4, 5.", "d": true },
+        { "q": "4 + 4 = ?", "o": ["8", "7", "9", "44"], "a": 0, "x": "Double 4 is 8.", "x_ml": "4-ന്റെ ഇരട്ടി 8." },
+        { "q": "Ravi has 6 marbles. He gets 3 more. How many now?", "q_ml": "രവിയുടെ കയ്യിൽ 6 ഗോലി. 3 എണ്ണം കൂടി കിട്ടി. ഇപ്പോൾ എത്ര?", "o": ["8", "9", "10", "3"], "a": 1, "x": "6 + 3 = 9.", "x_ml": "6 + 3 = 9." },
+        { "q": "Which pair makes 10?", "q_ml": "ഏത് ജോടി ചേർന്നാൽ 10 ആകും?", "o": ["5 + 4", "6 + 4", "7 + 2", "3 + 3"], "a": 1, "x": "6 + 4 = 10. Pairs that make 10 are very useful.", "x_ml": "6 + 4 = 10. 10 ഉണ്ടാക്കുന്ന ജോടികൾ ഓർത്തുവയ്ക്കുക." }
+      ]
+    },
+    {
+      "id": "math-2-1", "class": 2, "icon": "🔟", "minutes": 20, "competencies": ["NUM.1"], "scert": "Class 2 · Numbers to 100, place value",
+      "title": "Tens and ones (numbers to 100)", "title_ml": "പത്തുകളും ഒന്നുകളും (100 വരെ)",
+      "body": "Tie 10 sticks into one bundle — that is one ten. The number 34 means 3 bundles of ten and 4 loose sticks. In 34, the 3 is in the tens place and the 4 is in the ones place. 10 bundles make 100.",
+      "body_ml": "10 ഈർക്കിലുകൾ ഒരു കെട്ടാക്കുക — അതാണ് ഒരു പത്ത്. 34 എന്നാൽ 3 പത്തിന്റെ കെട്ടും 4 ഒറ്റ ഈർക്കിലും. 34-ൽ 3 പത്തിന്റെ സ്ഥാനത്തും 4 ഒന്നിന്റെ സ്ഥാനത്തും. 10 കെട്ട് ചേർന്നാൽ 100.",
+      "activity": "Make bundles of 10 with broom sticks (eerkil). Show 27, 50 and 63 with bundles.",
+      "activity_ml": "ഈർക്കിൽ കൊണ്ട് 10-ന്റെ കെട്ടുകൾ ഉണ്ടാക്കി 27, 50, 63 കാണിക്കുക.",
+      "bridge": { "languages": ["Muthuvan", "Paniya", "Irula", "Kanikkar"], "note": "Bundling is familiar from tying firewood and broom sticks at home — use that home experience as the anchor.", "note_ml": "വിറകും ഈർക്കിലും കെട്ടുന്ന വീട്ടനുഭവം തുടക്കമാക്കുക." },
+      "questions": [
+        { "q": "In 47, what does the 4 stand for?", "q_ml": "47-ൽ 4 എന്തിനെ സൂചിപ്പിക്കുന്നു?", "o": ["4 ones", "4 tens", "4 hundreds", "47 ones"], "o_ml": ["4 ഒന്നുകൾ", "4 പത്തുകൾ", "4 നൂറുകൾ", "47 ഒന്നുകൾ"], "a": 1, "x": "4 is in the tens place: 4 tens = 40.", "x_ml": "4 പത്തിന്റെ സ്ഥാനത്ത്: 4 പത്ത് = 40.", "d": true },
+        { "q": "6 tens and 2 ones = ?", "q_ml": "6 പത്തും 2 ഒന്നും = ?", "o": ["26", "62", "602", "8"], "a": 1, "x": "60 + 2 = 62.", "x_ml": "60 + 2 = 62." },
+        { "q": "Which number is between 58 and 60?", "q_ml": "58-നും 60-നും ഇടയിലുള്ള സംഖ്യ?", "o": ["57", "59", "61", "50"], "a": 1, "x": "58, 59, 60.", "x_ml": "58, 59, 60." },
+        { "q": "How many tens make 100?", "q_ml": "എത്ര പത്തുകൾ ചേർന്നാൽ 100?", "o": ["10", "100", "1", "20"], "a": 0, "x": "10 tens = 100.", "x_ml": "10 പത്ത് = 100." }
+      ]
+    },
+    {
+      "id": "math-3-1", "class": 3, "icon": "➖", "minutes": 20, "competencies": ["NUM.2"], "scert": "Class 3 · Addition & subtraction with carrying",
+      "title": "Adding and taking away with 2-digit numbers", "title_ml": "രണ്ടക്ക സംഖ്യകളുടെ കൂട്ടലും കുറയ്ക്കലും",
+      "body": "Write the numbers one below the other, ones under ones and tens under tens. Add the ones first. If the ones make 10 or more, carry one ten to the tens column. For subtraction, if the top ones digit is smaller, borrow one ten (10 ones).",
+      "body_ml": "സംഖ്യകൾ ഒന്നിനു താഴെ ഒന്നായി എഴുതുക — ഒന്നുകൾ ഒന്നുകൾക്ക് താഴെ, പത്തുകൾ പത്തുകൾക്ക് താഴെ. ആദ്യം ഒന്നുകൾ കൂട്ടുക. 10 അല്ലെങ്കിൽ കൂടുതലായാൽ ഒരു പത്ത് പത്തിന്റെ നിരയിലേക്ക് നീക്കുക. കുറയ്ക്കുമ്പോൾ മുകളിലെ ഒന്ന് ചെറുതാണെങ്കിൽ ഒരു പത്ത് (10 ഒന്നുകൾ) കടം വാങ്ങുക.",
+      "activity": "Shop game: price tags up to ₹99 on forest produce; children add two items and give change from ₹100.",
+      "activity_ml": "കട കളി: വനവിഭവങ്ങൾക്ക് ₹99 വരെ വില; രണ്ടെണ്ണം കൂട്ടി ₹100-ൽ നിന്ന് ബാക്കി കൊടുക്കുക.",
+      "questions": [
+        { "q": "38 + 25 = ?", "o": ["53", "63", "513", "61"], "a": 1, "x": "8 + 5 = 13: write 3, carry 1. 3 + 2 + 1 = 6. Answer 63.", "x_ml": "8 + 5 = 13: 3 എഴുതി 1 നീക്കുക. 3 + 2 + 1 = 6. ഉത്തരം 63.", "d": true },
+        { "q": "72 − 45 = ?", "o": ["37", "27", "33", "23"], "a": 1, "x": "Borrow: 12 − 5 = 7; 6 − 4 = 2. Answer 27.", "x_ml": "കടം: 12 − 5 = 7; 6 − 4 = 2. ഉത്തരം 27.", "d": true },
+        { "q": "A tribal co-op sold 46 kg honey on Monday and 37 kg on Tuesday. Total?", "q_ml": "സഹകരണ സംഘം തിങ്കൾ 46 കി.ഗ്രാം, ചൊവ്വ 37 കി.ഗ്രാം തേൻ വിറ്റു. ആകെ?", "o": ["73 kg", "83 kg", "93 kg", "81 kg"], "a": 1, "x": "46 + 37 = 83.", "x_ml": "46 + 37 = 83." },
+        { "q": "You pay ₹100 for a ₹64 item. Change?", "q_ml": "₹64-ന്റെ സാധനത്തിന് ₹100 കൊടുത്തു. ബാക്കി?", "o": ["₹46", "₹36", "₹34", "₹44"], "a": 1, "x": "100 − 64 = 36.", "x_ml": "100 − 64 = 36." }
+      ]
+    },
+    {
+      "id": "math-4-1", "class": 4, "icon": "✖️", "minutes": 20, "competencies": ["NUM.2"], "scert": "Class 4 · Multiplication & division",
+      "title": "Multiplication as equal groups; sharing equally", "title_ml": "ഗുണനം: തുല്യ കൂട്ടങ്ങൾ; ഹരണം: തുല്യമായി പങ്കിടൽ",
+      "body": "4 baskets with 6 tubers each: 6 + 6 + 6 + 6 = 24, or 4 × 6 = 24. Multiplication is quick repeated adding. Division is fair sharing: 24 tubers shared among 4 families gives 24 ÷ 4 = 6 each.",
+      "body_ml": "4 കൊട്ടകളിൽ 6 കിഴങ്ങ് വീതം: 6 + 6 + 6 + 6 = 24, അഥവാ 4 × 6 = 24. ആവർത്തിച്ചുള്ള കൂട്ടലിന്റെ എളുപ്പവഴിയാണ് ഗുണനം. ഹരണം തുല്യമായ പങ്കിടലാണ്: 24 കിഴങ്ങ് 4 കുടുംബങ്ങൾക്ക് = 24 ÷ 4 = 6 വീതം.",
+      "activity": "Share 30 tamarind seeds among 5 children; record as a division sentence.",
+      "activity_ml": "30 പുളിങ്കുരു 5 കുട്ടികൾക്ക് പങ്കിടുക; ഹരണ വാക്യമായി എഴുതുക.",
+      "questions": [
+        { "q": "7 × 8 = ?", "o": ["54", "56", "64", "15"], "a": 1, "x": "7 eights: 8, 16, 24, 32, 40, 48, 56.", "x_ml": "8-ന്റെ 7 മടങ്ങ്: 8, 16, 24, 32, 40, 48, 56.", "d": true },
+        { "q": "36 ÷ 4 = ?", "o": ["8", "9", "7", "32"], "a": 1, "x": "4 × 9 = 36, so 36 ÷ 4 = 9.", "x_ml": "4 × 9 = 36, അതിനാൽ 36 ÷ 4 = 9.", "d": true },
+        { "q": "One bus seat holds 3 children. How many children in 9 seats?", "q_ml": "ഒരു സീറ്റിൽ 3 കുട്ടികൾ. 9 സീറ്റിൽ എത്ര?", "o": ["12", "27", "18", "39"], "a": 1, "x": "9 × 3 = 27.", "x_ml": "9 × 3 = 27." },
+        { "q": "45 sweets shared among 5 friends. Each gets?", "q_ml": "45 മിഠായി 5 കൂട്ടുകാർക്ക്. ഓരോരുത്തർക്കും?", "o": ["8", "9", "10", "40"], "a": 1, "x": "45 ÷ 5 = 9.", "x_ml": "45 ÷ 5 = 9." }
+      ]
+    },
+    {
+      "id": "math-5-1", "class": 5, "icon": "🍕", "minutes": 20, "competencies": ["NUM.3"], "scert": "Class 5 · Fractions",
+      "title": "Fractions: parts of a whole", "title_ml": "ഭിന്നസംഖ്യകൾ: മുഴുവന്റെ ഭാഗങ്ങൾ",
+      "body": "Cut a chapati into 4 equal parts. One part is one-fourth, written 1/4. The bottom number (denominator) tells how many equal parts; the top number (numerator) tells how many parts we take. 2/4 is the same as 1/2.",
+      "body_ml": "ഒരു ചപ്പാത്തി 4 തുല്യ ഭാഗങ്ങളാക്കുക. ഒരു ഭാഗം നാലിലൊന്ന്, 1/4. താഴത്തെ സംഖ്യ (ഛേദം) എത്ര തുല്യ ഭാഗങ്ങൾ എന്നും, മുകളിലെ സംഖ്യ (അംശം) എത്ര ഭാഗം എടുത്തു എന്നും പറയുന്നു. 2/4 = 1/2.",
+      "activity": "Fold paper strips into halves, quarters and eighths; label and compare.",
+      "activity_ml": "കടലാസ് നാടകൾ പകുതി, നാലിലൊന്ന്, എട്ടിലൊന്ന് ആയി മടക്കി താരതമ്യം ചെയ്യുക.",
+      "questions": [
+        { "q": "Which fraction is equal to 1/2?", "q_ml": "1/2-ന് തുല്യമായ ഭിന്നം?", "o": ["2/3", "3/6", "1/4", "2/1"], "a": 1, "x": "3/6: 3 is half of 6.", "x_ml": "3/6: 6-ന്റെ പകുതി 3.", "d": true },
+        { "q": "Which is bigger: 3/4 or 2/4?", "q_ml": "ഏതാണ് വലുത്: 3/4 അല്ലെങ്കിൽ 2/4?", "o": ["3/4", "2/4", "Both equal", "Cannot say"], "o_ml": ["3/4", "2/4", "രണ്ടും തുല്യം", "പറയാനാവില്ല"], "a": 0, "x": "Same-size parts; 3 parts are more than 2.", "x_ml": "ഭാഗങ്ങൾ ഒരേ വലുപ്പം; 3 ഭാഗം 2-നേക്കാൾ കൂടുതൽ." },
+        { "q": "1/4 of 20 = ?", "q_ml": "20-ന്റെ നാലിലൊന്ന് = ?", "o": ["4", "5", "16", "80"], "a": 1, "x": "20 ÷ 4 = 5.", "x_ml": "20 ÷ 4 = 5.", "d": true },
+        { "q": "1/3 + 1/3 = ?", "o": ["2/6", "2/3", "1/3", "1/9"], "a": 1, "x": "Same denominator: add tops. 1 + 1 = 2, so 2/3.", "x_ml": "ഛേദം ഒന്നാണെങ്കിൽ അംശങ്ങൾ കൂട്ടുക: 2/3." }
+      ]
+    },
+    {
+      "id": "math-6-1", "class": 6, "icon": "🔸", "minutes": 25, "competencies": ["NUM.3"], "scert": "Class 6 · Decimals",
+      "title": "Decimals and money", "title_ml": "ദശാംശ സംഖ്യകളും പണവും",
+      "body": "₹12.50 means 12 rupees and 50 paise. The dot is the decimal point. 0.5 = 5/10 = 1/2. When adding decimals, line up the decimal points: 12.50 + 3.75 = 16.25.",
+      "body_ml": "₹12.50 എന്നാൽ 12 രൂപ 50 പൈസ. കുത്താണ് ദശാംശ ബിന്ദു. 0.5 = 5/10 = 1/2. ദശാംശങ്ങൾ കൂട്ടുമ്പോൾ ബിന്ദുക്കൾ ഒരേ നിരയിൽ വരണം: 12.50 + 3.75 = 16.25.",
+      "activity": "Ration-shop bill: add prices of rice, dal and oil with paise; check change.",
+      "activity_ml": "റേഷൻ ബിൽ: അരി, പരിപ്പ്, എണ്ണ എന്നിവയുടെ വില പൈസയടക്കം കൂട്ടുക.",
+      "questions": [
+        { "q": "0.25 is the same as:", "q_ml": "0.25-ന് തുല്യം:", "o": ["1/4", "1/2", "2/5", "25"], "a": 0, "x": "0.25 = 25/100 = 1/4.", "x_ml": "0.25 = 25/100 = 1/4.", "d": true },
+        { "q": "₹7.50 + ₹2.75 = ?", "o": ["₹9.25", "₹10.25", "₹10.75", "₹9.75"], "a": 1, "x": "50 + 75 paise = ₹1.25; 7 + 2 + 1.25 = 10.25.", "x_ml": "50 + 75 പൈസ = ₹1.25; 7 + 2 + 1.25 = 10.25." },
+        { "q": "Which is largest?", "q_ml": "ഏറ്റവും വലുത്?", "o": ["0.6", "0.06", "0.59", "0.506"], "a": 0, "x": "Compare tenths first: 6 tenths is the most.", "x_ml": "ആദ്യം ദശാംശത്തിലെ ആദ്യ അക്കം നോക്കുക: 0.6 ഏറ്റവും വലുത്." },
+        { "q": "3.4 × 10 = ?", "o": ["0.34", "34", "340", "3.40"], "a": 1, "x": "×10 moves the decimal point one place right.", "x_ml": "10 കൊണ്ട് ഗുണിച്ചാൽ ബിന്ദു ഒരു സ്ഥാനം വലത്തേക്ക്." }
+      ]
+    },
+    {
+      "id": "math-6-2", "class": 6, "icon": "📐", "minutes": 25, "competencies": ["NUM.3"], "scert": "Class 6 · Perimeter and area",
+      "title": "Perimeter and area of a rectangle", "title_ml": "ചതുരത്തിന്റെ ചുറ്റളവും പരപ്പളവും",
+      "body": "Perimeter is the distance around a shape: for a rectangle, 2 × (length + breadth). Area is the space inside: length × breadth, measured in square units. A garden 8 m by 5 m has perimeter 26 m and area 40 square metres.",
+      "body_ml": "ഒരു രൂപത്തിന്റെ ചുറ്റുമുള്ള നീളമാണ് ചുറ്റളവ്: ചതുരത്തിന് 2 × (നീളം + വീതി). ഉള്ളിലെ സ്ഥലമാണ് പരപ്പളവ്: നീളം × വീതി, ചതുരശ്ര യൂണിറ്റിൽ. 8 മീ × 5 മീ തോട്ടത്തിന് ചുറ്റളവ് 26 മീ, പരപ്പളവ് 40 ച.മീ.",
+      "activity": "Measure the learning-centre floor with a rope marked in metres; compute fencing and floor-mat area.",
+      "activity_ml": "മീറ്റർ അടയാളമിട്ട കയർ കൊണ്ട് പഠനകേന്ദ്രത്തിന്റെ തറ അളന്ന് ചുറ്റളവും പരപ്പളവും കണ്ടെത്തുക.",
+      "questions": [
+        { "q": "Perimeter of a 6 m × 4 m rectangle?", "q_ml": "6 മീ × 4 മീ ചതുരത്തിന്റെ ചുറ്റളവ്?", "o": ["10 m", "20 m", "24 m", "24 sq m"], "a": 1, "x": "2 × (6 + 4) = 20 m.", "x_ml": "2 × (6 + 4) = 20 മീ." },
+        { "q": "Area of a 7 m × 3 m plot?", "q_ml": "7 മീ × 3 മീ സ്ഥലത്തിന്റെ പരപ്പളവ്?", "o": ["10 sq m", "20 sq m", "21 sq m", "21 m"], "a": 2, "x": "7 × 3 = 21 square metres.", "x_ml": "7 × 3 = 21 ചതുരശ്ര മീറ്റർ.", "d": true },
+        { "q": "A square has side 5 cm. Its area?", "q_ml": "ഒരു സമചതുരത്തിന്റെ വശം 5 സെ.മീ. പരപ്പളവ്?", "o": ["20 sq cm", "25 sq cm", "10 sq cm", "15 sq cm"], "a": 1, "x": "5 × 5 = 25.", "x_ml": "5 × 5 = 25." },
+        { "q": "Fencing is needed around a field. Do we use area or perimeter?", "q_ml": "വയലിന് ചുറ്റും വേലി കെട്ടാൻ എന്ത് കണക്കാക്കണം?", "o": ["Area", "Perimeter", "Volume", "Weight"], "o_ml": ["പരപ്പളവ്", "ചുറ്റളവ്", "വ്യാപ്തം", "ഭാരം"], "a": 1, "x": "Fencing goes around the edge — perimeter.", "x_ml": "വേലി അരികിലൂടെ — ചുറ്റളവ്." }
+      ]
+    },
+    {
+      "id": "math-7-1", "class": 7, "icon": "💯", "minutes": 25, "competencies": ["NUM.3"], "scert": "Class 7 · Percentage",
+      "title": "Percentages in daily life", "title_ml": "ദൈനംദിന ജീവിതത്തിലെ ശതമാനം",
+      "body": "Per cent means 'out of 100'. 25% = 25/100 = 1/4. To find 10% of a number, divide by 10. If you scored 36 out of 40 in a test, your percentage is 36 ÷ 40 × 100 = 90%.",
+      "body_ml": "ശതമാനം എന്നാൽ '100-ൽ'. 25% = 25/100 = 1/4. ഒരു സംഖ്യയുടെ 10% കാണാൻ 10 കൊണ്ട് ഹരിക്കുക. പരീക്ഷയിൽ 40-ൽ 36 കിട്ടിയാൽ ശതമാനം 36 ÷ 40 × 100 = 90%.",
+      "activity": "Use the hamlet's MGNREGA attendance or co-op sales to compute simple percentages.",
+      "activity_ml": "ഊരിലെ തൊഴിലുറപ്പ് ഹാജരോ സഹകരണ വിൽപ്പനയോ ഉപയോഗിച്ച് ശതമാനം കണക്കാക്കുക.",
+      "questions": [
+        { "q": "10% of 250 = ?", "o": ["2.5", "25", "250", "10"], "a": 1, "x": "250 ÷ 10 = 25.", "x_ml": "250 ÷ 10 = 25.", "d": true },
+        { "q": "Write 3/4 as a percentage.", "q_ml": "3/4 ശതമാനമായി എഴുതുക.", "o": ["34%", "75%", "43%", "70%"], "a": 1, "x": "3/4 = 75/100 = 75%.", "x_ml": "3/4 = 75/100 = 75%." },
+        { "q": "A ₹400 bag has 20% discount. Discount amount?", "q_ml": "₹400 ബാഗിന് 20% കിഴിവ്. കിഴിവ് തുക?", "o": ["₹20", "₹80", "₹320", "₹40"], "a": 1, "x": "20% of 400 = 400 × 20 ÷ 100 = 80.", "x_ml": "400-ന്റെ 20% = 80." },
+        { "q": "18 out of 20 correct = ?%", "q_ml": "20-ൽ 18 ശരി = ?%", "o": ["80%", "90%", "18%", "85%"], "a": 1, "x": "18/20 = 90/100.", "x_ml": "18/20 = 90/100." }
+      ]
+    },
+    {
+      "id": "math-7-2", "class": 7, "icon": "🧮", "minutes": 25, "competencies": ["NUM.3", "SSLC.MATH"], "scert": "Class 7 · Introduction to algebra",
+      "title": "Letters for numbers: simple equations", "title_ml": "സംഖ്യകൾക്ക് പകരം അക്ഷരങ്ങൾ: ലളിത സമവാക്യങ്ങൾ",
+      "body": "When we do not know a number we call it x. 'A number plus 5 is 12' is written x + 5 = 12. Do the same thing to both sides to keep the balance: subtract 5 from both sides, so x = 7. Check: 7 + 5 = 12 ✓.",
+      "body_ml": "അറിയാത്ത സംഖ്യയെ x എന്ന് വിളിക്കാം. 'ഒരു സംഖ്യയോട് 5 കൂട്ടിയാൽ 12' എന്നത് x + 5 = 12. തുലാസ് പോലെ ഇരുവശത്തും ഒരേ ക്രിയ ചെയ്യുക: രണ്ടു വശത്തുനിന്നും 5 കുറയ്ക്കുക, x = 7. പരിശോധന: 7 + 5 = 12 ✓.",
+      "activity": "Balance-scale game with a hanger, two cups and pebbles; hide some pebbles in a pouch as 'x'.",
+      "activity_ml": "ഹാംഗർ തുലാസും കല്ലുകളും; ഒരു സഞ്ചിയിൽ ഒളിപ്പിച്ച കല്ലുകളെ 'x' ആയി കാണുക.",
+      "questions": [
+        { "q": "Solve: x + 9 = 15", "q_ml": "നിർധാരണം ചെയ്യുക: x + 9 = 15", "o": ["x = 24", "x = 6", "x = 5", "x = 9"], "a": 1, "x": "15 − 9 = 6.", "x_ml": "15 − 9 = 6.", "d": true },
+        { "q": "Solve: 3x = 21", "q_ml": "3x = 21 ആയാൽ x = ?", "o": ["7", "18", "24", "63"], "a": 0, "x": "Divide both sides by 3: x = 7.", "x_ml": "ഇരുവശവും 3 കൊണ്ട് ഹരിക്കുക: x = 7." },
+        { "q": "'Twice a number minus 4' is:", "q_ml": "'ഒരു സംഖ്യയുടെ ഇരട്ടിയിൽ നിന്ന് 4 കുറച്ചത്':", "o": ["2 − 4x", "2x − 4", "4 − 2x", "x − 8"], "a": 1, "x": "Twice x is 2x, then minus 4.", "x_ml": "x-ന്റെ ഇരട്ടി 2x, പിന്നെ 4 കുറയ്ക്കുക." },
+        { "q": "If x = 4, value of 5x + 2?", "q_ml": "x = 4 ആയാൽ 5x + 2 = ?", "o": ["22", "54", "11", "20"], "a": 0, "x": "5 × 4 + 2 = 22.", "x_ml": "5 × 4 + 2 = 22." }
+      ]
+    },
+    {
+      "id": "math-8-1", "class": 8, "icon": "📊", "minutes": 30, "competencies": ["SSLC.MATH"], "scert": "Class 8 · Ratio and proportion",
+      "title": "Ratio and proportion", "title_ml": "അംശബന്ധവും അനുപാതവും",
+      "body": "A ratio compares two quantities. If a recipe uses 2 cups rice for 3 cups water, the ratio is 2 : 3. If 4 pens cost ₹30, then 10 pens cost 30 ÷ 4 × 10 = ₹75 — this is direct proportion. Simplify a ratio by dividing both parts by the same number: 12 : 18 = 2 : 3.",
+      "body_ml": "രണ്ട് അളവുകളെ താരതമ്യം ചെയ്യുന്നതാണ് അംശബന്ധം. 2 കപ്പ് അരിക്ക് 3 കപ്പ് വെള്ളം എങ്കിൽ 2 : 3. 4 പേനയ്ക്ക് ₹30 എങ്കിൽ 10 പേനയ്ക്ക് 30 ÷ 4 × 10 = ₹75 — ഇത് നേർ അനുപാതം. രണ്ടു ഭാഗവും ഒരേ സംഖ്യ കൊണ്ട് ഹരിച്ച് ലഘൂകരിക്കാം: 12 : 18 = 2 : 3.",
+      "activity": "Mixing coffee-seedling potting soil: soil : compost : sand in 3 : 2 : 1 for different total amounts.",
+      "activity_ml": "കാപ്പിത്തൈ നടാനുള്ള മണ്ണ് മിശ്രിതം 3 : 2 : 1 അനുപാതത്തിൽ വിവിധ അളവുകൾക്ക് കണക്കാക്കുക.",
+      "questions": [
+        { "q": "Simplify 15 : 25", "q_ml": "15 : 25 ലഘൂകരിക്കുക", "o": ["3 : 5", "5 : 3", "1 : 2", "15 : 5"], "a": 0, "x": "Divide both by 5.", "x_ml": "രണ്ടും 5 കൊണ്ട് ഹരിക്കുക.", "d": true },
+        { "q": "5 kg rice costs ₹200. Cost of 8 kg?", "q_ml": "5 കി.ഗ്രാം അരിക്ക് ₹200. 8 കി.ഗ്രാമിന്?", "o": ["₹300", "₹320", "₹340", "₹280"], "a": 1, "x": "₹40 per kg × 8 = ₹320.", "x_ml": "കി.ഗ്രാമിന് ₹40 × 8 = ₹320." },
+        { "q": "Share ₹600 between Anu and Biju in ratio 1 : 2. Biju gets?", "q_ml": "₹600, അനുവിനും ബിജുവിനും 1 : 2 അനുപാതത്തിൽ. ബിജുവിന്?", "o": ["₹200", "₹300", "₹400", "₹450"], "a": 2, "x": "3 parts; one part ₹200; Biju 2 parts = ₹400.", "x_ml": "ആകെ 3 ഭാഗം; ഒരു ഭാഗം ₹200; ബിജു 2 ഭാഗം = ₹400." },
+        { "q": "If 6 workers finish a job in 10 days, 12 workers take (same rate)?", "q_ml": "6 പേർ 10 ദിവസം കൊണ്ട് തീർക്കുന്ന ജോലി 12 പേർ എത്ര ദിവസം?", "o": ["20 days", "5 days", "10 days", "15 days"], "o_ml": ["20 ദിവസം", "5 ദിവസം", "10 ദിവസം", "15 ദിവസം"], "a": 1, "x": "Inverse proportion: double the workers, half the days.", "x_ml": "വിപരീത അനുപാതം: ആളുകൾ ഇരട്ടി, ദിവസം പകുതി." }
+      ]
+    },
+    {
+      "id": "math-9-1", "class": 9, "icon": "📈", "minutes": 30, "competencies": ["SSLC.MATH"], "scert": "Class 9 · Linear equations & polynomials",
+      "title": "Linear equations in one variable", "title_ml": "ഒരു ചരമുള്ള രേഖീയ സമവാക്യങ്ങൾ",
+      "body": "Collect the x terms on one side and the numbers on the other. 5x − 3 = 2x + 9 → 5x − 2x = 9 + 3 → 3x = 12 → x = 4. Always check by substituting back.",
+      "body_ml": "x ഉള്ള പദങ്ങൾ ഒരു വശത്തും സംഖ്യകൾ മറുവശത്തും ശേഖരിക്കുക. 5x − 3 = 2x + 9 → 5x − 2x = 9 + 3 → 3x = 12 → x = 4. തിരികെ ആദേശം ചെയ്ത് പരിശോധിക്കുക.",
+      "activity": "Age puzzles from the class: 'In 5 years Meera will be twice as old as she was 5 years ago.' Form and solve.",
+      "activity_ml": "വയസ്സ് പ്രഹേളിക: '5 വർഷം കഴിഞ്ഞ് മീരയ്ക്ക് 5 വർഷം മുമ്പുള്ളതിന്റെ ഇരട്ടി വയസ്സ്.' സമവാക്യമാക്കി ഉത്തരം കാണുക.",
+      "questions": [
+        { "q": "Solve 4x − 7 = 2x + 5", "o": ["x = 6", "x = 1", "x = 2", "x = 12"], "a": 0, "x": "2x = 12, x = 6.", "x_ml": "2x = 12, x = 6.", "d": true },
+        { "q": "The sum of two consecutive numbers is 41. The smaller is?", "q_ml": "തുടർച്ചയായ രണ്ട് സംഖ്യകളുടെ തുക 41. ചെറുത്?", "o": ["19", "20", "21", "22"], "a": 1, "x": "x + (x + 1) = 41 → 2x = 40 → x = 20.", "x_ml": "x + (x + 1) = 41 → x = 20." },
+        { "q": "Solve (x/3) + 2 = 6", "o": ["x = 12", "x = 4", "x = 24", "x = 8"], "a": 0, "x": "x/3 = 4 → x = 12.", "x_ml": "x/3 = 4 → x = 12." },
+        { "q": "Expand (x + 3)(x + 2)", "q_ml": "(x + 3)(x + 2) വിപുലീകരിക്കുക", "o": ["x² + 5x + 6", "x² + 6x + 5", "x² + 6", "2x + 5"], "a": 0, "x": "x² + 2x + 3x + 6.", "x_ml": "x² + 2x + 3x + 6." }
+      ]
+    },
+    {
+      "id": "math-10-1", "class": 10, "icon": "🔺", "minutes": 35, "competencies": ["SSLC.MATH"], "scert": "SSLC · Arithmetic sequences",
+      "title": "Arithmetic sequences (SSLC)", "title_ml": "സമാന്തര ശ്രേണികൾ (SSLC)",
+      "body": "In an arithmetic sequence each term increases by the same common difference d. 3, 7, 11, 15 … has d = 4. The nth term is f + (n − 1)d where f is the first term. The 10th term here is 3 + 9 × 4 = 39. Sum of first n terms = n/2 × (first + last).",
+      "body_ml": "സമാന്തര ശ്രേണിയിൽ ഓരോ പദവും ഒരേ പൊതുവ്യത്യാസം d കൂടുന്നു. 3, 7, 11, 15 … ൽ d = 4. n-ാം പദം = f + (n − 1)d (f = ആദ്യ പദം). ഇവിടെ 10-ാം പദം 3 + 9 × 4 = 39. ആദ്യ n പദങ്ങളുടെ തുക = n/2 × (ആദ്യം + അവസാനം).",
+      "activity": "Savings plan: save ₹10 in week 1 and ₹5 more each week. Find week-20 saving and total.",
+      "activity_ml": "സമ്പാദ്യ പദ്ധതി: ആദ്യ ആഴ്ച ₹10, പിന്നീട് ഓരോ ആഴ്ചയും ₹5 കൂടുതൽ. 20-ാം ആഴ്ചയും ആകെയും കണ്ടെത്തുക.",
+      "questions": [
+        { "q": "Common difference of 5, 12, 19, 26 …?", "q_ml": "5, 12, 19, 26 … പൊതുവ്യത്യാസം?", "o": ["5", "6", "7", "12"], "a": 2, "x": "12 − 5 = 7.", "x_ml": "12 − 5 = 7.", "d": true },
+        { "q": "15th term of 2, 5, 8, …?", "q_ml": "2, 5, 8, … ന്റെ 15-ാം പദം?", "o": ["44", "45", "47", "42"], "a": 0, "x": "2 + 14 × 3 = 44.", "x_ml": "2 + 14 × 3 = 44." },
+        { "q": "Sum of 1 + 2 + 3 + … + 20?", "q_ml": "1 + 2 + … + 20 തുക?", "o": ["200", "210", "220", "190"], "a": 1, "x": "20/2 × (1 + 20) = 210.", "x_ml": "20/2 × (1 + 20) = 210.", "d": true },
+        { "q": "Is 100 a term of 4, 10, 16, …?", "q_ml": "4, 10, 16, … ൽ 100 ഒരു പദമാണോ?", "o": ["Yes", "No"], "o_ml": ["അതെ", "അല്ല"], "a": 0, "x": "100 − 4 = 96, divisible by 6 → yes, the 17th term.", "x_ml": "100 − 4 = 96, 6 കൊണ്ട് ഹരിക്കാം → അതെ, 17-ാം പദം." }
+      ]
+    },
+    {
+      "id": "math-10-2", "class": 10, "icon": "⭕", "minutes": 35, "competencies": ["SSLC.MATH"], "scert": "SSLC · Circles & mensuration",
+      "title": "Circles: circumference and area", "title_ml": "വൃത്തങ്ങൾ: ചുറ്റളവും പരപ്പളവും",
+      "body": "For a circle of radius r: circumference = 2πr and area = πr². Use π ≈ 22/7 or 3.14. A well of radius 7 m has circumference 2 × 22/7 × 7 = 44 m and area 22/7 × 49 = 154 m².",
+      "body_ml": "ആരം r ആയ വൃത്തത്തിന്: ചുറ്റളവ് = 2πr, പരപ്പളവ് = πr². π ≈ 22/7 അല്ലെങ്കിൽ 3.14. ആരം 7 മീ ഉള്ള കിണറിന് ചുറ്റളവ് 44 മീ, പരപ്പളവ് 154 ച.മീ.",
+      "activity": "Measure a bicycle wheel or a plate: compare circumference ÷ diameter for several objects.",
+      "activity_ml": "സൈക്കിൾ ചക്രമോ പാത്രമോ അളന്ന് ചുറ്റളവ് ÷ വ്യാസം താരതമ്യം ചെയ്യുക.",
+      "questions": [
+        { "q": "Circumference of a circle with radius 14 cm (π = 22/7)?", "q_ml": "ആരം 14 സെ.മീ — ചുറ്റളവ് (π = 22/7)?", "o": ["44 cm", "88 cm", "616 cm", "28 cm"], "a": 1, "x": "2 × 22/7 × 14 = 88.", "x_ml": "2 × 22/7 × 14 = 88." },
+        { "q": "Area of a circle with radius 7 cm (π = 22/7)?", "q_ml": "ആരം 7 സെ.മീ — പരപ്പളവ്?", "o": ["44 sq cm", "154 sq cm", "49 sq cm", "308 sq cm"], "a": 1, "x": "22/7 × 7 × 7 = 154.", "x_ml": "22/7 × 7 × 7 = 154.", "d": true },
+        { "q": "If the radius doubles, the area becomes:", "q_ml": "ആരം ഇരട്ടിയായാൽ പരപ്പളവ്:", "o": ["double", "four times", "half", "same"], "o_ml": ["ഇരട്ടി", "നാലിരട്ടി", "പകുതി", "മാറില്ല"], "a": 1, "x": "Area depends on r²: (2r)² = 4r².", "x_ml": "പരപ്പളവ് r²-നെ ആശ്രയിക്കുന്നു: (2r)² = 4r²." },
+        { "q": "Diameter of a circle with circumference 31.4 m (π = 3.14)?", "q_ml": "ചുറ്റളവ് 31.4 മീ ആയ വൃത്തത്തിന്റെ വ്യാസം?", "o": ["5 m", "10 m", "15 m", "3.14 m"], "a": 1, "x": "Circumference = π × d → d = 31.4 ÷ 3.14 = 10.", "x_ml": "ചുറ്റളവ് = π × വ്യാസം → 10 മീ." }
+      ]
+    }
+  ]
+}

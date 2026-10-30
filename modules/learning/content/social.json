@@ -1,0 +1,91 @@
+{
+  "subject": "social",
+  "lessons": [
+    {
+      "id": "soc-3-1", "class": 3, "icon": "🗺️", "minutes": 20, "competencies": ["SOC.1"], "scert": "Class 3 · My district",
+      "title": "Our district and our panchayat", "title_ml": "നമ്മുടെ ജില്ലയും പഞ്ചായത്തും",
+      "body": "Kerala has 14 districts. Our hamlet belongs to a grama panchayat, which looks after roads, water and local schools. The panchayat president and ward members are elected by the people. The Oorumooppan (hamlet head) speaks for the hamlet.",
+      "body_ml": "കേരളത്തിൽ 14 ജില്ലകൾ. നമ്മുടെ ഊര് ഒരു ഗ്രാമപഞ്ചായത്തിന്റെ ഭാഗമാണ്; റോഡ്, കുടിവെള്ളം, പ്രാദേശിക സ്കൂൾ എന്നിവ പഞ്ചായത്ത് നോക്കുന്നു. പ്രസിഡന്റിനെയും വാർഡ് അംഗങ്ങളെയും ജനങ്ങൾ തിരഞ്ഞെടുക്കുന്നു. ഊരുമൂപ്പൻ ഊരിന്റെ ശബ്ദമാണ്.",
+      "audio_ml": "കേരളത്തിൽ പതിനാല് ജില്ലകൾ. നമ്മുടെ ഊര് ഒരു ഗ്രാമപഞ്ചായത്തിന്റെ ഭാഗമാണ്.",
+      "activity": "Draw a map from home to the learning centre, the anganwadi and the panchayat office.",
+      "activity_ml": "വീട്ടിൽ നിന്ന് പഠനകേന്ദ്രം, അങ്കണവാടി, പഞ്ചായത്ത് ഓഫീസ് വരെയുള്ള ഭൂപടം വരയ്ക്കുക.",
+      "bridge": { "languages": ["Muthuvan", "Paniya", "Irula"], "note": "Begin with the hamlet's own governance (Oorukootam, Oorumooppan) in the home language, then connect to the panchayat.", "note_ml": "ഊരിന്റെ സ്വന്തം ഭരണരീതി (ഊരുകൂട്ടം, ഊരുമൂപ്പൻ) വീട്ടുഭാഷയിൽ തുടങ്ങി പഞ്ചായത്തുമായി ബന്ധിപ്പിക്കുക." },
+      "questions": [
+        { "q": "How many districts are in Kerala?", "q_ml": "കേരളത്തിൽ എത്ര ജില്ലകൾ?", "o": ["10", "12", "14", "16"], "a": 2, "x": "14 districts.", "x_ml": "14 ജില്ലകൾ.", "d": true },
+        { "q": "Who elects the panchayat members?", "q_ml": "പഞ്ചായത്ത് അംഗങ്ങളെ തിരഞ്ഞെടുക്കുന്നത്?", "o": ["The people", "The teacher", "The police", "Nobody"], "o_ml": ["ജനങ്ങൾ", "ടീച്ചർ", "പോലീസ്", "ആരുമില്ല"], "a": 0, "x": "Citizens vote in elections.", "x_ml": "ജനങ്ങൾ വോട്ട് ചെയ്യുന്നു." },
+        { "q": "The hamlet head is called:", "q_ml": "ഊരിന്റെ തലവൻ:", "o": ["ഊരുമൂപ്പൻ", "കളക്ടർ", "മന്ത്രി", "ഡോക്ടർ"], "a": 0, "x": "Oorumooppan.", "x_ml": "ഊരുമൂപ്പൻ.", "d": true },
+        { "q": "Which is a panchayat's work?", "q_ml": "പഞ്ചായത്തിന്റെ ചുമതല?", "o": ["Local roads and water", "Printing money", "Running the army", "Flying planes"], "o_ml": ["റോഡ്, കുടിവെള്ളം", "പണം അച്ചടിക്കൽ", "സൈന്യം", "വിമാനം"], "a": 0, "x": "Local services.", "x_ml": "പ്രാദേശിക സേവനങ്ങൾ." }
+      ]
+    },
+    {
+      "id": "soc-5-1", "class": 5, "icon": "⛰️", "minutes": 20, "competencies": ["SOC.1"], "scert": "Class 5 · Geography of Kerala",
+      "title": "Kerala: highlands, midlands, lowlands", "title_ml": "കേരളം: മലനാട്, ഇടനാട്, തീരപ്രദേശം",
+      "body": "Kerala has three natural regions: the highlands (Western Ghats — forests, tea, cardamom; home to many tribal communities), the midlands (rubber, coconut, paddy) and the lowlands along the Arabian Sea (backwaters, fishing). Anamudi (2695 m) in Idukki is the highest peak in South India.",
+      "body_ml": "കേരളത്തിന് മൂന്ന് ഭൂപ്രകൃതി വിഭാഗങ്ങൾ: മലനാട് (പശ്ചിമഘട്ടം — കാട്, തേയില, ഏലം; പല ഗോത്ര സമൂഹങ്ങളുടെയും വാസസ്ഥലം), ഇടനാട് (റബ്ബർ, തെങ്ങ്, നെല്ല്), അറബിക്കടലിനോട് ചേർന്ന തീരപ്രദേശം (കായൽ, മത്സ്യബന്ധനം). ഇടുക്കിയിലെ ആനമുടി (2695 മീ) ദക്ഷിണേന്ത്യയിലെ ഏറ്റവും ഉയരമുള്ള കൊടുമുടി.",
+      "activity": "Make a clay relief model of Kerala's three regions.",
+      "activity_ml": "കേരളത്തിലെ മൂന്ന് മേഖലകളുടെ കളിമൺ മാതൃക ഉണ്ടാക്കുക.",
+      "questions": [
+        { "q": "The highest peak in South India:", "q_ml": "ദക്ഷിണേന്ത്യയിലെ ഏറ്റവും ഉയർന്ന കൊടുമുടി:", "o": ["Anamudi", "Agasthyakoodam", "Chembra", "Ponmudi"], "o_ml": ["ആനമുടി", "അഗസ്ത്യകൂടം", "ചെമ്പ്ര", "പൊന്മുടി"], "a": 0, "x": "Anamudi, 2695 m.", "x_ml": "ആനമുടി.", "d": true },
+        { "q": "Cardamom grows mainly in the:", "q_ml": "ഏലം പ്രധാനമായി വളരുന്നത്:", "o": ["lowlands", "midlands", "highlands", "sea"], "o_ml": ["തീരപ്രദേശം", "ഇടനാട്", "മലനാട്", "കടൽ"], "a": 2, "x": "Highlands of the Western Ghats.", "x_ml": "പശ്ചിമഘട്ട മലനാട്." },
+        { "q": "Kerala's coast is along the:", "q_ml": "കേരളതീരം ഏത് കടലിനോട് ചേർന്ന്?", "o": ["Bay of Bengal", "Arabian Sea", "Indian Ocean only", "Red Sea"], "o_ml": ["ബംഗാൾ ഉൾക്കടൽ", "അറബിക്കടൽ", "ഇന്ത്യൻ മഹാസമുദ്രം മാത്രം", "ചെങ്കടൽ"], "a": 1, "x": "Arabian Sea on the west.", "x_ml": "പടിഞ്ഞാറ് അറബിക്കടൽ.", "d": true },
+        { "q": "The mountain range on Kerala's east is:", "q_ml": "കേരളത്തിന്റെ കിഴക്കുള്ള പർവതനിര:", "o": ["Himalayas", "Western Ghats", "Eastern Ghats", "Aravalli"], "o_ml": ["ഹിമാലയം", "പശ്ചിമഘട്ടം", "പൂർവഘട്ടം", "ആരവല്ലി"], "a": 1, "x": "Western Ghats (Sahyadri).", "x_ml": "പശ്ചിമഘട്ടം (സഹ്യാദ്രി)." }
+      ]
+    },
+    {
+      "id": "soc-7-1", "class": 7, "icon": "⚖️", "minutes": 25, "competencies": ["SOC.1", "SOC.2"], "scert": "Class 7 · Constitution & rights",
+      "title": "Our Constitution and fundamental rights", "title_ml": "നമ്മുടെ ഭരണഘടനയും മൗലികാവകാശങ്ങളും",
+      "body": "The Constitution of India came into force on 26 January 1950. Dr B. R. Ambedkar chaired its drafting committee. Fundamental rights include equality, freedom, the right against exploitation and the right to education (free education for children aged 6–14). Article 46 directs the State to promote the educational interests of Scheduled Tribes.",
+      "body_ml": "ഇന്ത്യൻ ഭരണഘടന 1950 ജനുവരി 26-ന് നിലവിൽ വന്നു. ഡോ. ബി. ആർ. അംബേദ്കർ കരട് സമിതി അധ്യക്ഷനായിരുന്നു. സമത്വം, സ്വാതന്ത്ര്യം, ചൂഷണത്തിനെതിരായ അവകാശം, വിദ്യാഭ്യാസാവകാശം (6–14 വയസ്സുകാർക്ക് സൗജന്യ വിദ്യാഭ്യാസം) എന്നിവ മൗലികാവകാശങ്ങളാണ്. പട്ടികവർഗക്കാരുടെ വിദ്യാഭ്യാസ താൽപര്യങ്ങൾ പ്രോത്സാഹിപ്പിക്കാൻ അനുച്ഛേദം 46 നിർദ്ദേശിക്കുന്നു.",
+      "activity": "Mock gram sabha: children raise a hamlet issue and propose a solution citing their rights.",
+      "activity_ml": "മാതൃകാ ഗ്രാമസഭ: ഊരിലെ ഒരു പ്രശ്നം അവകാശങ്ങൾ ചൂണ്ടിക്കാട്ടി അവതരിപ്പിക്കുക.",
+      "questions": [
+        { "q": "The Constitution came into force on:", "q_ml": "ഭരണഘടന നിലവിൽ വന്നത്:", "o": ["15 Aug 1947", "26 Jan 1950", "2 Oct 1869", "1 Nov 1956"], "a": 1, "x": "Republic Day, 26 January 1950.", "x_ml": "1950 ജനുവരി 26 — റിപ്പബ്ലിക് ദിനം.", "d": true },
+        { "q": "Chairman of the drafting committee:", "q_ml": "കരട് സമിതി അധ്യക്ഷൻ:", "o": ["Jawaharlal Nehru", "Dr B. R. Ambedkar", "Mahatma Gandhi", "Sardar Patel"], "o_ml": ["ജവഹർലാൽ നെഹ്റു", "ഡോ. ബി. ആർ. അംബേദ്കർ", "മഹാത്മാഗാന്ധി", "സർദാർ പട്ടേൽ"], "a": 1, "x": "Dr B. R. Ambedkar.", "x_ml": "ഡോ. അംബേദ്കർ." },
+        { "q": "Free and compulsory education is a right for children aged:", "q_ml": "സൗജന്യ നിർബന്ധിത വിദ്യാഭ്യാസം — പ്രായം:", "o": ["3–5", "6–14", "15–18", "18–25"], "a": 1, "x": "6 to 14 years (Article 21A).", "x_ml": "6 മുതൽ 14 വയസ്സ് (അനുച്ഛേദം 21A).", "d": true },
+        { "q": "Kerala state was formed on:", "q_ml": "കേരള സംസ്ഥാനം രൂപീകരിച്ചത്:", "o": ["1 Nov 1956", "26 Jan 1950", "15 Aug 1947", "1 Jan 1960"], "a": 0, "x": "Kerala Piravi — 1 November 1956.", "x_ml": "കേരളപ്പിറവി — 1956 നവംബർ 1." }
+      ]
+    },
+    {
+      "id": "soc-8-1", "class": 8, "icon": "🏹", "minutes": 25, "competencies": ["SOC.2"], "scert": "Class 8 · History: resistance movements",
+      "title": "Pazhassi Raja and the Kurichiya revolt", "title_ml": "പഴശ്ശിരാജയും കുറിച്യ കലാപവും",
+      "body": "Kerala Varma Pazhassi Raja resisted the British East India Company in Wayanad (1793–1805). Kurichiya and Kurumba warriors, led by Thalakkal Chandu, fought with bows and arrows using forest knowledge. In 1812 the Kurichiyas rose again against unjust taxes — one of the earliest tribal revolts in India.",
+      "body_ml": "കേരളവർമ്മ പഴശ്ശിരാജ വയനാട്ടിൽ ഈസ്റ്റ് ഇന്ത്യാ കമ്പനിയെ ചെറുത്തു (1793–1805). തലക്കൽ ചന്തുവിന്റെ നേതൃത്വത്തിൽ കുറിച്യ, കുറുമ്പ പോരാളികൾ കാടിനെക്കുറിച്ചുള്ള അറിവും അമ്പും വില്ലും ഉപയോഗിച്ച് പോരാടി. 1812-ൽ അന്യായ നികുതിക്കെതിരെ കുറിച്യർ വീണ്ടും കലാപം നടത്തി — ഇന്ത്യയിലെ ആദ്യകാല ഗോത്ര കലാപങ്ങളിലൊന്ന്.",
+      "activity": "Visit or research the Pazhassi tomb at Mananthavady; prepare a short talk.",
+      "activity_ml": "മാനന്തവാടിയിലെ പഴശ്ശി കുടീരത്തെക്കുറിച്ച് പഠിച്ച് ചെറുപ്രഭാഷണം തയ്യാറാക്കുക.",
+      "questions": [
+        { "q": "Pazhassi Raja fought against:", "q_ml": "പഴശ്ശിരാജ പോരാടിയത്:", "o": ["the Portuguese", "the British East India Company", "the Mughals", "the Dutch"], "o_ml": ["പോർച്ചുഗീസുകാർ", "ബ്രിട്ടീഷ് ഈസ്റ്റ് ഇന്ത്യാ കമ്പനി", "മുഗളർ", "ഡച്ചുകാർ"], "a": 1, "x": "The British East India Company.", "x_ml": "ഈസ്റ്റ് ഇന്ത്യാ കമ്പനി.", "d": true },
+        { "q": "Kurichiya warriors were led by:", "q_ml": "കുറിച്യ പോരാളികളുടെ നേതാവ്:", "o": ["Thalakkal Chandu", "Velu Thampi", "Ayyankali", "Sree Narayana Guru"], "o_ml": ["തലക്കൽ ചന്തു", "വേലുത്തമ്പി", "അയ്യങ്കാളി", "ശ്രീനാരായണഗുരു"], "a": 0, "x": "Thalakkal Chandu.", "x_ml": "തലക്കൽ ചന്തു." },
+        { "q": "The Kurichiya revolt of 1812 was mainly against:", "q_ml": "1812-ലെ കുറിച്യ കലാപം പ്രധാനമായും:", "o": ["unjust taxes", "a cricket match", "a festival", "new schools"], "o_ml": ["അന്യായ നികുതി", "ക്രിക്കറ്റ് മത്സരം", "ഉത്സവം", "പുതിയ സ്കൂളുകൾ"], "a": 0, "x": "Unjust tax collection in cash.", "x_ml": "അന്യായ നികുതി." },
+        { "q": "Pazhassi Raja's resistance was centred in:", "q_ml": "പഴശ്ശിയുടെ ചെറുത്തുനിൽപ്പിന്റെ കേന്ദ്രം:", "o": ["Wayanad", "Alappuzha", "Kollam", "Thrissur"], "o_ml": ["വയനാട്", "ആലപ്പുഴ", "കൊല്ലം", "തൃശൂർ"], "a": 0, "x": "Wayanad forests.", "x_ml": "വയനാടൻ കാടുകൾ.", "d": true }
+      ]
+    },
+    {
+      "id": "soc-9-1", "class": 9, "icon": "🏛️", "minutes": 30, "competencies": ["SOC.2"], "scert": "Class 9 · Kerala renaissance",
+      "title": "Kerala renaissance and social reform", "title_ml": "കേരള നവോത്ഥാനവും സാമൂഹിക പരിഷ്കരണവും",
+      "body": "Reformers fought caste discrimination and opened education to all. Sree Narayana Guru taught 'One caste, one religion, one God for man'. Ayyankali led the Villuvandi Samaram (1893) and fought for Dalit children to enter schools. Chattampi Swamikal, Pandit Karuppan and many others shaped modern Kerala.",
+      "body_ml": "പരിഷ്കർത്താക്കൾ ജാതിവിവേചനത്തിനെതിരെ പോരാടി, വിദ്യാഭ്യാസം എല്ലാവർക്കും തുറന്നു. ശ്രീനാരായണഗുരു 'ഒരു ജാതി, ഒരു മതം, ഒരു ദൈവം മനുഷ്യന്' എന്ന് പഠിപ്പിച്ചു. അയ്യങ്കാളി വില്ലുവണ്ടി സമരം (1893) നയിക്കുകയും ദളിത് കുട്ടികളുടെ സ്കൂൾ പ്രവേശനത്തിനായി പോരാടുകയും ചെയ്തു. ചട്ടമ്പിസ്വാമികൾ, പണ്ഡിറ്റ് കറുപ്പൻ തുടങ്ങി പലരും ആധുനിക കേരളത്തെ രൂപപ്പെടുത്തി.",
+      "activity": "Timeline wall: place 8 renaissance events on a rope-and-peg timeline.",
+      "activity_ml": "കാലരേഖ ചുമർ: 8 നവോത്ഥാന സംഭവങ്ങൾ കയർ-ക്ലിപ്പ് കാലരേഖയിൽ ക്രമീകരിക്കുക.",
+      "questions": [
+        { "q": "'One caste, one religion, one God for man' was said by:", "q_ml": "'ഒരു ജാതി, ഒരു മതം, ഒരു ദൈവം മനുഷ്യന്' — ആര്?", "o": ["Sree Narayana Guru", "Ayyankali", "Vakkom Moulavi", "K. Kelappan"], "o_ml": ["ശ്രീനാരായണഗുരു", "അയ്യങ്കാളി", "വക്കം മൗലവി", "കെ. കേളപ്പൻ"], "a": 0, "x": "Sree Narayana Guru.", "x_ml": "ശ്രീനാരായണഗുരു.", "d": true },
+        { "q": "The Villuvandi Samaram was led by:", "q_ml": "വില്ലുവണ്ടി സമരം നയിച്ചത്:", "o": ["Ayyankali", "Chattampi Swamikal", "Mannathu Padmanabhan", "Pandit Karuppan"], "o_ml": ["അയ്യങ്കാളി", "ചട്ടമ്പിസ്വാമികൾ", "മന്നത്ത് പത്മനാഭൻ", "പണ്ഡിറ്റ് കറുപ്പൻ"], "a": 0, "x": "Ayyankali, 1893.", "x_ml": "അയ്യങ്കാളി, 1893.", "d": true },
+        { "q": "A main goal of the reformers was:", "q_ml": "പരിഷ്കർത്താക്കളുടെ പ്രധാന ലക്ഷ്യം:", "o": ["ending caste discrimination", "building forts", "starting wars", "closing schools"], "o_ml": ["ജാതിവിവേചനം അവസാനിപ്പിക്കൽ", "കോട്ട പണിയൽ", "യുദ്ധം", "സ്കൂൾ അടയ്ക്കൽ"], "a": 0, "x": "Equality and education for all.", "x_ml": "സമത്വവും എല്ലാവർക്കും വിദ്യാഭ്യാസവും." },
+        { "q": "Ayyankali fought for the right of Dalit children to:", "q_ml": "അയ്യങ്കാളി ദളിത് കുട്ടികൾക്കായി പോരാടിയത്:", "o": ["enter schools", "own cars", "travel abroad", "vote at 10"], "o_ml": ["സ്കൂൾ പ്രവേശനം", "കാർ സ്വന്തമാക്കൽ", "വിദേശയാത്ര", "10-ൽ വോട്ട്"], "a": 0, "x": "School admission.", "x_ml": "സ്കൂൾ പ്രവേശനം." }
+      ]
+    },
+    {
+      "id": "soc-10-1", "class": 10, "icon": "🌏", "minutes": 35, "competencies": ["SOC.2"], "scert": "SSLC · Forest rights & development",
+      "title": "Forest Rights Act and tribal welfare (SSLC)", "title_ml": "വനാവകാശ നിയമവും ഗോത്രക്ഷേമവും (SSLC)",
+      "body": "The Forest Rights Act, 2006 recognises the rights of Scheduled Tribes and other traditional forest dwellers to land they have cultivated and to collect minor forest produce like honey, bamboo and medicinal plants. The Gram Sabha decides claims. Schemes like Model Residential Schools and post-matric scholarships support tribal students' education.",
+      "body_ml": "2006-ലെ വനാവകാശ നിയമം പട്ടികവർഗക്കാർക്കും മറ്റ് പരമ്പരാഗത വനവാസികൾക്കും കൃഷി ചെയ്യുന്ന ഭൂമിയിലും തേൻ, മുള, ഔഷധസസ്യങ്ങൾ പോലുള്ള ചെറുവനവിഭവങ്ങൾ ശേഖരിക്കുന്നതിലും ഉള്ള അവകാശം അംഗീകരിക്കുന്നു. അവകാശവാദങ്ങൾ ഗ്രാമസഭ തീരുമാനിക്കുന്നു. മോഡൽ റസിഡൻഷ്യൽ സ്കൂളുകളും പോസ്റ്റ്-മെട്രിക് സ്കോളർഷിപ്പും ഗോത്ര വിദ്യാർത്ഥികളെ സഹായിക്കുന്നു.",
+      "activity": "Interview a hamlet elder about forest produce collection; list rights under FRA.",
+      "activity_ml": "വനവിഭവ ശേഖരണത്തെക്കുറിച്ച് ഊരുമൂപ്പനുമായി അഭിമുഖം; FRA അവകാശങ്ങൾ പട്ടികപ്പെടുത്തുക.",
+      "questions": [
+        { "q": "The Forest Rights Act was passed in:", "q_ml": "വനാവകാശ നിയമം പാസാക്കിയത്:", "o": ["1950", "1986", "2006", "2019"], "a": 2, "x": "2006.", "x_ml": "2006.", "d": true },
+        { "q": "Who decides forest rights claims first?", "q_ml": "വനാവകാശ അപേക്ഷകൾ ആദ്യം തീരുമാനിക്കുന്നത്?", "o": ["Gram Sabha", "Supreme Court", "Police", "School PTA"], "o_ml": ["ഗ്രാമസഭ", "സുപ്രീം കോടതി", "പോലീസ്", "സ്കൂൾ PTA"], "a": 0, "x": "The Gram Sabha initiates the process.", "x_ml": "ഗ്രാമസഭ.", "d": true },
+        { "q": "Which is minor forest produce?", "q_ml": "ചെറുവനവിഭവം ഏത്?", "o": ["Honey", "Teak timber", "Granite", "Sand"], "o_ml": ["തേൻ", "തേക്ക് തടി", "കരിങ്കല്ല്", "മണൽ"], "a": 0, "x": "Honey, bamboo, medicinal plants.", "x_ml": "തേൻ, മുള, ഔഷധസസ്യങ്ങൾ." },
+        { "q": "Model Residential Schools mainly help:", "q_ml": "മോഡൽ റസിഡൻഷ്യൽ സ്കൂളുകൾ പ്രധാനമായി:", "o": ["tribal students' education", "tourism", "factories", "sports cars"], "o_ml": ["ഗോത്ര വിദ്യാർത്ഥികളുടെ വിദ്യാഭ്യാസം", "ടൂറിസം", "ഫാക്ടറി", "സ്പോർട്സ് കാർ"], "a": 0, "x": "Quality residential schooling for ST students.", "x_ml": "പട്ടികവർഗ വിദ്യാർത്ഥികൾക്ക് താമസ സൗകര്യമുള്ള വിദ്യാഭ്യാസം." }
+      ]
+    }
+  ]
+}

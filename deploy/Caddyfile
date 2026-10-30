@@ -1,0 +1,8 @@
+{$CLOUD_DOMAIN} {
+	encode gzip
+	reverse_proxy aadi-cloud:8080
+}
+{$HUB_DOMAIN} {
+	encode gzip
+	reverse_proxy aadi-hub:8080
+}

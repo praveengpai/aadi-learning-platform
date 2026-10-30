@@ -1,0 +1,37 @@
+{
+  "id": "learning",
+  "version": "1.0.0",
+  "name": "Learning — Tuition & Literacy",
+  "name_ml": "പഠനം — ട്യൂഷനും സാക്ഷരതയും",
+  "icon": "📚",
+  "description": "SCERT-aligned tuition (Class 1–SSLC), diagnostic placement, personalised catch-up paths, lesson player with read-aloud, attendance, homework, adult literacy circles and the facilitator console.",
+  "tables": {
+    "learning_progress": ["person_id", "hamlet_id", "lesson_id", "subject", "class_level", "status", "best_score", "attempts", "first_at", "last_at", "completed_at"],
+    "learning_attempts": ["person_id", "hamlet_id", "lesson_id", "subject", "kind", "score", "correct", "total", "answers", "at"],
+    "learning_diagnostics": ["person_id", "hamlet_id", "grade", "results", "path", "cohort", "at"],
+    "learning_sessions": ["programme_id", "agency_id", "hamlet_id", "track", "date", "start_time", "kind", "topic", "lesson_ids", "notes", "status", "facilitator_id", "present_count", "roster_count", "camp_id"],
+    "learning_attendance": ["session_id", "programme_id", "agency_id", "person_id", "hamlet_id", "date", "status", "marked_by"],
+    "learning_flags": ["person_id", "hamlet_id", "agency_id", "programme_id", "reason", "note", "status", "raised_by", "at", "resolved_at"],
+    "learning_homework": ["programme_id", "agency_id", "hamlet_id", "title", "title_ml", "instructions", "lesson_id", "due_date", "assigned_by", "assigned_at"],
+    "learning_submissions": ["homework_id", "programme_id", "person_id", "hamlet_id", "agency_id", "kind", "text", "media_note", "thumb", "submitted_at", "feedback", "feedback_kind", "feedback_by", "feedback_at", "grade"],
+    "learning_literacy": ["person_id", "hamlet_id", "agency_id", "programme_id", "level", "skills", "notes", "assessed_by", "last_assessed"],
+    "learning_camps": ["agency_id", "hamlet_id", "programme_id", "title", "title_ml", "kind", "start_date", "end_date", "daily_slots", "focus", "capacity", "status", "created_by"],
+    "learning_goals": ["hamlet_id", "title", "title_ml", "metric", "target", "period_start", "period_end"]
+  },
+  "types": {
+    "class_level": "INTEGER", "best_score": "REAL", "attempts": "INTEGER", "score": "REAL", "correct": "INTEGER", "total": "INTEGER",
+    "grade": "INTEGER", "present_count": "INTEGER", "roster_count": "INTEGER", "level": "INTEGER", "capacity": "INTEGER", "target": "INTEGER"
+  },
+  "emits": ["learning.lesson_completed", "learning.mastery_achieved", "learning.diagnostic_completed", "learning.attendance_marked", "learning.at_risk_flagged", "learning.session_created", "learning.homework_assigned", "learning.homework_submitted", "learning.literacy_level_up", "learning.camp_scheduled"],
+  "subscribes": ["core.enrolled"],
+  "nav": [
+    { "view": "home", "label": "My Learning", "label_ml": "എന്റെ പഠനം", "icon": "📚", "roles": ["learner"], "section": "learn" },
+    { "view": "homework", "label": "Homework", "label_ml": "ഗൃഹപാഠം", "icon": "📝", "roles": ["learner"], "section": "learn" },
+    { "view": "child", "label": "Child's Learning", "label_ml": "കുട്ടിയുടെ പഠനം", "icon": "👪", "roles": ["guardian"], "section": "learn" },
+    { "view": "console", "label": "Teaching Console", "label_ml": "അധ്യാപന കൺസോൾ", "icon": "🧑‍🏫", "roles": ["facilitator", "teacher", "coordinator"], "section": "teach" },
+    { "view": "homework", "label": "Homework Review", "label_ml": "ഗൃഹപാഠ പരിശോധന", "icon": "📝", "roles": ["facilitator", "teacher"], "section": "teach" },
+    { "view": "literacy", "label": "Literacy Circles", "label_ml": "സാക്ഷരതാ കൂട്ടങ്ങൾ", "icon": "🔤", "roles": ["facilitator", "teacher", "coordinator", "agency_admin", "platform_admin"], "section": "teach" },
+    { "view": "library", "label": "Lesson Library", "label_ml": "പാഠശേഖരം", "icon": "📖", "roles": ["learner", "facilitator", "teacher", "coordinator", "agency_admin", "platform_admin"], "section": "teach" },
+    { "view": "overview", "label": "Learning Overview", "label_ml": "പഠന അവലോകനം", "icon": "📊", "roles": ["agency_admin", "platform_admin", "coordinator"], "section": "insight" }
+  ]
+}

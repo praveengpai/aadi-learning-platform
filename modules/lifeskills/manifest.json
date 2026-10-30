@@ -1,0 +1,18 @@
+{
+  "id": "lifeskills", "version": "1.0.0",
+  "name": "Life Skills & Digital", "name_ml": "ജീവിത നൈപുണ്യം, ഡിജിറ്റൽ", "icon": "🧭",
+  "description": "City readiness for youth moving to jobs: hygiene, workplace, interviews, travel, rights at work, safety & fake job offers, UPI/banking, government portals. Mandatory online-safety gate, document checklist and soft-skills assessment.",
+  "tables": {
+    "lifeskills_progress": ["person_id", "hamlet_id", "module_key", "lessons_done", "scenario_score", "scenario_max", "scenario_path", "quiz_score", "quiz_total", "attempts", "passed", "passed_at", "last_at"],
+    "lifeskills_documents": ["person_id", "hamlet_id", "doc_key", "status", "note", "due_date", "reminded_at", "updated_by"],
+    "lifeskills_softskills": ["person_id", "hamlet_id", "rater_role", "rater_id", "rater_name", "ratings", "note", "rated_at", "agency_id"]
+  },
+  "types": { "scenario_score": "INTEGER", "scenario_max": "INTEGER", "quiz_score": "INTEGER", "quiz_total": "INTEGER", "attempts": "INTEGER", "passed": "INTEGER" },
+  "emits": ["lifeskills.lesson_completed", "lifeskills.module_passed"],
+  "subscribes": [],
+  "nav": [
+    { "view": "home", "label": "Life Skills", "label_ml": "ജീവിത നൈപുണ്യം", "icon": "🧭", "roles": ["learner", "guardian"], "section": "learn" },
+    { "view": "staff", "label": "Life Skills cohort", "label_ml": "ജീവിത നൈപുണ്യ ബാച്ച്", "icon": "🧭", "roles": ["facilitator", "teacher", "coordinator", "agency_admin", "platform_admin", "counsellor", "mentor"], "section": "teach" },
+    { "view": "insight", "label": "Life Skills impact", "label_ml": "ജീവിത നൈപുണ്യ ഫലം", "icon": "📊", "roles": ["donor", "govt_viewer", "platform_admin", "agency_admin"], "section": "insight" }
+  ]
+}

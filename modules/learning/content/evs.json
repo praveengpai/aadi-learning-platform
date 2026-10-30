@@ -1,0 +1,150 @@
+{
+  "subject": "evs",
+  "lessons": [
+    {
+      "id": "evs-1-1", "class": 1, "icon": "🌳", "minutes": 15, "competencies": ["SCI.0"], "scert": "Class 1 · Plants around us",
+      "title": "Plants around our hamlet", "title_ml": "നമ്മുടെ ഊരിലെ ചെടികൾ",
+      "body": "Plants have roots, a stem, leaves, flowers and fruits. The jackfruit tree gives us chakka; tapioca gives us kappa from its root; bamboo grows tall and fast. Plants need water, sunlight and soil.",
+      "body_ml": "ചെടികൾക്ക് വേര്, തണ്ട്, ഇല, പൂവ്, കായ എന്നിവയുണ്ട്. പ്ലാവ് ചക്ക തരുന്നു; കപ്പ വേരിൽ നിന്ന്; മുള വേഗം ഉയരത്തിൽ വളരുന്നു. ചെടികൾക്ക് വെള്ളവും വെയിലും മണ്ണും വേണം.",
+      "audio_ml": "ചെടികൾക്ക് വേര്, തണ്ട്, ഇല, പൂവ്, കായ. ചെടികൾക്ക് വെള്ളവും വെയിലും മണ്ണും വേണം.",
+      "activity": "Leaf collection: collect 5 different leaves, paste them and name them in home language and Malayalam.",
+      "activity_ml": "5 വ്യത്യസ്ത ഇലകൾ ശേഖരിച്ച് ഒട്ടിച്ച് വീട്ടുഭാഷയിലും മലയാളത്തിലും പേരെഴുതുക.",
+      "bridge": { "languages": ["Muthuvan", "Paniya", "Irula", "Kanikkar", "Cholanaikkan"], "note": "Children often know far more plant names in their home language than the textbook. Make the child the expert: ask them to teach plant names and uses; record them.", "note_ml": "പാഠപുസ്തകത്തേക്കാൾ കൂടുതൽ ചെടിപ്പേരുകൾ കുട്ടികൾക്ക് വീട്ടുഭാഷയിൽ അറിയാം. കുട്ടിയെ വിദഗ്ധനാക്കുക: ചെടികളുടെ പേരും ഉപയോഗവും പഠിപ്പിക്കാൻ പറയുക; രേഖപ്പെടുത്തുക." },
+      "questions": [
+        { "q": "Which part of tapioca do we eat?", "q_ml": "കപ്പയുടെ ഏത് ഭാഗമാണ് നാം കഴിക്കുന്നത്?", "o": ["Leaf", "Root", "Flower", "Stem"], "o_ml": ["ഇല", "വേര്", "പൂവ്", "തണ്ട്"], "a": 1, "x": "Tapioca is a root.", "x_ml": "കപ്പ വേരാണ്.", "d": true },
+        { "q": "What do plants need to grow?", "q_ml": "ചെടികൾ വളരാൻ എന്ത് വേണം?", "o": ["Water and sunlight", "Plastic", "Only darkness", "Salt"], "o_ml": ["വെള്ളവും വെയിലും", "പ്ലാസ്റ്റിക്", "ഇരുട്ട് മാത്രം", "ഉപ്പ്"], "a": 0, "x": "Water, sunlight, soil and air.", "x_ml": "വെള്ളം, വെയിൽ, മണ്ണ്, വായു.", "d": true },
+        { "q": "Which tree gives us chakka?", "q_ml": "ചക്ക തരുന്ന മരം?", "o": ["മാവ്", "പ്ലാവ്", "തെങ്ങ്", "മുള"], "a": 1, "x": "പ്ലാവ് (jackfruit tree).", "x_ml": "പ്ലാവ്." },
+        { "q": "Which grows very fast and tall?", "q_ml": "വളരെ വേഗം ഉയരത്തിൽ വളരുന്നത്?", "o": ["Bamboo", "Grass mat", "Stone", "Pot"], "o_ml": ["മുള", "പായ", "കല്ല്", "കലം"], "a": 0, "x": "Bamboo can grow very fast.", "x_ml": "മുള വേഗം വളരും." }
+      ]
+    },
+    {
+      "id": "evs-2-1", "class": 2, "icon": "💧", "minutes": 15, "competencies": ["SCI.0"], "scert": "Class 2 · Water and cleanliness",
+      "title": "Clean water, clean hands", "title_ml": "ശുദ്ധജലം, വൃത്തിയുള്ള കൈകൾ",
+      "body": "Dirty water can make us sick. Boil drinking water and keep it covered. Wash hands with soap before eating and after using the toilet — rub for 20 seconds, between fingers and under nails.",
+      "body_ml": "മലിനജലം രോഗമുണ്ടാക്കും. കുടിവെള്ളം തിളപ്പിച്ച് മൂടിവയ്ക്കുക. ഭക്ഷണത്തിന് മുമ്പും ടോയ്‌ലറ്റ് ഉപയോഗിച്ച ശേഷവും സോപ്പിട്ട് കൈ കഴുകുക — 20 സെക്കൻഡ്, വിരലുകൾക്കിടയിലും നഖത്തിനടിയിലും.",
+      "audio_ml": "കുടിവെള്ളം തിളപ്പിച്ച് മൂടിവയ്ക്കുക. ഭക്ഷണത്തിന് മുമ്പ് സോപ്പിട്ട് കൈ കഴുകുക.",
+      "activity": "Handwashing song and demonstration with a tippy-tap made from a plastic can.",
+      "activity_ml": "പ്ലാസ്റ്റിക് കാൻ കൊണ്ടുള്ള 'ടിപ്പി-ടാപ്പ്' ഉപയോഗിച്ച് കൈകഴുകൽ പാട്ടും പ്രദർശനവും.",
+      "bridge": { "languages": ["Muthuvan", "Paniya", "Irula"], "note": "Use the home-language words for 'stomach ache' and 'fever' when explaining germs; involve mothers in the demonstration.", "note_ml": "രോഗാണുക്കളെക്കുറിച്ച് പറയുമ്പോൾ 'വയറുവേദന', 'പനി' എന്നിവയ്ക്ക് വീട്ടുഭാഷാ വാക്കുകൾ ഉപയോഗിക്കുക; അമ്മമാരെയും ഉൾപ്പെടുത്തുക." },
+      "questions": [
+        { "q": "When should we wash hands?", "q_ml": "എപ്പോൾ കൈ കഴുകണം?", "o": ["Before eating", "Only on Sunday", "Never", "After sleeping only"], "o_ml": ["ഭക്ഷണത്തിന് മുമ്പ്", "ഞായറാഴ്ച മാത്രം", "ഒരിക്കലും വേണ്ട", "ഉറങ്ങിയ ശേഷം മാത്രം"], "a": 0, "x": "Before eating and after the toilet.", "x_ml": "ഭക്ഷണത്തിന് മുമ്പും ടോയ്‌ലറ്റിന് ശേഷവും.", "d": true },
+        { "q": "How do we make water safe to drink?", "q_ml": "വെള്ളം കുടിക്കാൻ സുരക്ഷിതമാക്കുന്നത്?", "o": ["Boil it", "Add sugar", "Keep it open", "Add mud"], "o_ml": ["തിളപ്പിക്കുക", "പഞ്ചസാര ചേർക്കുക", "തുറന്നുവയ്ക്കുക", "മണ്ണ് ചേർക്കുക"], "a": 0, "x": "Boiling kills germs.", "x_ml": "തിളപ്പിച്ചാൽ രോഗാണുക്കൾ നശിക്കും.", "d": true },
+        { "q": "How long should we rub our hands with soap?", "q_ml": "സോപ്പിട്ട് എത്ര നേരം കൈ ഉരയ്ക്കണം?", "o": ["2 seconds", "20 seconds", "1 hour", "No need"], "o_ml": ["2 സെക്കൻഡ്", "20 സെക്കൻഡ്", "1 മണിക്കൂർ", "വേണ്ട"], "a": 1, "x": "About 20 seconds.", "x_ml": "ഏകദേശം 20 സെക്കൻഡ്." },
+        { "q": "Drinking water should be kept:", "q_ml": "കുടിവെള്ളം സൂക്ഷിക്കേണ്ടത്:", "o": ["covered", "open", "in the sun", "on the floor"], "o_ml": ["മൂടിവച്ച്", "തുറന്ന്", "വെയിലത്ത്", "തറയിൽ"], "a": 0, "x": "Covered, so dust and flies cannot enter.", "x_ml": "പൊടിയും ഈച്ചയും കടക്കാതിരിക്കാൻ മൂടിവയ്ക്കുക." }
+      ]
+    },
+    {
+      "id": "evs-3-1", "class": 3, "icon": "🐘", "minutes": 20, "competencies": ["SCI.0"], "scert": "Class 3 · Animals and their homes",
+      "title": "Animals of the forest and their homes", "title_ml": "കാട്ടിലെ ജീവികളും അവയുടെ വാസസ്ഥലവും",
+      "body": "Elephants move in herds led by the eldest female. Birds build nests, bees make hives, rats live in burrows. The Nilgiri tahr lives on high rocky hills near Munnar. Forests are home to many animals — we must protect them.",
+      "body_ml": "ആനകൾ മുതിർന്ന പിടിയാനയുടെ നേതൃത്വത്തിൽ കൂട്ടമായി സഞ്ചരിക്കുന്നു. കിളികൾ കൂടുണ്ടാക്കുന്നു, തേനീച്ചകൾ കൂട്, എലികൾ മാളം. വരയാട് മൂന്നാറിനടുത്തുള്ള ഉയർന്ന പാറക്കുന്നുകളിൽ ജീവിക്കുന്നു. കാട് അനേകം ജീവികളുടെ വീടാണ് — അതിനെ സംരക്ഷിക്കണം.",
+      "activity": "Draw a forest map with animal homes; elders share safe practices around elephants.",
+      "activity_ml": "ജീവികളുടെ വാസസ്ഥലങ്ങളുള്ള കാട്ടുഭൂപടം വരയ്ക്കുക; ആനകൾക്കിടയിലെ സുരക്ഷാരീതികൾ മുതിർന്നവർ പങ്കുവയ്ക്കട്ടെ.",
+      "bridge": { "languages": ["Muthuvan", "Paniya", "Irula", "Kanikkar"], "note": "Invite children to share animal names and traditional knowledge (tracks, calls) in their home language — treat it as science.", "note_ml": "ജീവികളുടെ പേരും പരമ്പരാഗത അറിവും (കാൽപ്പാട്, ശബ്ദം) വീട്ടുഭാഷയിൽ പങ്കുവയ്ക്കാൻ ക്ഷണിക്കുക — ഇതും ശാസ്ത്രമാണ്." },
+      "questions": [
+        { "q": "Who leads an elephant herd?", "q_ml": "ആനക്കൂട്ടത്തെ നയിക്കുന്നത്?", "o": ["The youngest calf", "The eldest female", "A tiger", "No one"], "o_ml": ["ഏറ്റവും ചെറിയ കുട്ടി", "മുതിർന്ന പിടിയാന", "കടുവ", "ആരുമില്ല"], "a": 1, "x": "The matriarch — eldest female.", "x_ml": "മുതിർന്ന പിടിയാന.", "d": true },
+        { "q": "Where does a rat live?", "q_ml": "എലി എവിടെ ജീവിക്കുന്നു?", "o": ["Nest", "Burrow", "Hive", "Web"], "o_ml": ["കൂട്", "മാളം", "തേനീച്ചക്കൂട്", "വല"], "a": 1, "x": "A burrow in the ground.", "x_ml": "മണ്ണിലെ മാളം." },
+        { "q": "The Nilgiri tahr lives on:", "q_ml": "വരയാട് ജീവിക്കുന്നത്:", "o": ["the sea shore", "high rocky hills", "rivers", "cities"], "o_ml": ["കടൽത്തീരം", "ഉയർന്ന പാറക്കുന്നുകൾ", "പുഴ", "നഗരം"], "a": 1, "x": "High rocky hills like Eravikulam.", "x_ml": "ഇരവികുളം പോലുള്ള ഉയർന്ന പാറക്കുന്നുകൾ." },
+        { "q": "Bees live in a:", "q_ml": "തേനീച്ച ജീവിക്കുന്നത്:", "o": ["hive", "burrow", "den", "stable"], "o_ml": ["തേനീച്ചക്കൂട്", "മാളം", "ഗുഹ", "തൊഴുത്ത്"], "a": 0, "x": "A hive.", "x_ml": "കൂട്." }
+      ]
+    },
+    {
+      "id": "evs-4-1", "class": 4, "icon": "🍚", "minutes": 20, "competencies": ["SCI.0"], "scert": "Class 4 · Food and nutrition",
+      "title": "Healthy food from our land", "title_ml": "നമ്മുടെ നാട്ടിലെ പോഷകാഹാരം",
+      "body": "Energy foods: rice, ragi, tapioca. Body-building foods: dal, eggs, fish, beans. Protective foods: greens, fruits like papaya and guava. Ragi (millet) is rich in calcium and iron and is a traditional tribal food. Eat a mix every day.",
+      "body_ml": "ഊർജ്ജം തരുന്നവ: അരി, റാഗി, കപ്പ. ശരീരം വളർത്തുന്നവ: പരിപ്പ്, മുട്ട, മീൻ, പയർ. സംരക്ഷണം നൽകുന്നവ: ഇലക്കറി, പപ്പായ, പേരയ്ക്ക. റാഗി (ചെറുധാന്യം) കാൽസ്യവും ഇരുമ്പും നിറഞ്ഞ പരമ്പരാഗത ഭക്ഷണമാണ്. ദിവസവും എല്ലാം ചേർത്ത് കഴിക്കുക.",
+      "activity": "Plate game: arrange picture-cards of local foods into a balanced plate.",
+      "activity_ml": "പ്ലേറ്റ് കളി: നാടൻ ഭക്ഷണ ചിത്രകാർഡുകൾ കൊണ്ട് സമീകൃത പ്ലേറ്റ് ഒരുക്കുക.",
+      "questions": [
+        { "q": "Which is a body-building food?", "q_ml": "ശരീരം വളർത്തുന്ന ഭക്ഷണം?", "o": ["Sugar", "Dal", "Oil", "Salt"], "o_ml": ["പഞ്ചസാര", "പരിപ്പ്", "എണ്ണ", "ഉപ്പ്"], "a": 1, "x": "Dal is rich in protein.", "x_ml": "പരിപ്പിൽ മാംസ്യം കൂടുതൽ.", "d": true },
+        { "q": "Ragi is rich in:", "q_ml": "റാഗിയിൽ ധാരാളമുള്ളത്:", "o": ["calcium and iron", "plastic", "only sugar", "nothing"], "o_ml": ["കാൽസ്യം, ഇരുമ്പ്", "പ്ലാസ്റ്റിക്", "പഞ്ചസാര മാത്രം", "ഒന്നുമില്ല"], "a": 0, "x": "Ragi is a nutritious millet.", "x_ml": "റാഗി പോഷകസമൃദ്ധം." },
+        { "q": "Greens and fruits are:", "q_ml": "ഇലക്കറികളും പഴങ്ങളും:", "o": ["energy foods", "protective foods", "junk foods", "poison"], "o_ml": ["ഊർജ്ജ ഭക്ഷണം", "സംരക്ഷക ഭക്ഷണം", "ജങ്ക് ഫുഡ്", "വിഷം"], "a": 1, "x": "They give vitamins and minerals.", "x_ml": "ജീവകങ്ങളും ധാതുക്കളും." },
+        { "q": "A balanced meal has:", "q_ml": "സമീകൃതാഹാരത്തിൽ:", "o": ["only rice", "a mix of all food groups", "only sweets", "only fruit"], "o_ml": ["അരി മാത്രം", "എല്ലാ വിഭാഗവും", "മധുരം മാത്രം", "പഴം മാത്രം"], "a": 1, "x": "A mix of energy, body-building and protective foods.", "x_ml": "എല്ലാ വിഭാഗവും ചേർന്നത്.", "d": true }
+      ]
+    },
+    {
+      "id": "sci-5-1", "class": 5, "icon": "🌱", "minutes": 20, "competencies": ["SCI.1"], "scert": "Class 5 · Basic Science: plants make food",
+      "title": "How plants make food (photosynthesis)", "title_ml": "ചെടികൾ ആഹാരം നിർമ്മിക്കുന്നത് (പ്രകാശസംശ്ലേഷണം)",
+      "body": "Green leaves contain chlorophyll. Using sunlight, they take in carbon dioxide from air and water from the roots to make glucose (food), and release oxygen. This is photosynthesis. That is why forests give us fresh air.",
+      "body_ml": "പച്ചിലകളിൽ ഹരിതകം ഉണ്ട്. സൂര്യപ്രകാശം ഉപയോഗിച്ച് വായുവിലെ കാർബൺ ഡയോക്സൈഡും വേരിലൂടെ വെള്ളവും എടുത്ത് ഗ്ലൂക്കോസ് (ആഹാരം) ഉണ്ടാക്കുകയും ഓക്സിജൻ പുറത്തുവിടുകയും ചെയ്യുന്നു. ഇതാണ് പ്രകാശസംശ്ലേഷണം. അതുകൊണ്ടാണ് കാട് ശുദ്ധവായു തരുന്നത്.",
+      "activity": "Cover part of a leaf with black paper for 3 days; compare colour with uncovered parts.",
+      "activity_ml": "ഒരു ഇലയുടെ ഭാഗം 3 ദിവസം കറുത്ത കടലാസ് കൊണ്ട് മൂടി നിറവ്യത്യാസം നിരീക്ഷിക്കുക.",
+      "questions": [
+        { "q": "The green pigment in leaves is:", "q_ml": "ഇലകളിലെ പച്ച വർണ്ണകം:", "o": ["chlorophyll", "haemoglobin", "melanin", "starch"], "o_ml": ["ഹരിതകം", "ഹീമോഗ്ലോബിൻ", "മെലാനിൻ", "അന്നജം"], "a": 0, "x": "Chlorophyll traps sunlight.", "x_ml": "ഹരിതകം സൂര്യപ്രകാശം പിടിച്ചെടുക്കുന്നു.", "d": true },
+        { "q": "Plants release which gas during photosynthesis?", "q_ml": "പ്രകാശസംശ്ലേഷണത്തിൽ പുറത്തുവിടുന്ന വാതകം?", "o": ["Carbon dioxide", "Oxygen", "Nitrogen", "Smoke"], "o_ml": ["കാർബൺ ഡയോക്സൈഡ്", "ഓക്സിജൻ", "നൈട്രജൻ", "പുക"], "a": 1, "x": "Oxygen is released.", "x_ml": "ഓക്സിജൻ.", "d": true },
+        { "q": "Which is NOT needed for photosynthesis?", "q_ml": "പ്രകാശസംശ്ലേഷണത്തിന് ആവശ്യമില്ലാത്തത്?", "o": ["Sunlight", "Water", "Carbon dioxide", "Darkness"], "o_ml": ["സൂര്യപ്രകാശം", "വെള്ളം", "കാർബൺ ഡയോക്സൈഡ്", "ഇരുട്ട്"], "a": 3, "x": "Light is needed, not darkness.", "x_ml": "പ്രകാശം വേണം, ഇരുട്ടല്ല." },
+        { "q": "The food made by leaves is:", "q_ml": "ഇലകൾ ഉണ്ടാക്കുന്ന ആഹാരം:", "o": ["glucose", "salt", "protein powder", "oil"], "o_ml": ["ഗ്ലൂക്കോസ്", "ഉപ്പ്", "പ്രോട്ടീൻ പൊടി", "എണ്ണ"], "a": 0, "x": "Glucose, later stored as starch.", "x_ml": "ഗ്ലൂക്കോസ്, പിന്നീട് അന്നജമായി സംഭരിക്കുന്നു." }
+      ]
+    },
+    {
+      "id": "sci-6-1", "class": 6, "icon": "🧲", "minutes": 25, "competencies": ["SCI.1"], "scert": "Class 6 · Basic Science: magnets",
+      "title": "Magnets and their properties", "title_ml": "കാന്തങ്ങളും അവയുടെ സവിശേഷതകളും",
+      "body": "Magnets attract iron, nickel and cobalt. Every magnet has a north pole and a south pole. Like poles repel, unlike poles attract. A freely hanging magnet always points north–south — this is how a compass works.",
+      "body_ml": "കാന്തം ഇരുമ്പ്, നിക്കൽ, കൊബാൾട്ട് എന്നിവയെ ആകർഷിക്കുന്നു. എല്ലാ കാന്തത്തിനും ഉത്തരധ്രുവവും ദക്ഷിണധ്രുവവും ഉണ്ട്. സജാതീയ ധ്രുവങ്ങൾ വികർഷിക്കുന്നു, വിജാതീയ ധ്രുവങ്ങൾ ആകർഷിക്കുന്നു. സ്വതന്ത്രമായി തൂക്കിയിട്ട കാന്തം വടക്ക്–തെക്ക് ദിശയിൽ നിൽക്കും — വടക്കുനോക്കിയന്ത്രം ഇങ്ങനെ പ്രവർത്തിക്കുന്നു.",
+      "activity": "Test 10 objects from the hamlet for magnetism; make a needle compass in a bowl of water.",
+      "activity_ml": "ഊരിലെ 10 വസ്തുക്കൾ കാന്തം കൊണ്ട് പരീക്ഷിക്കുക; വെള്ളപ്പാത്രത്തിൽ സൂചി കോമ്പസ് ഉണ്ടാക്കുക.",
+      "questions": [
+        { "q": "Which is attracted by a magnet?", "q_ml": "കാന്തം ആകർഷിക്കുന്നത്?", "o": ["Wood", "Iron nail", "Plastic", "Paper"], "o_ml": ["മരം", "ഇരുമ്പാണി", "പ്ലാസ്റ്റിക്", "കടലാസ്"], "a": 1, "x": "Iron is magnetic.", "x_ml": "ഇരുമ്പ് കാന്തിക വസ്തു.", "d": true },
+        { "q": "Two north poles brought together will:", "q_ml": "രണ്ട് ഉത്തരധ്രുവങ്ങൾ അടുപ്പിച്ചാൽ:", "o": ["attract", "repel", "melt", "nothing"], "o_ml": ["ആകർഷിക്കും", "വികർഷിക്കും", "ഉരുകും", "ഒന്നുമില്ല"], "a": 1, "x": "Like poles repel.", "x_ml": "സജാതീയ ധ്രുവങ്ങൾ വികർഷിക്കും." },
+        { "q": "A compass needle points:", "q_ml": "കോമ്പസ് സൂചി ചൂണ്ടുന്നത്:", "o": ["east–west", "north–south", "up–down", "anywhere"], "o_ml": ["കിഴക്ക്–പടിഞ്ഞാറ്", "വടക്ക്–തെക്ക്", "മുകളിൽ–താഴെ", "എവിടെയും"], "a": 1, "x": "North–south.", "x_ml": "വടക്ക്–തെക്ക്.", "d": true },
+        { "q": "How many poles does a magnet have?", "q_ml": "ഒരു കാന്തത്തിന് എത്ര ധ്രുവങ്ങൾ?", "o": ["1", "2", "3", "4"], "a": 1, "x": "North and south.", "x_ml": "ഉത്തരം, ദക്ഷിണം." }
+      ]
+    },
+    {
+      "id": "sci-7-1", "class": 7, "icon": "🔥", "minutes": 25, "competencies": ["SCI.1"], "scert": "Class 7 · Basic Science: heat",
+      "title": "Heat: conduction, convection, radiation", "title_ml": "താപം: ചാലനം, സംവഹനം, വികിരണം",
+      "body": "Heat moves from hot to cold. In solids it moves by conduction (a steel spoon in hot tea gets hot). In liquids and gases by convection (hot water rises in a pot). From the sun by radiation, even through empty space. Metals are good conductors; wood and air are poor conductors (insulators).",
+      "body_ml": "താപം ചൂടുള്ളതിൽ നിന്ന് തണുത്തതിലേക്ക് നീങ്ങുന്നു. ഖരത്തിൽ ചാലനം (ചൂടുചായയിലെ സ്റ്റീൽ സ്പൂൺ ചൂടാകും). ദ്രാവകത്തിലും വാതകത്തിലും സംവഹനം (കലത്തിലെ ചൂടുവെള്ളം മുകളിലേക്ക്). സൂര്യനിൽ നിന്ന് വികിരണം, ശൂന്യതയിലൂടെയും. ലോഹങ്ങൾ നല്ല ചാലകങ്ങൾ; മരവും വായുവും കുചാലകങ്ങൾ.",
+      "activity": "Hold steel, wooden and plastic spoons in hot water; record which gets hot first.",
+      "activity_ml": "സ്റ്റീൽ, മരം, പ്ലാസ്റ്റിക് സ്പൂണുകൾ ചൂടുവെള്ളത്തിൽ വച്ച് ഏത് ആദ്യം ചൂടാകുന്നു എന്ന് രേഖപ്പെടുത്തുക.",
+      "questions": [
+        { "q": "Heat from the sun reaches us by:", "q_ml": "സൂര്യതാപം നമ്മിലെത്തുന്നത്:", "o": ["conduction", "convection", "radiation", "magnetism"], "o_ml": ["ചാലനം", "സംവഹനം", "വികിരണം", "കാന്തികത"], "a": 2, "x": "Radiation travels through space.", "x_ml": "വികിരണം ശൂന്യതയിലൂടെയും.", "d": true },
+        { "q": "Which is a good conductor of heat?", "q_ml": "നല്ല താപചാലകം?", "o": ["Wood", "Copper", "Plastic", "Cloth"], "o_ml": ["മരം", "ചെമ്പ്", "പ്ലാസ്റ്റിക്", "തുണി"], "a": 1, "x": "Metals like copper conduct heat well.", "x_ml": "ചെമ്പ് പോലുള്ള ലോഹങ്ങൾ.", "d": true },
+        { "q": "Why do cooking pots have wooden or plastic handles?", "q_ml": "പാത്രങ്ങൾക്ക് മരം/പ്ലാസ്റ്റിക് പിടി എന്തിന്?", "o": ["They are insulators", "They look nice", "They are heavy", "They conduct heat"], "o_ml": ["കുചാലകങ്ങളായതിനാൽ", "ഭംഗിക്ക്", "ഭാരത്തിന്", "ചാലകങ്ങളായതിനാൽ"], "a": 0, "x": "Insulators don't let heat reach your hand.", "x_ml": "കുചാലകങ്ങൾ ചൂട് കൈയിലെത്താൻ അനുവദിക്കില്ല." },
+        { "q": "Hot water rising in a pot is an example of:", "q_ml": "കലത്തിലെ ചൂടുവെള്ളം മുകളിലേക്ക് ഉയരുന്നത്:", "o": ["conduction", "convection", "radiation", "evaporation"], "o_ml": ["ചാലനം", "സംവഹനം", "വികിരണം", "ബാഷ്പീകരണം"], "a": 1, "x": "Convection in liquids.", "x_ml": "ദ്രാവകങ്ങളിലെ സംവഹനം." }
+      ]
+    },
+    {
+      "id": "sci-8-1", "class": 8, "icon": "🦠", "minutes": 30, "competencies": ["SCI.1"], "scert": "Class 8 · Biology: microorganisms",
+      "title": "Microorganisms: friends and foes", "title_ml": "സൂക്ഷ്മജീവികൾ: മിത്രങ്ങളും ശത്രുക്കളും",
+      "body": "Microorganisms are too small to see without a microscope: bacteria, fungi, protozoa, viruses. Friends: curd-making bacteria, yeast in appam batter, decomposers that make compost. Foes: germs causing cholera, malaria (spread by mosquitoes) and TB. Vaccines and hygiene protect us.",
+      "body_ml": "മൈക്രോസ്കോപ്പില്ലാതെ കാണാൻ കഴിയാത്തത്ര ചെറിയവയാണ് സൂക്ഷ്മജീവികൾ: ബാക്ടീരിയ, ഫംഗസ്, പ്രോട്ടോസോവ, വൈറസ്. മിത്രങ്ങൾ: തൈരുണ്ടാക്കുന്ന ബാക്ടീരിയ, അപ്പമാവിലെ യീസ്റ്റ്, കമ്പോസ്റ്റുണ്ടാക്കുന്ന വിഘാടകർ. ശത്രുക്കൾ: കോളറ, മലമ്പനി (കൊതുക് പരത്തുന്നു), ക്ഷയം. വാക്സിനും ശുചിത്വവും നമ്മെ സംരക്ഷിക്കുന്നു.",
+      "activity": "Set up a compost pit at the centre; observe changes weekly.",
+      "activity_ml": "പഠനകേന്ദ്രത്തിൽ കമ്പോസ്റ്റ് കുഴി ഉണ്ടാക്കി ആഴ്ചതോറും നിരീക്ഷിക്കുക.",
+      "questions": [
+        { "q": "Which microorganism helps make curd?", "q_ml": "തൈരുണ്ടാക്കാൻ സഹായിക്കുന്നത്?", "o": ["Virus", "Lactobacillus bacteria", "Plasmodium", "Mosquito"], "o_ml": ["വൈറസ്", "ലാക്ടോബാസിലസ് ബാക്ടീരിയ", "പ്ലാസ്മോഡിയം", "കൊതുക്"], "a": 1, "x": "Lactobacillus.", "x_ml": "ലാക്ടോബാസിലസ്.", "d": true },
+        { "q": "Malaria spreads through:", "q_ml": "മലമ്പനി പരത്തുന്നത്:", "o": ["mosquito bites", "eating curd", "sunlight", "trees"], "o_ml": ["കൊതുകുകടി", "തൈര്", "വെയിൽ", "മരങ്ങൾ"], "a": 0, "x": "Female Anopheles mosquito.", "x_ml": "അനോഫിലസ് പെൺകൊതുക്.", "d": true },
+        { "q": "Yeast in appam batter causes:", "q_ml": "അപ്പമാവിലെ യീസ്റ്റ്:", "o": ["fermentation", "freezing", "rusting", "melting"], "o_ml": ["പുളിക്കൽ", "ഉറയൽ", "തുരുമ്പ്", "ഉരുകൽ"], "a": 0, "x": "Fermentation makes it rise.", "x_ml": "പുളിക്കൽ — മാവ് പൊങ്ങുന്നു." },
+        { "q": "Decomposers help by:", "q_ml": "വിഘാടകർ:", "o": ["turning waste into compost", "making plastic", "spreading disease only", "making rain"], "o_ml": ["മാലിന്യം കമ്പോസ്റ്റാക്കുന്നു", "പ്ലാസ്റ്റിക് ഉണ്ടാക്കുന്നു", "രോഗം മാത്രം പരത്തുന്നു", "മഴ ഉണ്ടാക്കുന്നു"], "a": 0, "x": "They recycle nutrients.", "x_ml": "പോഷകങ്ങൾ പുനഃചംക്രമണം ചെയ്യുന്നു." }
+      ]
+    },
+    {
+      "id": "sci-9-1", "class": 9, "icon": "⚡", "minutes": 30, "competencies": ["SCI.1", "SCI.2"], "scert": "Class 9 · Physics: electricity",
+      "title": "Electric current and Ohm's law", "title_ml": "വൈദ്യുതപ്രവാഹവും ഓം നിയമവും",
+      "body": "Electric current is the flow of charge, measured in amperes (A). Voltage (V) pushes the current; resistance (Ω) opposes it. Ohm's law: V = I × R. A 12 V solar battery across a 6 Ω bulb gives I = 12 ÷ 6 = 2 A. Power P = V × I.",
+      "body_ml": "ചാർജിന്റെ ഒഴുക്കാണ് വൈദ്യുതപ്രവാഹം, ആമ്പിയറിൽ (A) അളക്കുന്നു. വോൾട്ടേജ് (V) പ്രവാഹത്തെ തള്ളുന്നു; പ്രതിരോധം (Ω) തടയുന്നു. ഓം നിയമം: V = I × R. 12 V സോളാർ ബാറ്ററി 6 Ω ബൾബിൽ → I = 2 A. പവർ P = V × I.",
+      "activity": "Study the hamlet solar light: identify panel, battery, controller and LED; compute power.",
+      "activity_ml": "ഊരിലെ സോളാർ വിളക്ക് പഠിക്കുക: പാനൽ, ബാറ്ററി, കൺട്രോളർ, LED; പവർ കണക്കാക്കുക.",
+      "questions": [
+        { "q": "Unit of electric current:", "q_ml": "വൈദ്യുതപ്രവാഹത്തിന്റെ യൂണിറ്റ്:", "o": ["volt", "ampere", "ohm", "watt"], "o_ml": ["വോൾട്ട്", "ആമ്പിയർ", "ഓം", "വാട്ട്"], "a": 1, "x": "Ampere (A).", "x_ml": "ആമ്പിയർ.", "d": true },
+        { "q": "V = 12 V, R = 4 Ω. Current?", "q_ml": "V = 12 V, R = 4 Ω. പ്രവാഹം?", "o": ["3 A", "48 A", "8 A", "16 A"], "a": 0, "x": "I = V/R = 3 A.", "x_ml": "I = V/R = 3 A.", "d": true },
+        { "q": "Power of a device using 2 A at 12 V:", "q_ml": "12 V-ൽ 2 A — പവർ:", "o": ["6 W", "14 W", "24 W", "10 W"], "a": 2, "x": "P = V × I = 24 W.", "x_ml": "P = 24 W." },
+        { "q": "Which opposes the flow of current?", "q_ml": "പ്രവാഹത്തെ തടയുന്നത്?", "o": ["voltage", "resistance", "power", "charge"], "o_ml": ["വോൾട്ടേജ്", "പ്രതിരോധം", "പവർ", "ചാർജ്"], "a": 1, "x": "Resistance.", "x_ml": "പ്രതിരോധം." }
+      ]
+    },
+    {
+      "id": "sci-10-1", "class": 10, "icon": "🧪", "minutes": 35, "competencies": ["SCI.2"], "scert": "SSLC · Chemistry: acids, bases, salts",
+      "title": "Acids, bases and the pH scale", "title_ml": "ആസിഡുകൾ, ബേസുകൾ, pH സ്കെയിൽ",
+      "body": "Acids taste sour and turn blue litmus red (lemon juice, vinegar). Bases feel soapy and turn red litmus blue (soap, lime water). pH below 7 is acidic, 7 is neutral (pure water), above 7 is basic. An acid and a base neutralise each other to form salt and water.",
+      "body_ml": "ആസിഡുകൾക്ക് പുളിരസം, നീല ലിറ്റ്മസ് ചുവപ്പാക്കും (നാരങ്ങനീര്, വിനാഗിരി). ബേസുകൾക്ക് വഴുവഴുപ്പ്, ചുവന്ന ലിറ്റ്മസ് നീലയാക്കും (സോപ്പ്, ചുണ്ണാമ്പുവെള്ളം). pH 7-ൽ താഴെ ആസിഡ്, 7 നിർവീര്യം (ശുദ്ധജലം), 7-ന് മുകളിൽ ബേസ്. ആസിഡും ബേസും ചേർന്ന് ലവണവും ജലവും ഉണ്ടാകുന്നു (നിർവീരീകരണം).",
+      "activity": "Make an indicator from red cabbage or hibiscus flowers; test 8 household liquids.",
+      "activity_ml": "ചെമ്പരത്തിപ്പൂവിൽ നിന്ന് സൂചകം ഉണ്ടാക്കി 8 വീട്ടുദ്രാവകങ്ങൾ പരിശോധിക്കുക.",
+      "questions": [
+        { "q": "pH of pure water:", "q_ml": "ശുദ്ധജലത്തിന്റെ pH:", "o": ["0", "5", "7", "14"], "a": 2, "x": "Neutral: 7.", "x_ml": "നിർവീര്യം: 7.", "d": true },
+        { "q": "Lemon juice turns blue litmus:", "q_ml": "നാരങ്ങനീര് നീല ലിറ്റ്മസിനെ:", "o": ["red", "blue", "green", "no change"], "o_ml": ["ചുവപ്പാക്കും", "നീലയാക്കും", "പച്ചയാക്കും", "മാറ്റമില്ല"], "a": 0, "x": "It is an acid.", "x_ml": "ആസിഡ് ആയതിനാൽ ചുവപ്പ്.", "d": true },
+        { "q": "Acid + base → ?", "o": ["salt + water", "only gas", "metal", "oxygen"], "o_ml": ["ലവണം + ജലം", "വാതകം മാത്രം", "ലോഹം", "ഓക്സിജൻ"], "a": 0, "x": "Neutralisation.", "x_ml": "നിർവീരീകരണം." },
+        { "q": "A solution with pH 11 is:", "q_ml": "pH 11 ഉള്ള ലായനി:", "o": ["acidic", "neutral", "basic", "salty only"], "o_ml": ["അമ്ലം", "നിർവീര്യം", "ക്ഷാരം (ബേസ്)", "ഉപ്പുരസം മാത്രം"], "a": 2, "x": "Above 7 → basic.", "x_ml": "7-ന് മുകളിൽ → ബേസ്." }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "id": "exams",
+  "version": "1.0.0",
+  "name": "Exam Preparation",
+  "name_ml": "പരീക്ഷാ പരിശീലനം",
+  "icon": "🎯",
+  "description": "Kerala PSC, Bank (IBPS), SSC and RRB coaching: bilingual question bank, OMR-style timed mocks with negative marking, weakness analytics, spaced revision, current affairs, exam calendar and assisted applications.",
+  "tables": {
+    "exams_attempts": ["person_id", "hamlet_id", "pattern", "title", "assignment_id", "programme_id", "qids", "answers", "status", "started_at", "submitted_at", "duration_s", "correct", "wrong", "blank", "score", "max_score", "pct", "sections", "neg", "subject", "topic"],
+    "exams_reviews": ["person_id", "hamlet_id", "qid", "subject", "topic", "ef", "interval_d", "reps", "lapses", "due", "last_seen", "last_grade", "status"],
+    "exams_calendar": ["code", "body", "title", "title_ml", "notif_date", "apply_from", "apply_by", "exam_date", "pattern", "eligibility", "eligibility_ml", "url", "demo", "status"],
+    "exams_applications": ["person_id", "hamlet_id", "calendar_id", "status", "steps", "docs", "application_no", "assisted_by", "remind", "last_reminded", "note"],
+    "exams_assignments": ["agency_id", "programme_id", "hamlet_id", "pattern", "title", "title_ml", "due", "created_by", "created_at", "subject", "topic"],
+    "exams_affairs": ["date", "category", "title", "title_ml", "body", "body_ml", "tags", "author", "demo"],
+    "exams_prefs": ["person_id", "hamlet_id", "leaderboard", "target_exam", "daily_goal"],
+    "exams_questions": ["subject", "topic", "q", "q_ml", "options", "options_ml", "answer", "x", "x_ml", "difficulty", "author_id", "agency_id", "status"]
+  },
+  "types": {
+    "duration_s": "INTEGER", "correct": "INTEGER", "wrong": "INTEGER", "blank": "INTEGER", "score": "REAL", "max_score": "REAL", "pct": "REAL", "neg": "REAL",
+    "ef": "REAL", "interval_d": "INTEGER", "reps": "INTEGER", "lapses": "INTEGER", "last_grade": "INTEGER",
+    "demo": "INTEGER", "remind": "INTEGER", "leaderboard": "INTEGER", "daily_goal": "INTEGER", "answer": "INTEGER", "difficulty": "INTEGER"
+  },
+  "emits": ["exams.mock_completed", "exams.application_updated", "exams.assignment_created"],
+  "subscribes": ["core.enrolled"],
+  "nav": [
+    { "view": "home", "label": "Exam Prep", "label_ml": "പരീക്ഷാ പരിശീലനം", "icon": "🎯", "roles": ["learner", "guardian"], "section": "learn" },
+    { "view": "teach", "label": "Exam batches", "label_ml": "പരീക്ഷാ ബാച്ചുകൾ", "icon": "🎯", "roles": ["teacher", "facilitator", "agency_admin", "coordinator", "platform_admin"], "section": "teach" },
+    { "view": "admin", "label": "Exam prep overview", "label_ml": "പരീക്ഷാ പരിശീലനം — അവലോകനം", "icon": "📊", "roles": ["platform_admin", "agency_admin", "coordinator", "donor", "govt_viewer", "cpo"], "section": "insight" }
+  ]
+}

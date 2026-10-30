@@ -1,0 +1,65 @@
+'use strict';
+// AADI Brain — storage layer.
+// Every replicated table has the standard columns: id, updated_at, node, deleted.
+// All writes to replicated tables go through store.put / store.del, which first
+// append an event to the hash-chained log and then apply it. State can therefore
+// always be rebuilt from the log, and the log is what nodes (cloud <-> hubs) sync.
+const { DatabaseSync } = require('node:sqlite');
+const fs = require('fs');
+const path = require('path');
+
+function openDb(file) {
+  if (file !== ':memory:') fs.mkdirSync(path.dirname(file), { recursive: true });
+  const db = new DatabaseSync(file);
+  db.exec('PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL; PRAGMA foreign_keys=OFF; PRAGMA busy_timeout=5000;');
+  return db;
+}
+
+const STD_COLS = 'id TEXT PRIMARY KEY, updated_at TEXT NOT NULL, node TEXT NOT NULL, deleted INTEGER NOT NULL DEFAULT 0';
+
+// Replicated core tables. Column lists are explicit so the store can whitelist fields.
+const CORE_TABLES = {
+  hamlets: ['name', 'name_ml', 'district', 'panchayat', 'community', 'population', 'households', 'lat', 'lng', 'connectivity', 'power', 'hub_node', 'notes'],
+  agencies: ['name', 'type', 'steward', 'contact', 'status', 'colour', 'about'],
+  agency_presence: ['agency_id', 'hamlet_id', 'services', 'since', 'status'],
+  centres: ['hamlet_id', 'agency_id', 'name', 'kind', 'hub_status', 'devices', 'last_sync'],
+  programmes: ['agency_id', 'hamlet_id', 'centre_id', 'module', 'track', 'title', 'title_ml', 'schedule', 'capacity', 'status'],
+  persons: ['hamlet_id', 'name', 'gender', 'dob', 'kind', 'language', 'school_class', 'phone', 'guardian_id', 'relation', 'aspirations', 'literacy_level', 'notes'],
+  users: ['person_id', 'username', 'pass_hash', 'role', 'agency_id', 'centre_id', 'hamlet_ids', 'display_name', 'active', 'safeguarding_trained'],
+  enrolments: ['person_id', 'programme_id', 'agency_id', 'hamlet_id', 'status', 'start_date'],
+  consents: ['person_id', 'agency_id', 'scopes', 'granted_by', 'relation', 'status', 'granted_at', 'expires_at', 'method', 'hamlet_id'],
+  competencies: ['code', 'domain', 'title', 'title_ml', 'level', 'stage'],
+  passport_entries: ['person_id', 'hamlet_id', 'type', 'ref', 'title', 'level', 'evidence', 'issued_by_agency', 'issued_at'],
+  notifications: ['person_id', 'hamlet_id', 'channel', 'message', 'status', 'module', 'created_at'],
+};
+
+function migrateCore(db) {
+  for (const [t, cols] of Object.entries(CORE_TABLES)) {
+    db.exec(`CREATE TABLE IF NOT EXISTS ${t} (${STD_COLS}, ${cols.map((c) => `${c} ${colType(c)}`).join(', ')})`);
+  }
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS events (
+      seq INTEGER PRIMARY KEY AUTOINCREMENT,
+      id TEXT UNIQUE NOT NULL, node TEXT NOT NULL, type TEXT NOT NULL, actor TEXT,
+      hamlet_id TEXT, payload TEXT NOT NULL, ts TEXT NOT NULL,
+      prev_hash TEXT, hash TEXT NOT NULL, local INTEGER NOT NULL DEFAULT 1);
+    CREATE INDEX IF NOT EXISTS ev_type ON events(type);
+    CREATE INDEX IF NOT EXISTS ev_node ON events(node, seq);
+    CREATE TABLE IF NOT EXISTS sessions (token TEXT PRIMARY KEY, user_id TEXT NOT NULL, created_at TEXT, expires_at TEXT);
+    CREATE TABLE IF NOT EXISTS module_state (id TEXT PRIMARY KEY, enabled INTEGER NOT NULL DEFAULT 1, version TEXT, schema_version INTEGER DEFAULT 0, updated_at TEXT);
+    CREATE TABLE IF NOT EXISTS sync_cursors (peer TEXT PRIMARY KEY, pulled_seq INTEGER DEFAULT 0, pushed_seq INTEGER DEFAULT 0, last_ok TEXT, last_error TEXT);
+    CREATE TABLE IF NOT EXISTS kv (k TEXT PRIMARY KEY, v TEXT);
+    CREATE INDEX IF NOT EXISTS persons_hamlet ON persons(hamlet_id);
+    CREATE INDEX IF NOT EXISTS enr_person ON enrolments(person_id);
+    CREATE INDEX IF NOT EXISTS cons_person ON consents(person_id, agency_id);
+    CREATE INDEX IF NOT EXISTS pp_person ON passport_entries(person_id);
+  `);
+}
+
+function colType(c) {
+  if (/^(population|households|steward|capacity|active|safeguarding_trained|level|devices)$/.test(c)) return 'INTEGER';
+  if (/^(lat|lng)$/.test(c)) return 'REAL';
+  return 'TEXT';
+}
+
+module.exports = { openDb, migrateCore, CORE_TABLES, STD_COLS, colType };

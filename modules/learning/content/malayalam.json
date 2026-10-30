@@ -1,0 +1,125 @@
+{
+  "subject": "malayalam",
+  "lessons": [
+    {
+      "id": "mal-1-1", "class": 1, "icon": "അ", "minutes": 15, "competencies": ["LIT.ML.1"], "scert": "Class 1 · Swaraksharangal (vowels)",
+      "title": "Vowel letters: അ ആ ഇ ഈ ഉ", "title_ml": "സ്വരാക്ഷരങ്ങൾ: അ ആ ഇ ഈ ഉ",
+      "body": "Malayalam begins with vowels. അ as in അമ്മ (mother), ആ as in ആന (elephant), ഇ as in ഇല (leaf), ഈ as in ഈച്ച (fly), ഉ as in ഉറുമ്പ് (ant). Say each sound slowly and trace the letter in sand.",
+      "body_ml": "അ — അമ്മ, ആ — ആന, ഇ — ഇല, ഈ — ഈച്ച, ഉ — ഉറുമ്പ്. ഓരോ ശബ്ദവും പതുക്കെ പറയുക, മണലിൽ അക്ഷരം വരയ്ക്കുക.",
+      "audio_ml": "അ, അമ്മ. ആ, ആന. ഇ, ഇല. ഈ, ഈച്ച. ഉ, ഉറുമ്പ്.",
+      "activity": "Letter hunt: find objects in the hamlet whose names begin with each vowel; draw them.",
+      "activity_ml": "അക്ഷര വേട്ട: ഓരോ സ്വരത്തിലും തുടങ്ങുന്ന വസ്തുക്കൾ ഊരിൽ കണ്ടെത്തി വരയ്ക്കുക.",
+      "bridge": { "languages": ["Muthuvan", "Paniya", "Irula", "Kanikkar", "Cholanaikkan"], "note": "Collect home-language words that start with the same sound (e.g., the child's own word for 'mother'). Accept them warmly and write them on the Bridge Chart next to the Malayalam word. Speak in the home language for instructions in the first weeks.", "note_ml": "അതേ ശബ്ദത്തിൽ തുടങ്ങുന്ന വീട്ടുഭാഷാ വാക്കുകൾ ശേഖരിക്കുക (ഉദാ: 'അമ്മ' എന്നതിന് കുട്ടിയുടെ സ്വന്തം വാക്ക്). സന്തോഷത്തോടെ സ്വീകരിച്ച് മലയാള വാക്കിനടുത്ത് 'പാലം ചാർട്ടിൽ' എഴുതുക. ആദ്യ ആഴ്ചകളിൽ നിർദ്ദേശങ്ങൾ വീട്ടുഭാഷയിൽ നൽകുക." },
+      "questions": [
+        { "q": "Which letter does ആന (elephant) begin with?", "q_ml": "'ആന' ഏത് അക്ഷരത്തിൽ തുടങ്ങുന്നു?", "o": ["അ", "ആ", "ഇ", "ഉ"], "a": 1, "x": "ആ-ന: the long 'aa' sound.", "x_ml": "ആ-ന: നീണ്ട 'ആ' ശബ്ദം.", "d": true },
+        { "q": "Which word starts with ഇ?", "q_ml": "'ഇ'-യിൽ തുടങ്ങുന്ന വാക്ക്?", "o": ["അമ്മ", "ഇല", "ഉറുമ്പ്", "ആട്"], "a": 1, "x": "ഇ-ല (leaf).", "x_ml": "ഇ-ല.", "d": true },
+        { "q": "ഉറുമ്പ് means:", "q_ml": "'ഉറുമ്പ്' എന്താണ്?", "o": ["🐜 ant", "🐘 elephant", "🍃 leaf", "🐟 fish"], "o_ml": ["🐜 ഉറുമ്പ്", "🐘 ആന", "🍃 ഇല", "🐟 മീൻ"], "a": 0, "x": "ഉറുമ്പ് is an ant.", "x_ml": "ഉറുമ്പ് ചെറിയ ജീവി." },
+        { "q": "Which is a long vowel?", "q_ml": "ദീർഘസ്വരം ഏത്?", "o": ["അ", "ഇ", "ഈ", "ഉ"], "a": 2, "x": "ഈ is the long form of ഇ.", "x_ml": "ഇ-യുടെ ദീർഘരൂപം ഈ." }
+      ]
+    },
+    {
+      "id": "mal-1-2", "class": 1, "icon": "ക", "minutes": 15, "competencies": ["LIT.ML.1"], "scert": "Class 1 · Vyanjanangal (consonants)",
+      "title": "Consonants ക ഖ ഗ ഘ ങ and simple words", "title_ml": "വ്യഞ്ജനങ്ങൾ ക ഖ ഗ ഘ ങ, ലളിത വാക്കുകൾ",
+      "body": "ക is the first consonant: കാക്ക (crow), കല്ല് (stone), കപ്പ (tapioca). Joining a consonant with a vowel sign makes new sounds: ക + ാ = കാ, ക + ി = കി, ക + ു = കു.",
+      "body_ml": "ആദ്യ വ്യഞ്ജനം ക: കാക്ക, കല്ല്, കപ്പ. വ്യഞ്ജനത്തോട് സ്വരചിഹ്നം ചേർന്നാൽ പുതിയ ശബ്ദം: ക + ാ = കാ, ക + ി = കി, ക + ു = കു.",
+      "audio_ml": "ക, കാ, കി, കു. കാക്ക. കപ്പ. കല്ല്.",
+      "activity": "Make letter cards from cardboard; children build കാക്ക and കപ്പ.",
+      "activity_ml": "കാർഡ്ബോർഡ് അക്ഷര കാർഡുകൾ കൊണ്ട് 'കാക്ക', 'കപ്പ' ഉണ്ടാക്കുക.",
+      "bridge": { "languages": ["Muthuvan", "Paniya", "Irula"], "note": "Many tribal languages share ക-sounds; ask children for home words with 'ka' and compare.", "note_ml": "പല ഗോത്രഭാഷകളിലും 'ക' ശബ്ദമുണ്ട്; 'ക'-യുള്ള വീട്ടുവാക്കുകൾ ചോദിച്ച് താരതമ്യം ചെയ്യുക." },
+      "questions": [
+        { "q": "Which word means 'crow'?", "q_ml": "'crow' എന്നതിന്റെ മലയാളം?", "o": ["കപ്പ", "കാക്ക", "കല്ല്", "കുട"], "a": 1, "x": "കാക്ക = crow 🐦‍⬛", "x_ml": "കാക്ക.", "d": true },
+        { "q": "ക + ു = ?", "o": ["കാ", "കി", "കു", "കെ"], "a": 2, "x": "The ു sign gives the 'u' sound.", "x_ml": "'ു' ചിഹ്നം 'ഉ' ശബ്ദം നൽകുന്നു.", "d": true },
+        { "q": "How many letters in കപ്പ (count ക, പ്പ)?", "q_ml": "'കപ്പ' — എത്ര അക്ഷരങ്ങൾ (ക, പ്പ)?", "o": ["1", "2", "3", "4"], "a": 1, "x": "ക + പ്പ = 2 syllables.", "x_ml": "ക + പ്പ = 2." },
+        { "q": "Which starts with the same letter as കാക്ക?", "q_ml": "'കാക്ക' തുടങ്ങുന്ന അതേ അക്ഷരത്തിൽ തുടങ്ങുന്നത്?", "o": ["പൂവ്", "കുട", "മരം", "ആന"], "a": 1, "x": "കുട also begins with ക.", "x_ml": "കുടയും 'ക'-യിൽ തുടങ്ങുന്നു." }
+      ]
+    },
+    {
+      "id": "mal-2-1", "class": 2, "icon": "📖", "minutes": 20, "competencies": ["LIT.ML.2"], "scert": "Class 2 · Reading short sentences",
+      "title": "Reading short sentences: 'My hamlet'", "title_ml": "ചെറുവാക്യങ്ങൾ വായിക്കാം: 'എന്റെ ഊര്'",
+      "body": "Read: എന്റെ ഊര് മലയുടെ അടുത്താണ്. ഊരിൽ ഒരു പുഴയുണ്ട്. പുഴയിൽ മീനുണ്ട്. ഞാൻ എല്ലാ ദിവസവും പഠനകേന്ദ്രത്തിൽ പോകും. (My hamlet is near the hill. There is a river. There are fish in the river. I go to the learning centre every day.)",
+      "body_ml": "എന്റെ ഊര് മലയുടെ അടുത്താണ്. ഊരിൽ ഒരു പുഴയുണ്ട്. പുഴയിൽ മീനുണ്ട്. ഞാൻ എല്ലാ ദിവസവും പഠനകേന്ദ്രത്തിൽ പോകും.",
+      "audio_ml": "എന്റെ ഊര് മലയുടെ അടുത്താണ്. ഊരിൽ ഒരു പുഴയുണ്ട്. പുഴയിൽ മീനുണ്ട്. ഞാൻ എല്ലാ ദിവസവും പഠനകേന്ദ്രത്തിൽ പോകും.",
+      "activity": "Each child dictates one sentence about their hamlet; facilitator writes it; class reads together.",
+      "activity_ml": "ഓരോ കുട്ടിയും സ്വന്തം ഊരിനെക്കുറിച്ച് ഒരു വാക്യം പറയുന്നു; ഫെസിലിറ്റേറ്റർ എഴുതുന്നു; എല്ലാവരും ചേർന്ന് വായിക്കുന്നു.",
+      "bridge": { "languages": ["Muthuvan", "Paniya", "Irula", "Kanikkar"], "note": "Let children tell the story first in their home language, then build the Malayalam sentence together (Language Experience Approach).", "note_ml": "കുട്ടികൾ ആദ്യം വീട്ടുഭാഷയിൽ പറയട്ടെ, പിന്നീട് ഒരുമിച്ച് മലയാള വാക്യം ഉണ്ടാക്കുക (ഭാഷാനുഭവ സമീപനം)." },
+      "questions": [
+        { "q": "Where is the hamlet?", "q_ml": "ഊര് എവിടെയാണ്?", "o": ["Near the sea", "Near the hill", "In the city", "Near the school"], "o_ml": ["കടലിനടുത്ത്", "മലയുടെ അടുത്ത്", "നഗരത്തിൽ", "സ്കൂളിനടുത്ത്"], "a": 1, "x": "'മലയുടെ അടുത്താണ്' — near the hill.", "x_ml": "'മലയുടെ അടുത്താണ്'.", "d": true },
+        { "q": "What is in the river?", "q_ml": "പുഴയിൽ എന്താണുള്ളത്?", "o": ["ആന", "മീൻ", "കാക്ക", "പൂവ്"], "a": 1, "x": "പുഴയിൽ മീനുണ്ട്.", "x_ml": "പുഴയിൽ മീനുണ്ട്." },
+        { "q": "Which word means 'river'?", "q_ml": "'river' — മലയാളം?", "o": ["മല", "പുഴ", "ഊര്", "മീൻ"], "a": 1, "x": "പുഴ = river.", "x_ml": "പുഴ.", "d": true },
+        { "q": "Where does the child go every day?", "q_ml": "കുട്ടി എല്ലാ ദിവസവും എവിടെ പോകും?", "o": ["പുഴ", "മല", "പഠനകേന്ദ്രം", "ചന്ത"], "a": 2, "x": "പഠനകേന്ദ്രത്തിൽ പോകും — the learning centre.", "x_ml": "പഠനകേന്ദ്രത്തിൽ." }
+      ]
+    },
+    {
+      "id": "mal-3-1", "class": 3, "icon": "✍️", "minutes": 20, "competencies": ["LIT.ML.2", "LIT.ML.3"], "scert": "Class 3 · Koottaksharangal (conjuncts)",
+      "title": "Conjunct letters and chillu", "title_ml": "കൂട്ടക്ഷരങ്ങളും ചില്ലക്ഷരങ്ങളും",
+      "body": "When two consonants join without a vowel between them they form a conjunct (കൂട്ടക്ഷരം): ക്ക in കാക്ക, ന്ന in അന്ന്, ത്ത in പത്ത്. Chillu letters (ൻ ർ ൽ ൾ ൺ) are consonants that end a sound: അവൻ, അവൾ, പാൽ, തേൻ.",
+      "body_ml": "രണ്ട് വ്യഞ്ജനങ്ങൾ ഇടയിൽ സ്വരമില്ലാതെ ചേർന്നാൽ കൂട്ടക്ഷരം: കാക്കയിലെ ക്ക, അന്നിലെ ന്ന, പത്തിലെ ത്ത. ചില്ലക്ഷരങ്ങൾ (ൻ ർ ൽ ൾ ൺ) ശബ്ദം അവസാനിപ്പിക്കുന്നു: അവൻ, അവൾ, പാൽ, തേൻ.",
+      "audio_ml": "അവൻ. അവൾ. പാൽ. തേൻ. പത്ത്.",
+      "activity": "Honey-collection story: underline every chillu letter in a short paragraph about തേൻ.",
+      "activity_ml": "തേൻ ശേഖരണ കഥയിലെ എല്ലാ ചില്ലക്ഷരങ്ങൾക്കും അടിവരയിടുക.",
+      "questions": [
+        { "q": "Which word ends in a chillu letter?", "q_ml": "ചില്ലക്ഷരത്തിൽ അവസാനിക്കുന്ന വാക്ക്?", "o": ["തേൻ", "കാക്ക", "ഇല", "കുട"], "a": 0, "x": "തേൻ ends with ൻ.", "x_ml": "തേൻ — 'ൻ'.", "d": true },
+        { "q": "Which word has a conjunct letter?", "q_ml": "കൂട്ടക്ഷരമുള്ള വാക്ക്?", "o": ["പത്ത്", "മല", "ആന", "പുഴ"], "a": 0, "x": "ത്ത in പത്ത്.", "x_ml": "പത്തിലെ 'ത്ത'." },
+        { "q": "'അവൾ' refers to:", "q_ml": "'അവൾ' ആരെ കുറിക്കുന്നു?", "o": ["a boy", "a girl/woman", "a tree", "many people"], "o_ml": ["ആൺകുട്ടി", "പെൺകുട്ടി/സ്ത്രീ", "മരം", "പലർ"], "a": 1, "x": "അവൾ = she.", "x_ml": "അവൾ = സ്ത്രീലിംഗം." },
+        { "q": "Choose the correct spelling of 'milk':", "q_ml": "'പാൽ' ശരിയായ എഴുത്ത്:", "o": ["പാല്", "പാൽ", "പാള", "പല്"], "a": 1, "x": "പാൽ, with chillu ൽ.", "x_ml": "പാൽ — ചില്ല് 'ൽ'." }
+      ]
+    },
+    {
+      "id": "mal-4-1", "class": 4, "icon": "📜", "minutes": 25, "competencies": ["LIT.ML.2", "LIT.ML.3"], "scert": "Class 4 · Reading comprehension: folk tale",
+      "title": "Folk tale: The honey bird and the hunter", "title_ml": "നാട്ടുകഥ: തേൻകിളിയും വേട്ടക്കാരനും",
+      "body": "A honey-guide bird led a hunter to a beehive. The hunter took the honey and left a piece of wax for the bird. Next time, the bird guided him again. The elders say: share with those who help you. (Retold folk tale.)",
+      "body_ml": "ഒരു തേൻകിളി വേട്ടക്കാരനെ തേനീച്ചക്കൂട്ടിലേക്ക് നയിച്ചു. വേട്ടക്കാരൻ തേനെടുത്ത് കിളിക്ക് ഒരു കഷണം മെഴുക് കൊടുത്തു. അടുത്ത തവണയും കിളി വഴികാട്ടി. മൂപ്പന്മാർ പറയും: സഹായിക്കുന്നവരോട് പങ്കുവയ്ക്കുക.",
+      "audio_ml": "ഒരു തേൻകിളി വേട്ടക്കാരനെ തേനീച്ചക്കൂട്ടിലേക്ക് നയിച്ചു. വേട്ടക്കാരൻ തേനെടുത്ത് കിളിക്ക് ഒരു കഷണം മെഴുക് കൊടുത്തു.",
+      "activity": "Invite a hamlet elder to tell a story; children retell it in 4 sentences.",
+      "activity_ml": "ഊരിലെ മൂപ്പനെ കഥ പറയാൻ ക്ഷണിക്കുക; കുട്ടികൾ 4 വാക്യങ്ങളിൽ പുനരാഖ്യാനം ചെയ്യുക.",
+      "questions": [
+        { "q": "Who led the hunter to the hive?", "q_ml": "വേട്ടക്കാരനെ തേനീച്ചക്കൂട്ടിലേക്ക് നയിച്ചത് ആര്?", "o": ["An elephant", "A honey bird", "A child", "A dog"], "o_ml": ["ആന", "തേൻകിളി", "കുട്ടി", "നായ"], "a": 1, "x": "The honey-guide bird.", "x_ml": "തേൻകിളി.", "d": true },
+        { "q": "What did the hunter give the bird?", "q_ml": "വേട്ടക്കാരൻ കിളിക്ക് എന്ത് കൊടുത്തു?", "o": ["Rice", "Wax", "Fish", "Nothing"], "o_ml": ["അരി", "മെഴുക്", "മീൻ", "ഒന്നുമില്ല"], "a": 1, "x": "A piece of wax.", "x_ml": "ഒരു കഷണം മെഴുക്." },
+        { "q": "What is the lesson of the story?", "q_ml": "കഥയുടെ ഗുണപാഠം?", "o": ["Run fast", "Share with those who help you", "Never climb trees", "Birds are dangerous"], "o_ml": ["വേഗം ഓടുക", "സഹായിക്കുന്നവരോട് പങ്കുവയ്ക്കുക", "മരം കയറരുത്", "കിളികൾ അപകടകാരികൾ"], "a": 1, "x": "Sharing builds trust.", "x_ml": "പങ്കുവയ്ക്കൽ വിശ്വാസം വളർത്തുന്നു.", "d": true },
+        { "q": "'മൂപ്പന്മാർ' means:", "q_ml": "'മൂപ്പന്മാർ' എന്നാൽ:", "o": ["children", "elders", "birds", "hunters"], "o_ml": ["കുട്ടികൾ", "മുതിർന്നവർ / ഊരുമൂപ്പൻ", "കിളികൾ", "വേട്ടക്കാർ"], "a": 1, "x": "Elders / hamlet heads.", "x_ml": "ഊരിലെ മുതിർന്നവർ." }
+      ]
+    },
+    {
+      "id": "mal-6-1", "class": 6, "icon": "🖋️", "minutes": 25, "competencies": ["LIT.ML.3"], "scert": "Class 6 · Writing a letter / application",
+      "title": "Writing a leave letter", "title_ml": "അവധി അപേക്ഷ എഴുതാം",
+      "body": "A formal letter has: sender (From), receiver (To), date, subject, salutation (ബഹുമാനപ്പെട്ട സാർ/ടീച്ചർ), body, closing (വിശ്വസ്തതയോടെ) and signature. Keep sentences short and polite.",
+      "body_ml": "ഔപചാരിക കത്തിൽ: അയയ്ക്കുന്നയാൾ, സ്വീകർത്താവ്, തീയതി, വിഷയം, സംബോധന (ബഹുമാനപ്പെട്ട സാർ/ടീച്ചർ), ഉള്ളടക്കം, സമാപനം (വിശ്വസ്തതയോടെ), ഒപ്പ്. വാക്യങ്ങൾ ചെറുതും വിനയപൂർവവും ആയിരിക്കണം.",
+      "activity": "Write a leave letter to the class teacher for attending a family festival (Kalladi / Onam).",
+      "activity_ml": "കുടുംബ ഉത്സവത്തിൽ പങ്കെടുക്കാൻ ക്ലാസ് ടീച്ചർക്ക് അവധി അപേക്ഷ എഴുതുക.",
+      "questions": [
+        { "q": "Which is the correct closing for a formal letter in Malayalam?", "q_ml": "ഔപചാരിക കത്തിന്റെ ശരിയായ സമാപനം?", "o": ["സ്നേഹത്തോടെ", "വിശ്വസ്തതയോടെ", "ബൈ", "ശുഭരാത്രി"], "a": 1, "x": "വിശ്വസ്തതയോടെ (Yours faithfully).", "x_ml": "വിശ്വസ്തതയോടെ.", "d": true },
+        { "q": "What comes right after the date in a formal letter?", "q_ml": "തീയതിക്ക് ശേഷം വരുന്നത്?", "o": ["Signature", "Subject", "Closing", "Address of sender"], "o_ml": ["ഒപ്പ്", "വിഷയം", "സമാപനം", "അയയ്ക്കുന്നയാളുടെ വിലാസം"], "a": 1, "x": "Subject (വിഷയം) tells the purpose.", "x_ml": "വിഷയം — കത്തിന്റെ ഉദ്ദേശ്യം." },
+        { "q": "A leave letter should be:", "q_ml": "അവധി അപേക്ഷ എങ്ങനെയായിരിക്കണം?", "o": ["Long and angry", "Short and polite", "Without date", "Without reason"], "o_ml": ["നീണ്ടതും ദേഷ്യമുള്ളതും", "ചെറുതും വിനയപൂർവവും", "തീയതിയില്ലാതെ", "കാരണമില്ലാതെ"], "a": 1, "x": "Brief, polite, with a clear reason.", "x_ml": "ചുരുക്കി, വിനയത്തോടെ, കാരണം സഹിതം." },
+        { "q": "'ബഹുമാനപ്പെട്ട' is used in the:", "q_ml": "'ബഹുമാനപ്പെട്ട' ഉപയോഗിക്കുന്നത്:", "o": ["salutation", "signature", "subject", "date"], "o_ml": ["സംബോധന", "ഒപ്പ്", "വിഷയം", "തീയതി"], "a": 0, "x": "It begins the salutation.", "x_ml": "സംബോധനയിൽ." }
+      ]
+    },
+    {
+      "id": "mal-8-1", "class": 8, "icon": "🌿", "minutes": 30, "competencies": ["LIT.ML.3"], "scert": "Class 8 · Poetry appreciation",
+      "title": "Reading a nature poem", "title_ml": "പ്രകൃതി കവിത ആസ്വദിക്കാം",
+      "body": "Poems use rhythm (താളം), imagery (ബിംബം) and feeling. When you read a poem about the forest, ask: what do I see, hear and feel? Which words sound alike (പ്രാസം)? Write 3 lines about what the poem means to you.",
+      "body_ml": "കവിതയിൽ താളം, ബിംബം, ഭാവം ഉണ്ട്. കാടിനെക്കുറിച്ചുള്ള കവിത വായിക്കുമ്പോൾ ചോദിക്കുക: ഞാൻ എന്ത് കാണുന്നു, കേൾക്കുന്നു, അനുഭവിക്കുന്നു? ഏതൊക്കെ വാക്കുകൾ ഒരുപോലെ മുഴങ്ങുന്നു (പ്രാസം)? കവിത നിനക്ക് എന്തർത്ഥമാക്കുന്നു എന്ന് 3 വരിയിൽ എഴുതുക.",
+      "activity": "Children write a 4-line poem about the monsoon in their hamlet and recite it.",
+      "activity_ml": "സ്വന്തം ഊരിലെ മഴക്കാലത്തെക്കുറിച്ച് 4 വരി കവിത എഴുതി ചൊല്ലുക.",
+      "questions": [
+        { "q": "'ബിംബം' in poetry means:", "q_ml": "കവിതയിൽ 'ബിംബം' എന്നാൽ:", "o": ["rhythm", "word picture / image", "rhyme", "title"], "o_ml": ["താളം", "വാക്ചിത്രം", "പ്രാസം", "തലക്കെട്ട്"], "a": 1, "x": "An image painted with words.", "x_ml": "വാക്കുകൾ കൊണ്ടുള്ള ചിത്രം.", "d": true },
+        { "q": "Words that sound alike at the start of lines show:", "q_ml": "വരികളിൽ ഒരുപോലെ മുഴങ്ങുന്ന അക്ഷരങ്ങൾ:", "o": ["പ്രാസം", "വിഷയം", "സംബോധന", "ഒപ്പ്"], "a": 0, "x": "പ്രാസം (rhyme / alliteration).", "x_ml": "പ്രാസം." },
+        { "q": "'താളം' refers to:", "q_ml": "'താളം':", "o": ["rhythm", "meaning", "author", "colour"], "o_ml": ["താളം / ഈണം", "അർത്ഥം", "കവി", "നിറം"], "a": 0, "x": "The beat of the poem.", "x_ml": "കവിതയുടെ ഈണം." },
+        { "q": "When reading a poem like 'Karshakante Venal', what should you notice first?", "q_ml": "'കർഷകന്റെ വേനൽ' — ഇത്തരം പാഠങ്ങൾ വായിക്കുമ്പോൾ ആദ്യം ശ്രദ്ധിക്കേണ്ടത്?", "o": ["the feeling and images", "only the spelling", "the page number", "the font"], "o_ml": ["ഭാവവും ബിംബങ്ങളും", "അക്ഷരത്തെറ്റ് മാത്രം", "പേജ് നമ്പർ", "അക്ഷരരൂപം"], "a": 0, "x": "Appreciation begins with feeling and imagery.", "x_ml": "ആസ്വാദനം ഭാവത്തിൽ നിന്നും ബിംബത്തിൽ നിന്നും തുടങ്ങുന്നു." }
+      ]
+    },
+    {
+      "id": "mal-10-1", "class": 10, "icon": "📝", "minutes": 35, "competencies": ["LIT.ML.3"], "scert": "SSLC · Essay & review writing",
+      "title": "Writing an SSLC-style essay (ഉപന്യാസം)", "title_ml": "SSLC ഉപന്യാസ രചന",
+      "body": "A good essay has: an introduction that states the topic, 2–3 body paragraphs each with one main idea and an example, and a conclusion that gives your view. Use connecting words: എന്നാൽ, അതിനാൽ, കൂടാതെ, ചുരുക്കത്തിൽ. Plan for 3 minutes before writing.",
+      "body_ml": "നല്ല ഉപന്യാസത്തിൽ: വിഷയം അവതരിപ്പിക്കുന്ന ആമുഖം, ഓരോന്നിലും ഒരു പ്രധാന ആശയവും ഉദാഹരണവുമുള്ള 2–3 ഖണ്ഡികകൾ, നിങ്ങളുടെ അഭിപ്രായം പറയുന്ന ഉപസംഹാരം. ബന്ധിപ്പിക്കുന്ന വാക്കുകൾ: എന്നാൽ, അതിനാൽ, കൂടാതെ, ചുരുക്കത്തിൽ. എഴുതും മുമ്പ് 3 മിനിറ്റ് ആസൂത്രണം ചെയ്യുക.",
+      "activity": "Essay: 'Forests and our future' — plan with a mind-map, then write 200 words.",
+      "activity_ml": "ഉപന്യാസം: 'കാടും നമ്മുടെ ഭാവിയും' — മൈൻഡ്മാപ്പ് ഉണ്ടാക്കി 200 വാക്കിൽ എഴുതുക.",
+      "questions": [
+        { "q": "Which part of an essay gives your final view?", "q_ml": "ഉപന്യാസത്തിൽ അന്തിമ അഭിപ്രായം വരുന്നത്?", "o": ["ആമുഖം", "ഉപസംഹാരം", "തലക്കെട്ട്", "ഉദാഹരണം"], "a": 1, "x": "ഉപസംഹാരം (conclusion).", "x_ml": "ഉപസംഹാരം.", "d": true },
+        { "q": "Which word means 'therefore'?", "q_ml": "'therefore' — മലയാളം?", "o": ["അതിനാൽ", "എന്നാൽ", "കൂടാതെ", "പക്ഷേ"], "a": 0, "x": "അതിനാൽ = therefore.", "x_ml": "അതിനാൽ." },
+        { "q": "Each body paragraph should have:", "q_ml": "ഓരോ ഖണ്ഡികയിലും വേണ്ടത്:", "o": ["many unrelated ideas", "one main idea with an example", "only quotations", "no sentences"], "o_ml": ["ബന്ധമില്ലാത്ത പല ആശയങ്ങൾ", "ഒരു പ്രധാന ആശയവും ഉദാഹരണവും", "ഉദ്ധരണികൾ മാത്രം", "വാക്യങ്ങളില്ലാതെ"], "a": 1, "x": "One idea per paragraph keeps it clear.", "x_ml": "ഒരു ഖണ്ഡികയ്ക്ക് ഒരു ആശയം." },
+        { "q": "Before writing an essay in the exam you should:", "q_ml": "പരീക്ഷയിൽ ഉപന്യാസം എഴുതും മുമ്പ്:", "o": ["plan briefly", "start immediately without thinking", "copy from neighbour", "skip it"], "o_ml": ["ചുരുക്കി ആസൂത്രണം ചെയ്യുക", "ആലോചിക്കാതെ തുടങ്ങുക", "അടുത്തയാളിൽ നിന്ന് പകർത്തുക", "ഒഴിവാക്കുക"], "a": 0, "x": "A 3-minute plan saves time later.", "x_ml": "3 മിനിറ്റ് ആസൂത്രണം പിന്നീട് സമയം ലാഭിക്കും." }
+      ]
+    }
+  ]
+}

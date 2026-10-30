@@ -1,0 +1,71 @@
+{
+  "helplines": [
+    { "number": "1098", "icon": "🧒", "label": "Childline (children under 18)", "label_ml": "ചൈൽഡ്‌ലൈൻ (18 വയസ്സിൽ താഴെ)", "note": "Free, 24 hours", "note_ml": "സൗജന്യം, 24 മണിക്കൂറും" },
+    { "number": "112", "icon": "🚓", "label": "Police / Emergency", "label_ml": "പോലീസ് / അടിയന്തരം", "note": "If you are in danger now", "note_ml": "ഇപ്പോൾ അപകടത്തിലാണെങ്കിൽ" },
+    { "number": "181", "icon": "👩", "label": "Women helpline", "label_ml": "വനിതാ ഹെൽപ്‌ലൈൻ", "note": "Free, 24 hours", "note_ml": "സൗജന്യം, 24 മണിക്കൂറും" }
+  ],
+  "help_options": [
+    { "kind": "unsafe", "icon": "🫂", "label": "I feel unsafe", "label_ml": "എനിക്ക് സുരക്ഷിതത്വം തോന്നുന്നില്ല" },
+    { "kind": "bothering", "icon": "✋", "label": "Someone is bothering me", "label_ml": "ആരോ എന്നെ ശല്യം ചെയ്യുന്നു" },
+    { "kind": "other", "icon": "💬", "label": "Something else", "label_ml": "മറ്റെന്തെങ്കിലും" }
+  ],
+  "policy": {
+    "title": "AADI Safeguarding Policy — summary", "title_ml": "AADI സംരക്ഷണ നയം — ചുരുക്കം",
+    "sections": [
+      { "h": "Our promise", "h_ml": "ഞങ്ങളുടെ വാഗ്ദാനം",
+        "p": "Every child and young person on AADI has the right to be safe, heard and respected. Child protection comes before any programme target, any agency's interest or any adult's convenience.",
+        "p_ml": "AADI-യിലെ ഓരോ കുട്ടിക്കും യുവാവിനും സുരക്ഷിതരായിരിക്കാനും കേൾക്കപ്പെടാനും ബഹുമാനിക്കപ്പെടാനും അവകാശമുണ്ട്. ഏത് പരിപാടി ലക്ഷ്യത്തേക്കാളും ഏജൻസി താൽപര്യത്തേക്കാളും മുന്നിലാണ് കുട്ടികളുടെ സംരക്ഷണം." },
+      { "h": "Who is responsible", "h_ml": "ഉത്തരവാദിത്തം ആർക്ക്",
+        "p": "Everyone. CIF appoints a Child Protection Officer (CPO) for the whole platform. Concerns go to the CPO — not to the local agency — so that a learner is never asked to report to someone who may be involved.",
+        "p_ml": "എല്ലാവർക്കും. പ്ലാറ്റ്ഫോമിനാകെ CIF ഒരു ചൈൽഡ് പ്രൊട്ടക്ഷൻ ഓഫീസറെ (CPO) നിയമിക്കുന്നു. ആശങ്കകൾ പ്രാദേശിക ഏജൻസിക്കല്ല, CPO-യ്ക്ക് പോകുന്നു — ഉൾപ്പെട്ടിരിക്കാവുന്ന ഒരാളോട് പരാതിപ്പെടാൻ കുട്ടിയോട് ഒരിക്കലും ആവശ്യപ്പെടില്ല." },
+      { "h": "Reporting", "h_ml": "റിപ്പോർട്ട് ചെയ്യൽ",
+        "p": "Any learner or guardian can press the Help button. Any staff member or volunteer who sees or hears something worrying must report it the same day. Reports of sexual offences against children are passed to the police / Special Juvenile Police Unit or Child Welfare Committee as required by the POCSO Act, 2012.",
+        "p_ml": "ഏത് പഠിതാവിനും രക്ഷിതാവിനും സഹായ ബട്ടൺ അമർത്താം. ആശങ്കാജനകമായത് കാണുകയോ കേൾക്കുകയോ ചെയ്യുന്ന ഏത് ജീവനക്കാരനും വോളണ്ടിയറും അന്നുതന്നെ റിപ്പോർട്ട് ചെയ്യണം. കുട്ടികൾക്കെതിരായ ലൈംഗിക കുറ്റകൃത്യങ്ങൾ POCSO നിയമം, 2012 പ്രകാരം പോലീസ് / SJPU / ശിശുക്ഷേമ സമിതിക്ക് കൈമാറും." },
+      { "h": "Confidentiality & data", "h_ml": "രഹസ്യാത്മകതയും വിവരങ്ങളും",
+        "p": "Case records are seen only by the CPO and platform steward. Every view is logged. We collect the minimum data needed and follow the Digital Personal Data Protection Act, 2023 — including verifiable guardian consent for children and no tracking or targeted advertising of children.",
+        "p_ml": "കേസ് രേഖകൾ CPO-യും പ്ലാറ്റ്ഫോം സ്റ്റ്യൂവാർഡും മാത്രം കാണും. ഓരോ കാഴ്ചയും രേഖപ്പെടുത്തും. ആവശ്യമായ ഏറ്റവും കുറഞ്ഞ വിവരം മാത്രം ശേഖരിക്കുന്നു, ഡിജിറ്റൽ വ്യക്തിഗത വിവര സംരക്ഷണ നിയമം 2023 പാലിക്കുന്നു — കുട്ടികൾക്ക് രക്ഷിതാവിന്റെ സമ്മതം, കുട്ടികളെ ട്രാക്ക് ചെയ്യുകയോ പരസ്യം ലക്ഷ്യമിടുകയോ ഇല്ല." },
+      { "h": "Online safety", "h_ml": "ഓൺലൈൻ സുരക്ഷ",
+        "p": "There are no private, unlogged channels between adults and children on AADI. Mentor chat is supervised and filtered; messages that share contact details or ask to meet are held for review. Every learner completes the Digital citizenship & online safety module first.",
+        "p_ml": "AADI-യിൽ മുതിർന്നവർക്കും കുട്ടികൾക്കുമിടയിൽ രേഖപ്പെടുത്താത്ത സ്വകാര്യ ചാനലുകളില്ല. മെന്റർ ചാറ്റ് മേൽനോട്ടത്തിലും ഫിൽട്ടറിലുമാണ്; ബന്ധപ്പെടാനുള്ള വിവരം പങ്കിടുന്ന അല്ലെങ്കിൽ കാണാൻ ആവശ്യപ്പെടുന്ന സന്ദേശങ്ങൾ പരിശോധനയ്ക്ക് തടഞ്ഞുവെക്കും." },
+      { "h": "Safe recruitment & training", "h_ml": "സുരക്ഷിത നിയമനവും പരിശീലനവും",
+        "p": "Staff and volunteers who work with children must complete safeguarding training before their account is activated, and refresh it every year. Agencies verify identity and references for all child-facing roles.",
+        "p_ml": "കുട്ടികളുമായി പ്രവർത്തിക്കുന്ന ജീവനക്കാരും വോളണ്ടിയർമാരും അക്കൗണ്ട് സജീവമാകുന്നതിന് മുമ്പ് സംരക്ഷണ പരിശീലനം പൂർത്തിയാക്കണം, എല്ലാ വർഷവും പുതുക്കണം." }
+    ]
+  },
+  "code_of_conduct": {
+    "title": "Code of conduct for staff, mentors and volunteers", "title_ml": "ജീവനക്കാർ, മെന്റർമാർ, വോളണ്ടിയർമാർ — പെരുമാറ്റച്ചട്ടം",
+    "do": [
+      ["Meet learners in open, visible places — the centre, never alone in a closed room.", "പഠിതാക്കളെ തുറന്ന, കാണാവുന്ന സ്ഥലങ്ങളിൽ കാണുക — കേന്ദ്രത്തിൽ; അടച്ച മുറിയിൽ ഒറ്റയ്ക്ക് ഒരിക്കലും."],
+      ["Use only AADI's supervised chat to talk with learners.", "പഠിതാക്കളുമായി സംസാരിക്കാൻ AADI-യുടെ മേൽനോട്ടമുള്ള ചാറ്റ് മാത്രം ഉപയോഗിക്കുക."],
+      ["Respect each community's culture, language and decisions about their own knowledge.", "ഓരോ സമൂഹത്തിന്റെയും സംസ്കാരം, ഭാഷ, അവരുടെ അറിവിനെക്കുറിച്ചുള്ള തീരുമാനങ്ങൾ എന്നിവ ബഹുമാനിക്കുക."],
+      ["Report any concern to the CPO the same day — even if you are not sure.", "ഏത് ആശങ്കയും അന്നുതന്നെ CPO-യെ അറിയിക്കുക — ഉറപ്പില്ലെങ്കിൽ പോലും."],
+      ["Ask before taking any photo; never photograph children without guardian consent.", "ഫോട്ടോ എടുക്കും മുമ്പ് ചോദിക്കുക; രക്ഷിതാവിന്റെ സമ്മതമില്ലാതെ കുട്ടികളുടെ ഫോട്ടോ എടുക്കരുത്."]
+    ],
+    "dont": [
+      ["Don't share your personal phone number, social media or ask for theirs.", "നിങ്ങളുടെ സ്വകാര്യ ഫോൺ നമ്പറോ സോഷ്യൽ മീഡിയയോ പങ്കിടരുത്, അവരുടേത് ചോദിക്കരുത്."],
+      ["Don't give gifts, money or phone recharges to individual learners.", "വ്യക്തിഗത പഠിതാക്കൾക്ക് സമ്മാനം, പണം, ഫോൺ റീചാർജ് നൽകരുത്."],
+      ["Don't promise to keep a secret if a child tells you they are being harmed.", "ഉപദ്രവിക്കപ്പെടുന്നുവെന്ന് ഒരു കുട്ടി പറഞ്ഞാൽ രഹസ്യം സൂക്ഷിക്കാമെന്ന് വാഗ്ദാനം ചെയ്യരുത്."],
+      ["Don't investigate yourself or confront the person — report to the CPO.", "സ്വയം അന്വേഷിക്കുകയോ ആളെ നേരിടുകയോ ചെയ്യരുത് — CPO-യെ അറിയിക്കുക."],
+      ["Don't transport a learner alone in your vehicle.", "പഠിതാവിനെ നിങ്ങളുടെ വാഹനത്തിൽ ഒറ്റയ്ക്ക് കൊണ്ടുപോകരുത്."]
+    ]
+  },
+  "course": {
+    "version": "2026.1",
+    "title": "Safeguarding essentials for AADI staff & volunteers", "title_ml": "AADI ജീവനക്കാർക്കും വോളണ്ടിയർമാർക്കും — സംരക്ഷണ അടിസ്ഥാനങ്ങൾ",
+    "pass": 5,
+    "units": [
+      { "icon": "👀", "h": "Recognise", "h_ml": "തിരിച്ചറിയുക", "points": ["Signs of harm can be physical, emotional or behavioural: sudden withdrawal, fear of going home, unexplained injuries, new expensive gifts, secrecy about online contacts.", "Grooming often starts with attention, gifts and secrecy — online or offline."], "points_ml": ["ഉപദ്രവത്തിന്റെ സൂചനകൾ ശാരീരികമോ വൈകാരികമോ പെരുമാറ്റപരമോ ആകാം: പെട്ടെന്നുള്ള ഒറ്റപ്പെടൽ, വീട്ടിൽ പോകാൻ ഭയം, വിശദീകരിക്കാനാവാത്ത പരിക്കുകൾ, പുതിയ വിലകൂടിയ സമ്മാനങ്ങൾ, ഓൺലൈൻ ബന്ധങ്ങളെക്കുറിച്ചുള്ള രഹസ്യം.", "ചൂഷണം പലപ്പോഴും ശ്രദ്ധ, സമ്മാനം, രഹസ്യം എന്നിവയിൽ തുടങ്ങുന്നു."] },
+      { "icon": "👂", "h": "Respond", "h_ml": "പ്രതികരിക്കുക", "points": ["Listen calmly. Believe them. Don't ask leading questions.", "Say: 'You did the right thing by telling me. I need to share this with someone who can help.' Never promise secrecy."], "points_ml": ["ശാന്തമായി കേൾക്കുക. വിശ്വസിക്കുക. നയിക്കുന്ന ചോദ്യങ്ങൾ ചോദിക്കരുത്.", "പറയുക: 'എന്നോട് പറഞ്ഞത് ശരിയായ കാര്യമാണ്. സഹായിക്കാൻ കഴിയുന്ന ഒരാളോട് ഇത് പങ്കിടണം.' രഹസ്യം വാഗ്ദാനം ചെയ്യരുത്."] },
+      { "icon": "📣", "h": "Report", "h_ml": "റിപ്പോർട്ട് ചെയ്യുക", "points": ["Report to the CPO the same day using 'Report a concern'. If a child is in immediate danger call 112 first.", "Under POCSO, failing to report a known sexual offence against a child is itself an offence."], "points_ml": ["'ആശങ്ക റിപ്പോർട്ട് ചെയ്യുക' ഉപയോഗിച്ച് അന്നുതന്നെ CPO-യെ അറിയിക്കുക. കുട്ടി ഉടൻ അപകടത്തിലാണെങ്കിൽ ആദ്യം 112 വിളിക്കുക.", "POCSO പ്രകാരം, അറിയാവുന്ന ലൈംഗിക കുറ്റകൃത്യം റിപ്പോർട്ട് ചെയ്യാതിരിക്കുന്നത് തന്നെ കുറ്റമാണ്."] },
+      { "icon": "🗂️", "h": "Record & protect privacy", "h_ml": "രേഖപ്പെടുത്തുക, സ്വകാര്യത സംരക്ഷിക്കുക", "points": ["Write what you saw and heard, in the child's words, with date and time. Facts, not opinions.", "Don't discuss the case with colleagues, family or on social media. Never identify a child victim."], "points_ml": ["കണ്ടതും കേട്ടതും കുട്ടിയുടെ വാക്കുകളിൽ, തീയതിയും സമയവും ചേർത്ത് എഴുതുക. അഭിപ്രായമല്ല, വസ്തുതകൾ.", "കേസ് സഹപ്രവർത്തകരോടോ കുടുംബത്തോടോ സോഷ്യൽ മീഡിയയിലോ ചർച്ച ചെയ്യരുത്. ഇരയായ കുട്ടിയെ ഒരിക്കലും തിരിച്ചറിയിക്കരുത്."] }
+    ],
+    "quiz": [
+      { "q": "A learner tells you something worrying and asks you to keep it secret. You…", "q_ml": "ഒരു പഠിതാവ് ആശങ്കാജനകമായ കാര്യം പറഞ്ഞ് രഹസ്യമാക്കാൻ ആവശ്യപ്പെടുന്നു. നിങ്ങൾ…", "options": ["Promise to keep it secret", "Explain kindly that you must share it with someone who can help", "Tell the other facilitators"], "options_ml": ["രഹസ്യമാക്കാമെന്ന് വാഗ്ദാനം ചെയ്യും", "സഹായിക്കാൻ കഴിയുന്ന ഒരാളോട് പങ്കിടണമെന്ന് ദയയോടെ വിശദീകരിക്കും", "മറ്റ് ഫെസിലിറ്റേറ്റർമാരോട് പറയും"], "answer": 1 },
+      { "q": "Where do safeguarding concerns go on AADI?", "q_ml": "AADI-യിൽ സംരക്ഷണ ആശങ്കകൾ എങ്ങോട്ട് പോകുന്നു?", "options": ["To the platform CPO", "To the local agency head only", "Into the class WhatsApp group"], "options_ml": ["പ്ലാറ്റ്ഫോം CPO-യ്ക്ക്", "പ്രാദേശിക ഏജൻസി മേധാവിക്ക് മാത്രം", "ക്ലാസ് വാട്ട്സ്ആപ്പ് ഗ്രൂപ്പിൽ"], "answer": 0 },
+      { "q": "A mentee asks for your personal WhatsApp number. You…", "q_ml": "ഒരു മെന്റി നിങ്ങളുടെ സ്വകാര്യ വാട്ട്സ്ആപ്പ് നമ്പർ ചോദിക്കുന്നു. നിങ്ങൾ…", "options": ["Share it — it's easier", "Politely keep talking on AADI's supervised chat", "Give a friend's number"], "options_ml": ["പങ്കിടും — എളുപ്പമാണ്", "AADI-യുടെ മേൽനോട്ട ചാറ്റിൽ തന്നെ മര്യാദയോടെ തുടരും", "സുഹൃത്തിന്റെ നമ്പർ കൊടുക്കും"], "answer": 1 },
+      { "q": "A child is in immediate danger. First you…", "q_ml": "ഒരു കുട്ടി ഉടൻ അപകടത്തിലാണ്. ആദ്യം നിങ്ങൾ…", "options": ["Call 112", "Write a report next week", "Ask the child more questions"], "options_ml": ["112 വിളിക്കും", "അടുത്ത ആഴ്ച റിപ്പോർട്ട് എഴുതും", "കുട്ടിയോട് കൂടുതൽ ചോദ്യങ്ങൾ ചോദിക്കും"], "answer": 0 },
+      { "q": "When recording a concern you should write…", "q_ml": "ആശങ്ക രേഖപ്പെടുത്തുമ്പോൾ എഴുതേണ്ടത്…", "options": ["Your opinion of the family", "What you saw and heard, in the child's words, with date and time", "Nothing — just remember it"], "options_ml": ["കുടുംബത്തെക്കുറിച്ചുള്ള നിങ്ങളുടെ അഭിപ്രായം", "കണ്ടതും കേട്ടതും, കുട്ടിയുടെ വാക്കുകളിൽ, തീയതിയും സമയവും", "ഒന്നുമില്ല — ഓർത്തുവെച്ചാൽ മതി"], "answer": 1 },
+      { "q": "Which is a common sign of grooming?", "q_ml": "ചൂഷണത്തിന്റെ സാധാരണ സൂചന ഏത്?", "options": ["Gifts, special attention and secrecy", "Attending class regularly", "Asking homework questions"], "options_ml": ["സമ്മാനം, പ്രത്യേക ശ്രദ്ധ, രഹസ്യം", "ക്ലാസിൽ സ്ഥിരമായി വരുന്നത്", "ഹോംവർക്ക് സംശയം ചോദിക്കുന്നത്"], "answer": 0 }
+    ]
+  }
+}

@@ -1,0 +1,385 @@
+{
+  "version": 1,
+  "note": "Facts kept generic and correct for Kerala/India as of 2026. Rates, ages and portals change — learners are always told to check the official notice.",
+  "modules": [
+    {
+      "id": "digital_citizenship", "track": "digital", "icon": "🛡️", "mandatory": true, "competency": "DIG.1", "also": ["LS.SAFE"], "minutes": 15,
+      "title": "Digital citizenship & online safety", "title_ml": "ഡിജിറ്റൽ പൗരത്വം, ഓൺലൈൻ സുരക്ഷ",
+      "summary": "Everyone completes this first. Phones, passwords, strangers online, and what to do when something feels wrong.",
+      "summary_ml": "എല്ലാവരും ആദ്യം പൂർത്തിയാക്കണം. ഫോൺ, പാസ്‌വേഡ്, ഓൺലൈനിലെ അപരിചിതർ, എന്തെങ്കിലും ശരിയല്ലെന്ന് തോന്നിയാൽ എന്ത് ചെയ്യണം.",
+      "lessons": [
+        { "id": "dc1", "icon": "🔒", "title": "Lock your phone, guard your OTP", "title_ml": "ഫോൺ ലോക്ക് ചെയ്യൂ, OTP സൂക്ഷിക്കൂ",
+          "points": ["Use a screen lock (PIN or pattern) that others cannot guess.", "An OTP is like the key to your house. Never tell it to anyone — not even someone who says they are from the bank.", "On a shared phone, always log out of apps when you finish."],
+          "points_ml": ["മറ്റുള്ളവർക്ക് ഊഹിക്കാൻ പറ്റാത്ത സ്ക്രീൻ ലോക്ക് (PIN / പാറ്റേൺ) ഉപയോഗിക്കുക.", "OTP നിങ്ങളുടെ വീടിന്റെ താക്കോൽ പോലെയാണ്. ബാങ്കിൽ നിന്നാണെന്ന് പറയുന്നവരോടുപോലും പറയരുത്.", "പങ്കിടുന്ന ഫോണിൽ, ആപ്പുകളിൽ നിന്ന് എപ്പോഴും ലോഗ് ഔട്ട് ചെയ്യുക."] },
+        { "id": "dc2", "icon": "🧑‍🤝‍🧑", "title": "Strangers online", "title_ml": "ഓൺലൈനിലെ അപരിചിതർ",
+          "points": ["People online may not be who they say they are.", "Do not send photos, your address or school name to people you have not met with your family.", "If someone asks you to keep a chat secret, that is a warning sign. Tell a trusted adult."],
+          "points_ml": ["ഓൺലൈനിലുള്ളവർ പറയുന്ന ആളുകളായിരിക്കണമെന്നില്ല.", "കുടുംബത്തോടൊപ്പം നേരിൽ കണ്ടിട്ടില്ലാത്തവർക്ക് ഫോട്ടോ, വിലാസം, സ്കൂളിന്റെ പേര് അയക്കരുത്.", "ചാറ്റ് രഹസ്യമാക്കാൻ ആരെങ്കിലും പറഞ്ഞാൽ അത് അപകട സൂചനയാണ്. വിശ്വസിക്കുന്ന മുതിർന്നവരോട് പറയുക."] },
+        { "id": "dc3", "icon": "🗣️", "title": "Be kind, think before you share", "title_ml": "ദയയോടെ, പങ്കിടും മുമ്പ് ചിന്തിക്കൂ",
+          "points": ["Forwarding a rumour can hurt real people. Check before you share.", "Do not post other people's photos without asking them.", "If you are bullied online: do not reply, take a screenshot, block, and tell someone. You can use the Help button in AADI any time."],
+          "points_ml": ["കിംവദന്തി ഫോർവേഡ് ചെയ്യുന്നത് ആളുകളെ വേദനിപ്പിക്കും. പങ്കിടും മുമ്പ് പരിശോധിക്കുക.", "മറ്റുള്ളവരുടെ ഫോട്ടോ ചോദിക്കാതെ പോസ്റ്റ് ചെയ്യരുത്.", "ഓൺലൈനിൽ ശല്യം ചെയ്യപ്പെട്ടാൽ: മറുപടി കൊടുക്കരുത്, സ്ക്രീൻഷോട്ട് എടുക്കുക, ബ്ലോക്ക് ചെയ്യുക, ആരോടെങ്കിലും പറയുക. AADI-യിലെ സഹായ ബട്ടൺ എപ്പോഴും ഉപയോഗിക്കാം."] }
+      ],
+      "scenario": {
+        "title": "A message from a stranger", "title_ml": "അപരിചിതന്റെ സന്ദേശം",
+        "start": "s1",
+        "nodes": {
+          "s1": { "text": "Someone you don't know messages you: \"Hi! I saw your photo. You look smart. Send me more photos and I'll recharge your phone.\" What do you do?",
+                  "text_ml": "പരിചയമില്ലാത്ത ഒരാൾ സന്ദേശം അയക്കുന്നു: \"ഹായ്! നിന്റെ ഫോട്ടോ കണ്ടു. കൂടുതൽ ഫോട്ടോ അയച്ചാൽ ഫോൺ റീചാർജ് ചെയ്തു തരാം.\" നിങ്ങൾ എന്ത് ചെയ്യും?",
+                  "choices": [
+                    { "text": "Send one photo — the recharge is useful.", "text_ml": "ഒരു ഫോട്ടോ അയക്കാം — റീചാർജ് ഉപകാരമാണ്.", "score": 0, "next": "s2", "feedback": "Offers of gifts or recharge from strangers are a common trick. Photos can be misused and cannot be taken back.", "feedback_ml": "അപരിചിതരുടെ സമ്മാന / റീചാർജ് വാഗ്ദാനം സാധാരണ ഒരു തട്ടിപ്പാണ്. ഫോട്ടോ ദുരുപയോഗം ചെയ്യപ്പെടാം, തിരിച്ചെടുക്കാനാവില്ല." },
+                    { "text": "Don't reply. Block, take a screenshot, and tell a trusted adult.", "text_ml": "മറുപടി കൊടുക്കില്ല. ബ്ലോക്ക് ചെയ്യും, സ്ക്രീൻഷോട്ട് എടുക്കും, വിശ്വസിക്കുന്നവരോട് പറയും.", "score": 2, "next": "s3", "feedback": "Exactly right. You stayed safe and kept evidence.", "feedback_ml": "ശരിയാണ്. നിങ്ങൾ സുരക്ഷിതരായി, തെളിവും സൂക്ഷിച്ചു." },
+                    { "text": "Reply asking who they are.", "text_ml": "ആരാണെന്ന് ചോദിച്ച് മറുപടി അയക്കും.", "score": 1, "next": "s2", "feedback": "Replying keeps the conversation going. It is safer not to engage.", "feedback_ml": "മറുപടി കൊടുക്കുന്നത് സംഭാഷണം തുടരാൻ ഇടയാക്കും. ഇടപെടാതിരിക്കുന്നതാണ് സുരക്ഷിതം." }
+                  ] },
+          "s2": { "text": "They now say: \"Don't tell your parents about me. It's our secret.\" What now?",
+                  "text_ml": "അവർ ഇപ്പോൾ പറയുന്നു: \"എന്നെക്കുറിച്ച് അച്ഛനമ്മമാരോട് പറയരുത്. ഇത് നമ്മുടെ രഹസ്യം.\" ഇനി എന്ത്?",
+                  "choices": [
+                    { "text": "Keep the secret.", "text_ml": "രഹസ്യം സൂക്ഷിക്കും.", "score": 0, "next": "end_bad", "feedback": "A safe person never asks a young person to keep secrets from family. This is a strong warning sign.", "feedback_ml": "സുരക്ഷിതനായ ഒരാൾ കുടുംബത്തിൽ നിന്ന് രഹസ്യം സൂക്ഷിക്കാൻ ഒരിക്കലും പറയില്ല. ഇത് ശക്തമായ അപകട സൂചനയാണ്." },
+                    { "text": "Stop chatting, block them, and press the Help button or tell a trusted adult.", "text_ml": "ചാറ്റ് നിർത്തും, ബ്ലോക്ക് ചെയ്യും, സഹായ ബട്ടൺ അമർത്തും അല്ലെങ്കിൽ മുതിർന്നവരോട് പറയും.", "score": 2, "next": "s3", "feedback": "Well done. It is never too late to stop and ask for help.", "feedback_ml": "നന്നായി. നിർത്താനും സഹായം ചോദിക്കാനും ഒരിക്കലും വൈകിയിട്ടില്ല." }
+                  ] },
+          "s3": { "text": "Your friend wants to forward a funny but embarrassing video of a classmate. What do you say?",
+                  "text_ml": "ഒരു സഹപാഠിയുടെ നാണക്കേടുണ്ടാക്കുന്ന വീഡിയോ ഫോർവേഡ് ചെയ്യാൻ കൂട്ടുകാരൻ ആഗ്രഹിക്കുന്നു. നിങ്ങൾ എന്ത് പറയും?",
+                  "choices": [
+                    { "text": "\"Don't share it. It could really hurt them.\"", "text_ml": "\"പങ്കിടരുത്. അത് അവരെ വേദനിപ്പിക്കും.\"", "score": 2, "next": "end_good", "feedback": "Being kind online is part of being a good digital citizen.", "feedback_ml": "ഓൺലൈനിൽ ദയ കാണിക്കുന്നത് നല്ല ഡിജിറ്റൽ പൗരന്റെ ഭാഗമാണ്." },
+                    { "text": "\"Send it to me too!\"", "text_ml": "\"എനിക്കും അയക്ക്!\"", "score": 0, "next": "end_good", "feedback": "Sharing it spreads the harm. Think how you would feel.", "feedback_ml": "പങ്കിടുന്നത് ദോഷം കൂട്ടും. നിങ്ങൾക്ക് എങ്ങനെ തോന്നുമെന്ന് ചിന്തിക്കൂ." }
+                  ] },
+          "end_good": { "end": true, "text": "You made safe, kind choices online.", "text_ml": "ഓൺലൈനിൽ നിങ്ങൾ സുരക്ഷിതവും ദയയുള്ളതുമായ തീരുമാനങ്ങൾ എടുത്തു." },
+          "end_bad": { "end": true, "text": "Secrets with strangers can lead to harm. Remember: block, screenshot, tell. You can try again.", "text_ml": "അപരിചിതരുമായുള്ള രഹസ്യങ്ങൾ അപകടത്തിലേക്ക് നയിക്കാം. ഓർക്കുക: ബ്ലോക്ക്, സ്ക്രീൻഷോട്ട്, പറയുക. വീണ്ടും ശ്രമിക്കാം." }
+        }
+      },
+      "quiz": [
+        { "q": "The bank calls and asks for your OTP to 'stop your account from closing'. You should…", "q_ml": "അക്കൗണ്ട് ക്ലോസ് ആകാതിരിക്കാൻ OTP ചോദിച്ച് 'ബാങ്ക്' വിളിക്കുന്നു. നിങ്ങൾ…",
+          "options": ["Tell them quickly", "Never share it and cut the call", "Share only half"], "options_ml": ["വേഗം പറയും", "ഒരിക്കലും പറയില്ല, കോൾ കട്ട് ചെയ്യും", "പകുതി മാത്രം പറയും"], "answer": 1,
+          "why": "Banks never ask for your OTP or PIN.", "why_ml": "ബാങ്കുകൾ ഒരിക്കലും OTP / PIN ചോദിക്കില്ല." },
+        { "q": "Someone online asks you to keep your chats secret from your family. This is…", "q_ml": "ചാറ്റുകൾ കുടുംബത്തിൽ നിന്ന് രഹസ്യമാക്കാൻ ഓൺലൈനിൽ ഒരാൾ പറയുന്നു. ഇത്…",
+          "options": ["Normal friendship", "A warning sign — tell a trusted adult", "A game"], "options_ml": ["സാധാരണ സൗഹൃദം", "അപകട സൂചന — മുതിർന്നവരോട് പറയുക", "ഒരു കളി"], "answer": 1,
+          "why": "Asking for secrecy is a common grooming step.", "why_ml": "രഹസ്യം ആവശ്യപ്പെടുന്നത് ചൂഷണത്തിന്റെ സാധാരണ ഘട്ടമാണ്." },
+        { "q": "You finish using the shared centre tablet. You should…", "q_ml": "കേന്ദ്രത്തിലെ പൊതു ടാബ്‌ലെറ്റ് ഉപയോഗിച്ചു കഴിഞ്ഞു. നിങ്ങൾ…",
+          "options": ["Log out of your apps", "Leave it open for the next person", "Save your password in it"], "options_ml": ["ആപ്പുകളിൽ നിന്ന് ലോഗ് ഔട്ട് ചെയ്യും", "അടുത്തയാൾക്കായി തുറന്നിടും", "പാസ്‌വേഡ് അതിൽ സേവ് ചെയ്യും"], "answer": 0,
+          "why": "Logging out protects your account on shared devices.", "why_ml": "പൊതു ഉപകരണങ്ങളിൽ ലോഗ് ഔട്ട് ചെയ്യുന്നത് അക്കൗണ്ട് സുരക്ഷിതമാക്കും." },
+        { "q": "You are being bullied online. The best first step is…", "q_ml": "ഓൺലൈനിൽ നിങ്ങളെ ശല്യം ചെയ്യുന്നു. ആദ്യം ചെയ്യേണ്ടത്…",
+          "options": ["Reply angrily", "Screenshot, block and tell someone", "Delete your phone"], "options_ml": ["ദേഷ്യത്തോടെ മറുപടി", "സ്ക്രീൻഷോട്ട്, ബ്ലോക്ക്, ആരോടെങ്കിലും പറയുക", "ഫോൺ കളയുക"], "answer": 1,
+          "why": "Keep evidence, stop contact, and get support.", "why_ml": "തെളിവ് സൂക്ഷിക്കുക, ബന്ധം നിർത്തുക, സഹായം തേടുക." }
+      ]
+    },
+    {
+      "id": "hygiene", "track": "lifeskills", "icon": "🧼", "competency": "LS.GROOM", "minutes": 10,
+      "title": "Personal hygiene & presentation", "title_ml": "വ്യക്തിശുചിത്വം, അവതരണം",
+      "summary": "Simple daily habits that help you feel confident at work and in interviews.",
+      "summary_ml": "ജോലിയിലും ഇന്റർവ്യൂവിലും ആത്മവിശ്വാസം നൽകുന്ന ലളിതമായ ദിനചര്യകൾ.",
+      "lessons": [
+        { "id": "hy1", "icon": "🚿", "title": "Daily routine", "title_ml": "ദിനചര്യ",
+          "points": ["Bathe daily and wear clean, dry clothes — especially undergarments and socks.", "Brush teeth twice a day. Keep nails short and clean.", "Wash hands with soap before eating and after using the toilet."],
+          "points_ml": ["ദിവസവും കുളിക്കുക, വൃത്തിയുള്ള ഉണങ്ങിയ വസ്ത്രം ധരിക്കുക — പ്രത്യേകിച്ച് അടിവസ്ത്രങ്ങളും സോക്സും.", "ദിവസം രണ്ടുതവണ പല്ലുതേക്കുക. നഖം ചെറുതും വൃത്തിയുള്ളതുമായി സൂക്ഷിക്കുക.", "ഭക്ഷണത്തിന് മുമ്പും ടോയ്‌ലറ്റ് ഉപയോഗിച്ച ശേഷവും സോപ്പിട്ട് കൈ കഴുകുക."] },
+        { "id": "hy2", "icon": "👔", "title": "Dressing for work", "title_ml": "ജോലിക്കുള്ള വസ്ത്രധാരണം",
+          "points": ["Neat and simple is best: ironed shirt or kurta, clean footwear.", "Follow the uniform rules of the workplace.", "Your own culture and appearance are welcome — neatness matters, not fashion."],
+          "points_ml": ["വൃത്തിയും ലാളിത്യവും ആണ് നല്ലത്: ഇസ്തിരിയിട്ട ഷർട്ട് / കുർത്ത, വൃത്തിയുള്ള ചെരുപ്പ്.", "ജോലിസ്ഥലത്തെ യൂണിഫോം നിയമങ്ങൾ പാലിക്കുക.", "നിങ്ങളുടെ സംസ്കാരവും രൂപവും സ്വാഗതാർഹമാണ് — ഫാഷനല്ല, വൃത്തിയാണ് പ്രധാനം."] }
+      ],
+      "scenario": {
+        "title": "First day at the hotel kitchen", "title_ml": "ഹോട്ടൽ അടുക്കളയിലെ ആദ്യ ദിവസം", "start": "s1",
+        "nodes": {
+          "s1": { "text": "You start work in a hotel kitchen tomorrow. What do you prepare tonight?", "text_ml": "നാളെ ഹോട്ടൽ അടുക്കളയിൽ ജോലി തുടങ്ങുന്നു. ഇന്ന് രാത്രി എന്ത് തയ്യാറാക്കും?",
+            "choices": [
+              { "text": "Wash and dry my uniform, cut nails, set an alarm.", "text_ml": "യൂണിഫോം കഴുകി ഉണക്കും, നഖം വെട്ടും, അലാറം വെക്കും.", "score": 2, "next": "s2", "feedback": "Great preparation. Food workers must keep nails short and clean.", "feedback_ml": "നല്ല തയ്യാറെടുപ്പ്. ഭക്ഷണ ജോലിക്കാർ നഖം ചെറുതാക്കി വൃത്തിയായി സൂക്ഷിക്കണം." },
+              { "text": "Nothing — I'll manage in the morning.", "text_ml": "ഒന്നുമില്ല — രാവിലെ നോക്കാം.", "score": 0, "next": "s2", "feedback": "Rushing in the morning often makes you late or untidy on day one.", "feedback_ml": "രാവിലെ തിരക്കിട്ടാൽ ആദ്യ ദിവസം തന്നെ വൈകുകയോ അലങ്കോലമാവുകയോ ചെയ്യാം." }
+            ] },
+          "s2": { "text": "At work you have a cough and runny nose. What do you do?", "text_ml": "ജോലിസ്ഥലത്ത് നിങ്ങൾക്ക് ചുമയും ജലദോഷവും. എന്ത് ചെയ്യും?",
+            "choices": [
+              { "text": "Tell the supervisor, wear a mask, and wash hands often.", "text_ml": "സൂപ്പർവൈസറോട് പറയും, മാസ്ക് ധരിക്കും, ഇടയ്ക്കിടെ കൈ കഴുകും.", "score": 2, "next": "end", "feedback": "Honest and responsible — this protects customers and co-workers.", "feedback_ml": "സത്യസന്ധവും ഉത്തരവാദിത്തമുള്ളതും — ഇത് ഉപഭോക്താക്കളെയും സഹപ്രവർത്തകരെയും സംരക്ഷിക്കും." },
+              { "text": "Say nothing and keep cooking.", "text_ml": "ഒന്നും പറയാതെ പാചകം തുടരും.", "score": 0, "next": "end", "feedback": "Illness can spread through food. Always tell your supervisor.", "feedback_ml": "ഭക്ഷണത്തിലൂടെ രോഗം പകരാം. എപ്പോഴും സൂപ്പർവൈസറോട് പറയുക." }
+            ] },
+          "end": { "end": true, "text": "Good habits make a strong first impression.", "text_ml": "നല്ല ശീലങ്ങൾ നല്ല ആദ്യ മതിപ്പുണ്ടാക്കും." }
+        }
+      },
+      "quiz": [
+        { "q": "Before handling food you must…", "q_ml": "ഭക്ഷണം കൈകാര്യം ചെയ്യുന്നതിന് മുമ്പ്…", "options": ["Wash hands with soap", "Wipe hands on clothes", "Nothing"], "options_ml": ["സോപ്പിട്ട് കൈ കഴുകണം", "വസ്ത്രത്തിൽ തുടയ്ക്കണം", "ഒന്നും വേണ്ട"], "answer": 0, "why": "Soap and water removes germs.", "why_ml": "സോപ്പും വെള്ളവും അണുക്കളെ നീക്കും." },
+        { "q": "Good work clothing is…", "q_ml": "നല്ല ജോലി വസ്ത്രം…", "options": ["Expensive and branded", "Clean, neat and as per uniform rules", "Whatever was worn yesterday"], "options_ml": ["വിലകൂടിയ ബ്രാൻഡ്", "വൃത്തിയുള്ളത്, യൂണിഫോം നിയമപ്രകാരം", "ഇന്നലെ ധരിച്ചത്"], "answer": 1, "why": "Neatness matters more than price.", "why_ml": "വിലയേക്കാൾ വൃത്തിയാണ് പ്രധാനം." },
+        { "q": "How often should you brush your teeth?", "q_ml": "എത്ര തവണ പല്ലുതേക്കണം?", "options": ["Once a week", "Twice a day", "Only before interviews"], "options_ml": ["ആഴ്ചയിൽ ഒരിക്കൽ", "ദിവസം രണ്ടുതവണ", "ഇന്റർവ്യൂവിന് മുമ്പ് മാത്രം"], "answer": 1, "why": "Twice daily keeps teeth and breath healthy.", "why_ml": "ദിവസം രണ്ടുതവണ പല്ലും ശ്വാസവും ആരോഗ്യമുള്ളതാക്കും." }
+      ]
+    },
+    {
+      "id": "workplace", "track": "lifeskills", "icon": "🏢", "competency": "LS.WORK", "minutes": 12,
+      "title": "Workplace etiquette", "title_ml": "ജോലിസ്ഥല മര്യാദ",
+      "summary": "Being on time, asking questions, working in a team and handling problems calmly.",
+      "summary_ml": "സമയനിഷ്ഠ, സംശയം ചോദിക്കൽ, ടീമായി ജോലി, പ്രശ്നങ്ങൾ ശാന്തമായി കൈകാര്യം ചെയ്യൽ.",
+      "lessons": [
+        { "id": "wp1", "icon": "⏰", "title": "Time and attendance", "title_ml": "സമയവും ഹാജരും",
+          "points": ["Arrive 10 minutes early. If you will be late, call your supervisor before your shift starts.", "Ask for leave in advance when you can. Keep a note of the days you worked.", "Mobile phone: use it only in breaks unless your work needs it."],
+          "points_ml": ["10 മിനിറ്റ് നേരത്തെ എത്തുക. വൈകുമെങ്കിൽ ഷിഫ്റ്റ് തുടങ്ങും മുമ്പ് സൂപ്പർവൈസറെ വിളിക്കുക.", "കഴിയുമെങ്കിൽ മുൻകൂട്ടി അവധി ചോദിക്കുക. ജോലി ചെയ്ത ദിവസങ്ങൾ കുറിച്ചുവെക്കുക.", "മൊബൈൽ ഫോൺ: ജോലിക്ക് ആവശ്യമില്ലെങ്കിൽ ഇടവേളയിൽ മാത്രം."] },
+        { "id": "wp2", "icon": "🤝", "title": "Respect and teamwork", "title_ml": "ബഹുമാനവും ടീം വർക്കും",
+          "points": ["Greet people, say please and thank you.", "If you don't understand an instruction, it is fine to ask again.", "Disagree politely and in private. If someone insults your community or touches you inappropriately, it is not your fault — report it."],
+          "points_ml": ["ആളുകളെ അഭിവാദ്യം ചെയ്യുക, ദയവായി, നന്ദി എന്ന് പറയുക.", "നിർദ്ദേശം മനസ്സിലായില്ലെങ്കിൽ വീണ്ടും ചോദിക്കുന്നതിൽ തെറ്റില്ല.", "വിയോജിപ്പ് മര്യാദയോടെ, സ്വകാര്യമായി പറയുക. ആരെങ്കിലും നിങ്ങളുടെ സമുദായത്തെ അപമാനിക്കുകയോ അനുചിതമായി സ്പർശിക്കുകയോ ചെയ്താൽ അത് നിങ്ങളുടെ തെറ്റല്ല — പരാതിപ്പെടുക."] }
+      ],
+      "scenario": {
+        "title": "A mistake at the shop", "title_ml": "കടയിലെ ഒരു തെറ്റ്", "start": "s1",
+        "nodes": {
+          "s1": { "text": "You gave a customer the wrong change. Your supervisor noticed. What do you do?", "text_ml": "ഒരു ഉപഭോക്താവിന് തെറ്റായ ബാക്കി കൊടുത്തു. സൂപ്പർവൈസർ ശ്രദ്ധിച്ചു. എന്ത് ചെയ്യും?",
+            "choices": [
+              { "text": "Say sorry, explain, and ask how to avoid it next time.", "text_ml": "ക്ഷമ ചോദിക്കും, വിശദീകരിക്കും, അടുത്ത തവണ എങ്ങനെ ഒഴിവാക്കാമെന്ന് ചോദിക്കും.", "score": 2, "next": "s2", "feedback": "Owning a mistake builds trust.", "feedback_ml": "തെറ്റ് ഏറ്റുപറയുന്നത് വിശ്വാസം വളർത്തും." },
+              { "text": "Blame the customer.", "text_ml": "ഉപഭോക്താവിനെ കുറ്റപ്പെടുത്തും.", "score": 0, "next": "s2", "feedback": "Blaming others damages trust.", "feedback_ml": "മറ്റുള്ളവരെ കുറ്റപ്പെടുത്തുന്നത് വിശ്വാസം നശിപ്പിക്കും." },
+              { "text": "Leave the job.", "text_ml": "ജോലി ഉപേക്ഷിക്കും.", "score": 0, "next": "s2", "feedback": "Everyone makes mistakes when learning. Stay and learn.", "feedback_ml": "പഠിക്കുമ്പോൾ എല്ലാവർക്കും തെറ്റുപറ്റും. തുടർന്ന് പഠിക്കുക." }
+            ] },
+          "s2": { "text": "A co-worker keeps making jokes about your hamlet and language. What do you do?", "text_ml": "ഒരു സഹപ്രവർത്തകൻ നിങ്ങളുടെ ഊരിനെയും ഭാഷയെയും കുറിച്ച് തമാശ പറയുന്നു. എന്ത് ചെയ്യും?",
+            "choices": [
+              { "text": "Calmly tell them to stop; if it continues, report to the supervisor or HR.", "text_ml": "ശാന്തമായി നിർത്താൻ പറയും; തുടർന്നാൽ സൂപ്പർവൈസർ / HR-നോട് പറയും.", "score": 2, "next": "end", "feedback": "You have a right to respect. Discrimination should be reported.", "feedback_ml": "ബഹുമാനം നിങ്ങളുടെ അവകാശമാണ്. വിവേചനം റിപ്പോർട്ട് ചെയ്യണം." },
+              { "text": "Fight with them.", "text_ml": "അവരുമായി വഴക്കിടും.", "score": 0, "next": "end", "feedback": "Fighting can cost you the job. Use the proper complaint route.", "feedback_ml": "വഴക്ക് ജോലി നഷ്ടപ്പെടുത്താം. ശരിയായ പരാതി മാർഗം ഉപയോഗിക്കുക." },
+              { "text": "Stay quiet forever.", "text_ml": "എന്നും മിണ്ടാതിരിക്കും.", "score": 1, "next": "end", "feedback": "You don't have to suffer silently. Talk to someone you trust.", "feedback_ml": "നിശ്ശബ്ദമായി സഹിക്കേണ്ടതില്ല. വിശ്വസിക്കുന്ന ഒരാളോട് സംസാരിക്കുക." }
+            ] },
+          "end": { "end": true, "text": "Calm, honest and respectful — that's professional.", "text_ml": "ശാന്തം, സത്യസന്ധം, ബഹുമാനപൂർവ്വം — അതാണ് പ്രൊഫഷണലിസം." }
+        }
+      },
+      "quiz": [
+        { "q": "You will be 30 minutes late. You should…", "q_ml": "30 മിനിറ്റ് വൈകും. നിങ്ങൾ…", "options": ["Call the supervisor before the shift", "Say nothing", "Skip the day"], "options_ml": ["ഷിഫ്റ്റിന് മുമ്പ് സൂപ്പർവൈസറെ വിളിക്കും", "ഒന്നും പറയില്ല", "അന്ന് പോകില്ല"], "answer": 0, "why": "Informing early is respectful and professional.", "why_ml": "നേരത്തെ അറിയിക്കുന്നത് മര്യാദയാണ്." },
+        { "q": "You don't understand an instruction. You…", "q_ml": "നിർദ്ദേശം മനസ്സിലായില്ല. നിങ്ങൾ…", "options": ["Guess", "Politely ask again", "Ignore it"], "options_ml": ["ഊഹിക്കും", "മര്യാദയോടെ വീണ്ടും ചോദിക്കും", "അവഗണിക്കും"], "answer": 1, "why": "Asking prevents mistakes.", "why_ml": "ചോദിക്കുന്നത് തെറ്റുകൾ തടയും." },
+        { "q": "Someone at work touches you in a way that makes you uncomfortable. It is…", "q_ml": "ജോലിസ്ഥലത്ത് ആരെങ്കിലും അസ്വസ്ഥമാക്കുന്ന രീതിയിൽ സ്പർശിക്കുന്നു. അത്…", "options": ["Your fault", "Not your fault — report it", "Normal"], "options_ml": ["നിങ്ങളുടെ തെറ്റ്", "നിങ്ങളുടെ തെറ്റല്ല — പരാതിപ്പെടുക", "സാധാരണം"], "answer": 1, "why": "Workplaces must have a complaints committee for sexual harassment. You can also call 181 or 112.", "why_ml": "ലൈംഗിക പീഡന പരാതികൾക്ക് ജോലിസ്ഥലത്ത് കമ്മിറ്റി ഉണ്ടാകണം. 181 / 112 വിളിക്കാം." }
+      ]
+    },
+    {
+      "id": "interview", "track": "lifeskills", "icon": "🎤", "competency": "LS.INT", "minutes": 15,
+      "title": "Interview skills", "title_ml": "ഇന്റർവ്യൂ കഴിവുകൾ",
+      "summary": "Introduce yourself, answer common questions and ask the right questions about the job.",
+      "summary_ml": "സ്വയം പരിചയപ്പെടുത്തൽ, സാധാരണ ചോദ്യങ്ങൾക്ക് മറുപടി, ജോലിയെക്കുറിച്ച് ശരിയായ ചോദ്യങ്ങൾ.",
+      "lessons": [
+        { "id": "iv1", "icon": "🙋", "title": "Tell me about yourself", "title_ml": "നിങ്ങളെക്കുറിച്ച് പറയൂ",
+          "points": ["Practise a 30-second answer: name, where you are from, what you studied, one strength, why this job.", "Speak slowly. It is fine to answer in Malayalam if the job does not need English.", "Your community knowledge (forest, farming, languages) is a strength — mention it."],
+          "points_ml": ["30 സെക്കൻഡ് ഉത്തരം പരിശീലിക്കുക: പേര്, സ്ഥലം, പഠനം, ഒരു കഴിവ്, ഈ ജോലി എന്തിന്.", "പതുക്കെ സംസാരിക്കുക. ജോലിക്ക് ഇംഗ്ലീഷ് വേണ്ടെങ്കിൽ മലയാളത്തിൽ മറുപടി പറയാം.", "നിങ്ങളുടെ സമൂഹ അറിവ് (കാട്, കൃഷി, ഭാഷകൾ) ഒരു ശക്തിയാണ് — പറയുക."] },
+        { "id": "iv2", "icon": "❓", "title": "Questions you should ask", "title_ml": "നിങ്ങൾ ചോദിക്കേണ്ട ചോദ്യങ്ങൾ",
+          "points": ["What is the salary, and how is it paid (bank transfer is safest)?", "What are the working hours and weekly off?", "Will I get a written offer / appointment letter? Is food and stay provided, and is anything cut from salary?"],
+          "points_ml": ["ശമ്പളം എത്ര, എങ്ങനെ നൽകും (ബാങ്ക് ട്രാൻസ്ഫർ ആണ് സുരക്ഷിതം)?", "ജോലി സമയവും ആഴ്ചയിലെ അവധിയും?", "എഴുതിയ ഓഫർ / നിയമന കത്ത് കിട്ടുമോ? ഭക്ഷണവും താമസവും ഉണ്ടോ, ശമ്പളത്തിൽ നിന്ന് എന്തെങ്കിലും പിടിക്കുമോ?"] }
+      ],
+      "scenario": {
+        "title": "Interview at a resort", "title_ml": "റിസോർട്ടിലെ ഇന്റർവ്യൂ", "start": "s1",
+        "nodes": {
+          "s1": { "text": "The manager asks: \"Why should we hire you?\"", "text_ml": "മാനേജർ ചോദിക്കുന്നു: \"നിങ്ങളെ എന്തിന് ജോലിക്കെടുക്കണം?\"",
+            "choices": [
+              { "text": "\"I'm hardworking, I know the local forest trails, and I learn fast.\"", "text_ml": "\"ഞാൻ കഠിനാധ്വാനിയാണ്, ഇവിടത്തെ കാട്ടുവഴികൾ അറിയാം, വേഗം പഠിക്കും.\"", "score": 2, "next": "s2", "feedback": "Specific strengths linked to the job — excellent.", "feedback_ml": "ജോലിയുമായി ബന്ധപ്പെട്ട കൃത്യമായ കഴിവുകൾ — മികച്ചത്." },
+              { "text": "\"I need money.\"", "text_ml": "\"എനിക്ക് പണം വേണം.\"", "score": 0, "next": "s2", "feedback": "Honest, but show what you bring to the job.", "feedback_ml": "സത്യമാണ്, പക്ഷേ ജോലിക്ക് നിങ്ങൾ എന്ത് നൽകുമെന്ന് കാണിക്കുക." },
+              { "text": "Stay silent.", "text_ml": "മിണ്ടാതിരിക്കും.", "score": 0, "next": "s2", "feedback": "Nervous is normal. A short practised answer helps.", "feedback_ml": "പരിഭ്രമം സാധാരണമാണ്. പരിശീലിച്ച ചെറിയ ഉത്തരം സഹായിക്കും." }
+            ] },
+          "s2": { "text": "They offer the job but say: \"Give us your original SSLC certificate and Aadhaar card to keep.\"", "text_ml": "ജോലി തരാമെന്ന് പറഞ്ഞു, പക്ഷേ: \"ഒറിജിനൽ SSLC സർട്ടിഫിക്കറ്റും ആധാറും ഇവിടെ സൂക്ഷിക്കാൻ തരൂ.\"",
+            "choices": [
+              { "text": "Politely say you'll show originals for checking and give self-attested photocopies only.", "text_ml": "പരിശോധനയ്ക്ക് ഒറിജിനൽ കാണിക്കാം, സ്വയം സാക്ഷ്യപ്പെടുത്തിയ ഫോട്ടോകോപ്പി മാത്രം നൽകാം എന്ന് മര്യാദയോടെ പറയും.", "score": 2, "next": "end", "feedback": "Correct. Employers should not keep your original documents.", "feedback_ml": "ശരി. തൊഴിലുടമ ഒറിജിനൽ രേഖകൾ കൈവശം വെക്കരുത്." },
+              { "text": "Hand them over — they're the boss.", "text_ml": "കൊടുക്കും — അവരാണ് മുതലാളി.", "score": 0, "next": "end", "feedback": "Keeping your documents can trap you in a job. Never hand over originals.", "feedback_ml": "രേഖകൾ പിടിച്ചുവെക്കുന്നത് നിങ്ങളെ ജോലിയിൽ കുടുക്കാം. ഒറിജിനൽ ഒരിക്കലും കൊടുക്കരുത്." }
+            ] },
+          "end": { "end": true, "text": "Confident answers and knowing your rights — you're interview ready.", "text_ml": "ആത്മവിശ്വാസമുള്ള ഉത്തരങ്ങളും അവകാശ ബോധവും — നിങ്ങൾ ഇന്റർവ്യൂവിന് തയ്യാർ." }
+        }
+      },
+      "quiz": [
+        { "q": "A good 'about yourself' answer is…", "q_ml": "'നിങ്ങളെക്കുറിച്ച്' നല്ല ഉത്തരം…", "options": ["Very long life story", "30 seconds: name, study, strength, why this job", "Only your name"], "options_ml": ["നീണ്ട ജീവിതകഥ", "30 സെക്കൻഡ്: പേര്, പഠനം, കഴിവ്, ഈ ജോലി എന്തിന്", "പേര് മാത്രം"], "answer": 1, "why": "Short and relevant works best.", "why_ml": "ചുരുക്കവും പ്രസക്തവും ആണ് നല്ലത്." },
+        { "q": "Which is the safest way to receive salary?", "q_ml": "ശമ്പളം വാങ്ങാൻ ഏറ്റവും സുരക്ഷിത മാർഗം?", "options": ["Bank transfer", "Cash through an agent", "Paid only at the end of the year"], "options_ml": ["ബാങ്ക് ട്രാൻസ്ഫർ", "ഏജന്റ് വഴി പണം", "വർഷാവസാനം മാത്രം"], "answer": 0, "why": "Bank transfer leaves a record.", "why_ml": "ബാങ്ക് ട്രാൻസ്ഫറിന് രേഖ ഉണ്ടാകും." },
+        { "q": "Before joining, you should ask for…", "q_ml": "ജോലിയിൽ ചേരും മുമ്പ് ചോദിക്കേണ്ടത്…", "options": ["A written offer letter", "Nothing in writing", "An advance fee receipt"], "options_ml": ["എഴുതിയ ഓഫർ ലെറ്റർ", "ഒന്നും എഴുതി വേണ്ട", "മുൻകൂർ ഫീസ് രസീത്"], "answer": 0, "why": "A written offer protects you.", "why_ml": "എഴുതിയ ഓഫർ നിങ്ങളെ സംരക്ഷിക്കും." }
+      ]
+    },
+    {
+      "id": "city", "track": "lifeskills", "icon": "🚌", "competency": "LS.CITY", "minutes": 15,
+      "title": "City travel & navigation", "title_ml": "നഗര യാത്ര, വഴി കണ്ടെത്തൽ",
+      "summary": "Buses, metro, maps and staying safe in a new city.",
+      "summary_ml": "ബസ്, മെട്രോ, മാപ്പ്, പുതിയ നഗരത്തിൽ സുരക്ഷിതമായിരിക്കൽ.",
+      "lessons": [
+        { "id": "ct1", "icon": "🚍", "title": "Buses and metro", "title_ml": "ബസും മെട്രോയും",
+          "points": ["Read the board on the front of the bus, or ask the conductor: \"Does this go to …?\"", "Keep small change for bus tickets. Some seats are reserved for women, elders and persons with disabilities.", "Metro: buy a ticket or card at the counter or machine; tap or scan at the gate; keep the ticket until you exit."],
+          "points_ml": ["ബസിന്റെ മുന്നിലെ ബോർഡ് വായിക്കുക, അല്ലെങ്കിൽ കണ്ടക്ടറോട് ചോദിക്കുക: \"ഇത് …-ലേക്ക് പോകുമോ?\"", "ബസ് ടിക്കറ്റിന് ചില്ലറ കരുതുക. ചില സീറ്റുകൾ സ്ത്രീകൾക്കും മുതിർന്നവർക്കും ഭിന്നശേഷിക്കാർക്കും സംവരണം ചെയ്തതാണ്.", "മെട്രോ: കൗണ്ടറിലോ മെഷീനിലോ ടിക്കറ്റ് / കാർഡ് എടുക്കുക; ഗേറ്റിൽ ടാപ്പ് / സ്കാൻ ചെയ്യുക; പുറത്തിറങ്ങും വരെ ടിക്കറ്റ് സൂക്ഷിക്കുക."] },
+        { "id": "ct2", "icon": "🗺️", "title": "Using maps on the phone", "title_ml": "ഫോണിൽ മാപ്പ് ഉപയോഗിക്കൽ",
+          "points": ["Type the place name, press Directions, choose the bus or walking icon.", "Save your hostel or workplace address before you travel. Write it on paper too.", "Share live location with a trusted family member when travelling at night."],
+          "points_ml": ["സ്ഥലപ്പേര് ടൈപ്പ് ചെയ്യുക, Directions അമർത്തുക, ബസ് / നടത്തം ഐക്കൺ തിരഞ്ഞെടുക്കുക.", "യാത്രയ്ക്ക് മുമ്പ് ഹോസ്റ്റൽ / ജോലിസ്ഥല വിലാസം സേവ് ചെയ്യുക. കടലാസിലും എഴുതുക.", "രാത്രി യാത്രയിൽ വിശ്വസിക്കുന്ന കുടുംബാംഗവുമായി ലൈവ് ലൊക്കേഷൻ പങ്കിടുക."] },
+        { "id": "ct3", "icon": "🆘", "title": "If you are lost", "title_ml": "വഴി തെറ്റിയാൽ",
+          "points": ["Go to a shop, a bus station counter or a police person in uniform and ask.", "Do not accept lifts from strangers.", "Emergency: call 112. Women's helpline: 181."],
+          "points_ml": ["ഒരു കടയിലോ ബസ് സ്റ്റേഷൻ കൗണ്ടറിലോ യൂണിഫോമിലുള്ള പോലീസിനോടോ ചോദിക്കുക.", "അപരിചിതരുടെ വാഹനത്തിൽ കയറരുത്.", "അടിയന്തരം: 112 വിളിക്കുക. വനിതാ ഹെൽപ്‌ലൈൻ: 181."] }
+      ],
+      "scenario": {
+        "title": "Getting to your new job", "title_ml": "പുതിയ ജോലിസ്ഥലത്തേക്ക്", "start": "s1",
+        "nodes": {
+          "s1": { "text": "You arrive at a big city bus stand at 7 pm. Your hostel is 6 km away. Your phone battery is at 10%.", "text_ml": "വൈകിട്ട് 7-ന് നഗരത്തിലെ വലിയ ബസ് സ്റ്റാൻഡിൽ എത്തി. ഹോസ്റ്റൽ 6 കി.മീ അകലെ. ഫോൺ ബാറ്ററി 10%.",
+            "choices": [
+              { "text": "Check the address I wrote on paper and ask at the enquiry counter which bus to take.", "text_ml": "കടലാസിൽ എഴുതിയ വിലാസം നോക്കി, ഏത് ബസ് എന്ന് എൻക്വയറി കൗണ്ടറിൽ ചോദിക്കും.", "score": 2, "next": "s2", "feedback": "Smart — official counters are reliable and the paper backup saved you.", "feedback_ml": "ബുദ്ധിപൂർവ്വം — ഔദ്യോഗിക കൗണ്ടർ വിശ്വസനീയമാണ്, കടലാസ് ബാക്കപ്പ് സഹായിച്ചു." },
+              { "text": "Accept a lift from a friendly stranger who offers to drop me.", "text_ml": "സഹായിക്കാമെന്ന് പറയുന്ന അപരിചിതന്റെ വണ്ടിയിൽ കയറും.", "score": 0, "next": "s2", "feedback": "Never accept lifts from strangers. Use buses, prepaid autos or registered taxis.", "feedback_ml": "അപരിചിതരുടെ വണ്ടിയിൽ കയറരുത്. ബസ്, പ്രീപെയ്ഡ് ഓട്ടോ, രജിസ്റ്റേഡ് ടാക്സി ഉപയോഗിക്കുക." }
+            ] },
+          "s2": { "text": "On the bus, you aren't sure where to get off.", "text_ml": "ബസിൽ, എവിടെ ഇറങ്ങണമെന്ന് ഉറപ്പില്ല.",
+            "choices": [
+              { "text": "Tell the conductor the stop name and ask them to tell me.", "text_ml": "സ്റ്റോപ്പിന്റെ പേര് കണ്ടക്ടറോട് പറഞ്ഞ് അറിയിക്കാൻ ആവശ്യപ്പെടും.", "score": 2, "next": "s3", "feedback": "Conductors help passengers every day.", "feedback_ml": "കണ്ടക്ടർമാർ ദിവസവും യാത്രക്കാരെ സഹായിക്കുന്നു." },
+              { "text": "Get off at a random stop.", "text_ml": "ഏതെങ്കിലും സ്റ്റോപ്പിൽ ഇറങ്ങും.", "score": 0, "next": "s3", "feedback": "You may end up further away, at night. Ask first.", "feedback_ml": "രാത്രി കൂടുതൽ ദൂരെയെത്താം. ആദ്യം ചോദിക്കുക." }
+            ] },
+          "s3": { "text": "You reach the hostel. What do you do now?", "text_ml": "ഹോസ്റ്റലിൽ എത്തി. ഇനി എന്ത്?",
+            "choices": [
+              { "text": "Message family that I reached, and charge my phone.", "text_ml": "എത്തിയെന്ന് വീട്ടിൽ അറിയിക്കും, ഫോൺ ചാർജ് ചെയ്യും.", "score": 2, "next": "end", "feedback": "Family knows you're safe, and you're ready for tomorrow.", "feedback_ml": "നിങ്ങൾ സുരക്ഷിതരാണെന്ന് കുടുംബം അറിഞ്ഞു, നാളേക്ക് തയ്യാർ." },
+              { "text": "Sleep — I'll tell them some other day.", "text_ml": "ഉറങ്ങും — പിന്നീട് അറിയിക്കാം.", "score": 1, "next": "end", "feedback": "Your family will worry. A one-line message is enough.", "feedback_ml": "കുടുംബം വിഷമിക്കും. ഒരു വരി സന്ദേശം മതി." }
+            ] },
+          "end": { "end": true, "text": "You travelled safely to a new place!", "text_ml": "നിങ്ങൾ സുരക്ഷിതമായി പുതിയ സ്ഥലത്തെത്തി!" }
+        }
+      },
+      "quiz": [
+        { "q": "In an emergency anywhere in India, call…", "q_ml": "ഇന്ത്യയിൽ എവിടെയും അടിയന്തരാവസ്ഥയിൽ വിളിക്കേണ്ടത്…", "options": ["112", "100100", "1234"], "options_ml": ["112", "100100", "1234"], "answer": 0, "why": "112 is the national emergency number.", "why_ml": "112 ദേശീയ അടിയന്തര നമ്പറാണ്." },
+        { "q": "Before travelling to a new city, you should…", "q_ml": "പുതിയ നഗരത്തിലേക്ക് യാത്രയ്ക്ക് മുമ്പ്…", "options": ["Write the address on paper and save it on the phone", "Not tell anyone", "Carry all your original documents loose"], "options_ml": ["വിലാസം കടലാസിലും ഫോണിലും സൂക്ഷിക്കുക", "ആരോടും പറയാതിരിക്കുക", "എല്ലാ ഒറിജിനൽ രേഖകളും അലസമായി കൊണ്ടുപോകുക"], "answer": 0, "why": "A backup helps when the phone dies.", "why_ml": "ഫോൺ ഓഫായാൽ ബാക്കപ്പ് സഹായിക്കും." },
+        { "q": "A stranger offers you a free ride at night. You…", "q_ml": "രാത്രി ഒരു അപരിചിതൻ സൗജന്യ യാത്ര വാഗ്ദാനം ചെയ്യുന്നു. നിങ്ങൾ…", "options": ["Accept", "Politely refuse and use public transport", "Ask them for money too"], "options_ml": ["സ്വീകരിക്കും", "മര്യാദയോടെ നിരസിച്ച് പൊതുഗതാഗതം ഉപയോഗിക്കും", "പണവും ചോദിക്കും"], "answer": 1, "why": "Stay with known, public options.", "why_ml": "അറിയാവുന്ന പൊതു മാർഗങ്ങൾ ഉപയോഗിക്കുക." }
+      ]
+    },
+    {
+      "id": "rights", "track": "lifeskills", "icon": "⚖️", "competency": "LS.RIGHTS", "minutes": 15,
+      "title": "Rights at work", "title_ml": "ജോലിസ്ഥലത്തെ അവകാശങ്ങൾ",
+      "summary": "Minimum wage, written offers, your ID and documents, working hours and where to get help.",
+      "summary_ml": "മിനിമം കൂലി, എഴുതിയ ഓഫർ, തിരിച്ചറിയൽ രേഖകൾ, ജോലി സമയം, സഹായം എവിടെ.",
+      "lessons": [
+        { "id": "rt1", "icon": "💰", "title": "Wages and hours", "title_ml": "കൂലിയും ജോലി സമയവും",
+          "points": ["Every worker must get at least the minimum wage notified by the government for that kind of work. Rates differ by state and job — check the latest notice or ask the Labour Office.", "Usually a work day is about 8 hours with a weekly day off. Extra hours (overtime) should be paid extra.", "Keep your own record: dates worked, hours, money received."],
+          "points_ml": ["ഓരോ തൊഴിലാളിക്കും ആ ജോലിക്ക് സർക്കാർ നിശ്ചയിച്ച മിനിമം കൂലിയെങ്കിലും ലഭിക്കണം. സംസ്ഥാനവും ജോലിയും അനുസരിച്ച് നിരക്ക് മാറും — ഏറ്റവും പുതിയ അറിയിപ്പ് നോക്കുക അല്ലെങ്കിൽ ലേബർ ഓഫീസിൽ ചോദിക്കുക.", "സാധാരണ ഒരു ജോലി ദിവസം ഏകദേശം 8 മണിക്കൂർ, ആഴ്ചയിൽ ഒരു അവധി. അധിക സമയത്തിന് (ഓവർടൈം) അധിക കൂലി ലഭിക്കണം.", "സ്വന്തം രേഖ സൂക്ഷിക്കുക: ജോലി ചെയ്ത തീയതി, മണിക്കൂർ, കിട്ടിയ പണം."] },
+        { "id": "rt2", "icon": "📄", "title": "Your documents are yours", "title_ml": "നിങ്ങളുടെ രേഖകൾ നിങ്ങളുടേതാണ്",
+          "points": ["Ask for a written offer or appointment letter that shows salary, hours and job.", "Show original documents for checking, but give only photocopies. No employer or agent should keep your Aadhaar, certificates or bank passbook.", "Never pay a big 'fee' to an agent to get a job."],
+          "points_ml": ["ശമ്പളം, സമയം, ജോലി എന്നിവ കാണിക്കുന്ന എഴുതിയ ഓഫർ / നിയമന കത്ത് ചോദിക്കുക.", "പരിശോധനയ്ക്ക് ഒറിജിനൽ കാണിക്കാം, ഫോട്ടോകോപ്പി മാത്രം കൊടുക്കുക. ഒരു തൊഴിലുടമയോ ഏജന്റോ ആധാർ, സർട്ടിഫിക്കറ്റ്, ബാങ്ക് പാസ്ബുക്ക് പിടിച്ചുവെക്കരുത്.", "ജോലി കിട്ടാൻ ഏജന്റിന് വലിയ 'ഫീസ്' കൊടുക്കരുത്."] },
+        { "id": "rt3", "icon": "☎️", "title": "Where to get help", "title_ml": "സഹായം എവിടെ",
+          "points": ["Police emergency: 112. Women's helpline: 181. Children under 18: Childline 1098. Cyber fraud: 1930.", "The district Labour Office handles wage complaints.", "ST Promoters and your AADI facilitator can help you contact the right office."],
+          "points_ml": ["പോലീസ് അടിയന്തരം: 112. വനിതാ ഹെൽപ്‌ലൈൻ: 181. 18 വയസ്സിൽ താഴെയുള്ളവർ: ചൈൽഡ്‌ലൈൻ 1098. സൈബർ തട്ടിപ്പ്: 1930.", "കൂലി പരാതികൾ ജില്ലാ ലേബർ ഓഫീസ് കൈകാര്യം ചെയ്യുന്നു.", "ST പ്രൊമോട്ടർമാരും AADI ഫെസിലിറ്റേറ്ററും ശരിയായ ഓഫീസുമായി ബന്ധപ്പെടാൻ സഹായിക്കും."] }
+      ],
+      "scenario": {
+        "title": "Salary not paid", "title_ml": "ശമ്പളം കിട്ടിയില്ല", "start": "s1",
+        "nodes": {
+          "s1": { "text": "You've worked at a construction site for 2 months. The contractor says salary will be paid 'later' and keeps your Aadhaar card.", "text_ml": "2 മാസമായി നിർമ്മാണ സ്ഥലത്ത് ജോലി ചെയ്യുന്നു. ശമ്പളം 'പിന്നീട്' തരാമെന്ന് കരാറുകാരൻ പറയുന്നു, ആധാർ കാർഡ് കൈവശം വെച്ചിരിക്കുന്നു.",
+            "choices": [
+              { "text": "Write down my work dates, ask politely for my card back and my wages, and contact the Labour Office or my facilitator if refused.", "text_ml": "ജോലി ദിവസങ്ങൾ എഴുതിവെക്കും, കാർഡും കൂലിയും മര്യാദയോടെ ചോദിക്കും, നിരസിച്ചാൽ ലേബർ ഓഫീസിനെയോ ഫെസിലിറ്റേറ്ററെയോ ബന്ധപ്പെടും.", "score": 2, "next": "s2", "feedback": "Records plus the right office is the strongest way to get paid.", "feedback_ml": "രേഖകളും ശരിയായ ഓഫീസും — കൂലി കിട്ടാൻ ഏറ്റവും നല്ല വഴി." },
+              { "text": "Keep working and hope.", "text_ml": "ജോലി തുടരും, പ്രതീക്ഷിക്കും.", "score": 0, "next": "s2", "feedback": "Unpaid wages and kept documents are signs of forced labour. Get help early.", "feedback_ml": "കൂലി നൽകാതിരിക്കലും രേഖ പിടിച്ചുവെക്കലും നിർബന്ധിത തൊഴിലിന്റെ സൂചനയാണ്. നേരത്തെ സഹായം തേടുക." }
+            ] },
+          "s2": { "text": "The contractor threatens you and won't let you leave the site.", "text_ml": "കരാറുകാരൻ ഭീഷണിപ്പെടുത്തുന്നു, സ്ഥലം വിടാൻ അനുവദിക്കുന്നില്ല.",
+            "choices": [
+              { "text": "Call 112 when safe and tell family where I am.", "text_ml": "സുരക്ഷിതമാകുമ്പോൾ 112 വിളിക്കും, ഞാൻ എവിടെയെന്ന് വീട്ടിൽ അറിയിക്കും.", "score": 2, "next": "end", "feedback": "Being stopped from leaving is a crime. Police must help.", "feedback_ml": "പോകാൻ അനുവദിക്കാതിരിക്കുന്നത് കുറ്റകൃത്യമാണ്. പോലീസ് സഹായിക്കണം." },
+              { "text": "Stay quiet — it's my fault for asking.", "text_ml": "മിണ്ടാതിരിക്കും — ചോദിച്ചത് എന്റെ തെറ്റാണ്.", "score": 0, "next": "end", "feedback": "It is never your fault. Asking for wages is your right.", "feedback_ml": "ഇത് ഒരിക്കലും നിങ്ങളുടെ തെറ്റല്ല. കൂലി ചോദിക്കുന്നത് നിങ്ങളുടെ അവകാശമാണ്." }
+            ] },
+          "end": { "end": true, "text": "Knowing your rights protects you and others.", "text_ml": "അവകാശങ്ങൾ അറിയുന്നത് നിങ്ങളെയും മറ്റുള്ളവരെയും സംരക്ഷിക്കും." }
+        }
+      },
+      "quiz": [
+        { "q": "Can an employer keep your original Aadhaar card?", "q_ml": "തൊഴിലുടമയ്ക്ക് നിങ്ങളുടെ ഒറിജിനൽ ആധാർ കാർഡ് കൈവശം വെക്കാമോ?", "options": ["Yes, always", "No — give only a photocopy", "Only for a year"], "options_ml": ["ഉവ്വ്, എപ്പോഴും", "ഇല്ല — ഫോട്ടോകോപ്പി മാത്രം", "ഒരു വർഷം മാത്രം"], "answer": 1, "why": "Your originals stay with you.", "why_ml": "ഒറിജിനൽ നിങ്ങളുടെ കൈവശം തന്നെ." },
+        { "q": "Minimum wage rates…", "q_ml": "മിനിമം കൂലി നിരക്ക്…", "options": ["Are the same everywhere forever", "Differ by state and job — check the latest notice", "Don't exist"], "options_ml": ["എല്ലായിടത്തും എന്നും ഒന്നാണ്", "സംസ്ഥാനവും ജോലിയും അനുസരിച്ച് മാറും — പുതിയ അറിയിപ്പ് നോക്കുക", "ഇല്ല"], "answer": 1, "why": "Governments revise rates regularly.", "why_ml": "സർക്കാർ നിരക്കുകൾ ഇടയ്ക്കിടെ പുതുക്കുന്നു." },
+        { "q": "Women's helpline number is…", "q_ml": "വനിതാ ഹെൽപ്‌ലൈൻ നമ്പർ…", "options": ["181", "1098", "1930"], "options_ml": ["181", "1098", "1930"], "answer": 0, "why": "181 for women; 1098 for children; 1930 for cyber fraud.", "why_ml": "181 സ്ത്രീകൾക്ക്; 1098 കുട്ടികൾക്ക്; 1930 സൈബർ തട്ടിപ്പ്." }
+      ]
+    },
+    {
+      "id": "safety", "track": "lifeskills", "icon": "🚩", "competency": "LS.SAFE", "minutes": 15,
+      "title": "Personal safety & fake job offers", "title_ml": "വ്യക്തി സുരക്ഷ, വ്യാജ ജോലി വാഗ്ദാനങ്ങൾ",
+      "summary": "Spot trafficking and fake job offers before you travel. Stay connected and safe.",
+      "summary_ml": "യാത്രയ്ക്ക് മുമ്പ് മനുഷ്യക്കടത്തും വ്യാജ ജോലി വാഗ്ദാനങ്ങളും തിരിച്ചറിയുക.",
+      "lessons": [
+        { "id": "sf1", "icon": "🚩", "title": "Red flags in a job offer", "title_ml": "ജോലി വാഗ്ദാനത്തിലെ അപകട സൂചനകൾ",
+          "points": ["Salary that sounds too good for the work, with no interview.", "Asks you to pay a fee, or to hand over your documents or bank card.", "Asks you to travel quickly, keep it secret from family, or travel with someone you don't know."],
+          "points_ml": ["അഭിമുഖമില്ലാതെ, ജോലിക്ക് അനുയോജ്യമല്ലാത്തത്ര വലിയ ശമ്പളം.", "ഫീസ് ചോദിക്കുന്നു, അല്ലെങ്കിൽ രേഖകളോ ബാങ്ക് കാർഡോ ചോദിക്കുന്നു.", "പെട്ടെന്ന് യാത്ര ചെയ്യാൻ, കുടുംബത്തിൽ നിന്ന് രഹസ്യമാക്കാൻ, അറിയാത്തവരോടൊപ്പം പോകാൻ പറയുന്നു."] },
+        { "id": "sf2", "icon": "🔎", "title": "Check before you go", "title_ml": "പോകും മുമ്പ് പരിശോധിക്കുക",
+          "points": ["Ask for the company name, full address and a landline. Ask your facilitator to check it.", "Leave the employer's details and your travel plan with family and your AADI facilitator.", "Keep some emergency money and a list of phone numbers on paper."],
+          "points_ml": ["കമ്പനിയുടെ പേര്, പൂർണ്ണ വിലാസം, ലാൻഡ്‌ലൈൻ ചോദിക്കുക. ഫെസിലിറ്റേറ്ററോട് പരിശോധിക്കാൻ പറയുക.", "തൊഴിലുടമയുടെ വിവരങ്ങളും യാത്രാ പദ്ധതിയും കുടുംബത്തിനും AADI ഫെസിലിറ്റേറ്റർക്കും നൽകുക.", "അടിയന്തര പണവും ഫോൺ നമ്പറുകളുടെ ലിസ്റ്റും കടലാസിൽ കരുതുക."] }
+      ],
+      "scenario": {
+        "title": "An exciting offer", "title_ml": "ആകർഷകമായ ഒരു വാഗ്ദാനം", "start": "s1",
+        "nodes": {
+          "s1": { "text": "A man visits the hamlet: \"Factory job in another state, ₹30,000 a month, free stay. Pay ₹5,000 now. We leave tonight. Don't tell too many people.\"", "text_ml": "ഒരാൾ ഊരിൽ വരുന്നു: \"മറ്റൊരു സംസ്ഥാനത്ത് ഫാക്ടറി ജോലി, മാസം ₹30,000, സൗജന്യ താമസം. ഇപ്പോൾ ₹5,000 തരൂ. ഇന്ന് രാത്രി പോകാം. അധികം ആളുകളോട് പറയണ്ട.\"",
+            "choices": [
+              { "text": "Say no for now; tell family and the facilitator, and ask for written details to check.", "text_ml": "ഇപ്പോൾ ഇല്ലെന്ന് പറയും; കുടുംബത്തോടും ഫെസിലിറ്റേറ്ററോടും പറയും, പരിശോധിക്കാൻ എഴുതിയ വിവരം ചോദിക്കും.", "score": 2, "next": "s2", "feedback": "Fee + rush + secrecy = classic trafficking red flags. Well spotted.", "feedback_ml": "ഫീസ് + തിടുക്കം + രഹസ്യം = മനുഷ്യക്കടത്തിന്റെ സാധാരണ സൂചനകൾ. നന്നായി തിരിച്ചറിഞ്ഞു." },
+              { "text": "Pay and go tonight — it's a great salary.", "text_ml": "പണം കൊടുത്ത് ഇന്ന് രാത്രി പോകും — നല്ല ശമ്പളം.", "score": 0, "next": "end_bad", "feedback": "This offer has every warning sign. Never pay to get a job, never leave in secret.", "feedback_ml": "ഈ വാഗ്ദാനത്തിൽ എല്ലാ അപകട സൂചനകളുമുണ്ട്. ജോലിക്ക് പണം കൊടുക്കരുത്, രഹസ്യമായി പോകരുത്." }
+            ] },
+          "s2": { "text": "Your friend has already gone with him and now messages: \"They took my phone and Aadhaar. I can't leave.\"", "text_ml": "കൂട്ടുകാരി അയാളോടൊപ്പം പോയി, ഇപ്പോൾ സന്ദേശം: \"അവർ എന്റെ ഫോണും ആധാറും എടുത്തു. പോകാൻ പറ്റുന്നില്ല.\"",
+            "choices": [
+              { "text": "Call 112 with whatever location details I have, and tell the facilitator / use the AADI Help button.", "text_ml": "അറിയാവുന്ന സ്ഥല വിവരങ്ങളോടെ 112 വിളിക്കും, ഫെസിലിറ്റേറ്ററോട് പറയും / AADI സഹായ ബട്ടൺ ഉപയോഗിക്കും.", "score": 2, "next": "end_good", "feedback": "Fast reporting helps rescue. You did the right thing.", "feedback_ml": "വേഗത്തിലുള്ള റിപ്പോർട്ടിംഗ് രക്ഷാപ്രവർത്തനത്തെ സഹായിക്കും. നിങ്ങൾ ശരി ചെയ്തു." },
+              { "text": "Wait and see.", "text_ml": "കാത്തിരിക്കാം.", "score": 0, "next": "end_good", "feedback": "Waiting can put your friend in more danger. Report immediately.", "feedback_ml": "കാത്തിരിക്കുന്നത് കൂട്ടുകാരിയെ കൂടുതൽ അപകടത്തിലാക്കും. ഉടൻ റിപ്പോർട്ട് ചെയ്യുക." }
+            ] },
+          "end_good": { "end": true, "text": "You know the red flags and how to act. You can protect yourself and your friends.", "text_ml": "അപകട സൂചനകളും പ്രവർത്തിക്കേണ്ട രീതിയും നിങ്ങൾക്കറിയാം. നിങ്ങൾക്കും കൂട്ടുകാർക്കും സംരക്ഷണം നൽകാം." },
+          "end_bad": { "end": true, "text": "This is how many people are trafficked. Remember the red flags: fee, rush, secrecy, documents. Try again.", "text_ml": "ഇങ്ങനെയാണ് പലരും കടത്തപ്പെടുന്നത്. അപകട സൂചനകൾ ഓർക്കുക: ഫീസ്, തിടുക്കം, രഹസ്യം, രേഖകൾ. വീണ്ടും ശ്രമിക്കുക." }
+        }
+      },
+      "quiz": [
+        { "q": "Which is a red flag in a job offer?", "q_ml": "ജോലി വാഗ്ദാനത്തിലെ അപകട സൂചന ഏത്?", "options": ["A written offer letter", "Pay a fee and leave tonight", "An interview at the office"], "options_ml": ["എഴുതിയ ഓഫർ ലെറ്റർ", "ഫീസ് അടച്ച് ഇന്ന് രാത്രി പോകുക", "ഓഫീസിലെ ഇന്റർവ്യൂ"], "answer": 1, "why": "Fees and rush are warning signs.", "why_ml": "ഫീസും തിടുക്കവും അപകട സൂചനകളാണ്." },
+        { "q": "Before travelling for a job you should leave the employer's details with…", "q_ml": "ജോലിക്കായി യാത്ര ചെയ്യും മുമ്പ് തൊഴിലുടമയുടെ വിവരം നൽകേണ്ടത്…", "options": ["Nobody", "Family and your facilitator", "Only the agent"], "options_ml": ["ആർക്കും വേണ്ട", "കുടുംബത്തിനും ഫെസിലിറ്റേറ്റർക്കും", "ഏജന്റിന് മാത്രം"], "answer": 1, "why": "Someone you trust should know where you are.", "why_ml": "നിങ്ങൾ എവിടെയെന്ന് വിശ്വസിക്കുന്ന ഒരാൾ അറിയണം." },
+        { "q": "A child under 18 is being taken for work. Call…", "q_ml": "18 വയസ്സിൽ താഴെയുള്ള കുട്ടിയെ ജോലിക്ക് കൊണ്ടുപോകുന്നു. വിളിക്കേണ്ടത്…", "options": ["1098 or 112", "Nobody", "The agent"], "options_ml": ["1098 അല്ലെങ്കിൽ 112", "ആരെയും വേണ്ട", "ഏജന്റിനെ"], "answer": 0, "why": "Childline 1098 and Police 112 respond to child protection emergencies.", "why_ml": "ചൈൽഡ്‌ലൈൻ 1098, പോലീസ് 112 എന്നിവ കുട്ടികളുടെ സംരക്ഷണ അടിയന്തരങ്ങളിൽ ഇടപെടും." }
+      ]
+    },
+    {
+      "id": "upi_banking", "track": "digital", "icon": "🏦", "competency": "DIG.UPI", "minutes": 15,
+      "title": "UPI & banking safely", "title_ml": "UPI, ബാങ്കിംഗ് — സുരക്ഷിതമായി",
+      "summary": "Open a bank account, use UPI, and avoid common money frauds.",
+      "summary_ml": "ബാങ്ക് അക്കൗണ്ട് തുറക്കൽ, UPI ഉപയോഗം, സാധാരണ പണ തട്ടിപ്പുകൾ ഒഴിവാക്കൽ.",
+      "lessons": [
+        { "id": "ub1", "icon": "🏦", "title": "Your own bank account", "title_ml": "സ്വന്തം ബാങ്ക് അക്കൗണ്ട്",
+          "points": ["You can open a zero-balance basic savings account (BSBD / Jan Dhan) with Aadhaar or other valid ID and a photo.", "Keep your own passbook and ATM card. Never give them to an employer or agent.", "Link your mobile number so you get SMS for every transaction."],
+          "points_ml": ["ആധാർ അല്ലെങ്കിൽ മറ്റ് സാധുവായ ID, ഫോട്ടോ എന്നിവ ഉപയോഗിച്ച് സീറോ ബാലൻസ് അടിസ്ഥാന സേവിംഗ്സ് അക്കൗണ്ട് (BSBD / ജൻ ധൻ) തുറക്കാം.", "പാസ്ബുക്കും ATM കാർഡും സ്വന്തം കൈവശം. തൊഴിലുടമയ്ക്കോ ഏജന്റിനോ കൊടുക്കരുത്.", "ഓരോ ഇടപാടിനും SMS കിട്ടാൻ മൊബൈൽ നമ്പർ ലിങ്ക് ചെയ്യുക."] },
+        { "id": "ub2", "icon": "📲", "title": "UPI safety rules", "title_ml": "UPI സുരക്ഷാ നിയമങ്ങൾ",
+          "points": ["You enter your UPI PIN only to SEND money. You never need a PIN to RECEIVE money.", "Check the name shown before you pay. Don't scan a QR code someone sends you 'to receive a prize'.", "Never share PIN or OTP. If cheated, call 1930 or report at cybercrime.gov.in quickly, and inform your bank."],
+          "points_ml": ["പണം അയക്കാൻ മാത്രമേ UPI PIN നൽകേണ്ടൂ. പണം സ്വീകരിക്കാൻ PIN ഒരിക്കലും വേണ്ട.", "പണം അയക്കും മുമ്പ് കാണിക്കുന്ന പേര് പരിശോധിക്കുക. 'സമ്മാനം കിട്ടാൻ' എന്ന് പറഞ്ഞ് അയക്കുന്ന QR സ്കാൻ ചെയ്യരുത്.", "PIN / OTP ഒരിക്കലും പങ്കിടരുത്. തട്ടിപ്പിനിരയായാൽ ഉടൻ 1930 വിളിക്കുക അല്ലെങ്കിൽ cybercrime.gov.in-ൽ റിപ്പോർട്ട് ചെയ്യുക, ബാങ്കിനെ അറിയിക്കുക."] }
+      ],
+      "scenario": {
+        "title": "You won a prize?", "title_ml": "സമ്മാനം കിട്ടിയോ?", "start": "s1",
+        "nodes": {
+          "s1": { "text": "A message says: \"Congratulations! You won ₹5,000. Scan this QR and enter your UPI PIN to receive it.\"", "text_ml": "സന്ദേശം: \"അഭിനന്ദനങ്ങൾ! നിങ്ങൾക്ക് ₹5,000 സമ്മാനം. ഈ QR സ്കാൻ ചെയ്ത് UPI PIN നൽകി സ്വീകരിക്കൂ.\"",
+            "choices": [
+              { "text": "Ignore and delete — PIN is never needed to receive money.", "text_ml": "അവഗണിച്ച് ഡിലീറ്റ് ചെയ്യും — പണം സ്വീകരിക്കാൻ PIN വേണ്ട.", "score": 2, "next": "s2", "feedback": "Perfect. Entering a PIN always sends money out.", "feedback_ml": "ശരി. PIN നൽകുന്നത് എപ്പോഴും പണം പുറത്തേക്ക് അയക്കും." },
+              { "text": "Scan and enter PIN.", "text_ml": "സ്കാൻ ചെയ്ത് PIN നൽകും.", "score": 0, "next": "s2", "feedback": "This would send YOUR money to the fraudster.", "feedback_ml": "ഇത് നിങ്ങളുടെ പണം തട്ടിപ്പുകാരന് അയക്കും." }
+            ] },
+          "s2": { "text": "Oops — your cousin already lost ₹2,000 this way an hour ago. What should she do?", "text_ml": "അയ്യോ — കസിന് ഒരു മണിക്കൂർ മുമ്പ് ഇങ്ങനെ ₹2,000 നഷ്ടപ്പെട്ടു. അവൾ എന്ത് ചെയ്യണം?",
+            "choices": [
+              { "text": "Call 1930 right away and inform the bank.", "text_ml": "ഉടൻ 1930 വിളിക്കുക, ബാങ്കിനെ അറിയിക്കുക.", "score": 2, "next": "end", "feedback": "Reporting quickly gives the best chance to stop the money.", "feedback_ml": "വേഗത്തിൽ റിപ്പോർട്ട് ചെയ്താൽ പണം തടയാൻ മികച്ച സാധ്യത." },
+              { "text": "Feel ashamed and tell nobody.", "text_ml": "നാണക്കേട് കാരണം ആരോടും പറയാതിരിക്കുക.", "score": 0, "next": "end", "feedback": "Fraud happens to many people. Reporting is nothing to be ashamed of.", "feedback_ml": "തട്ടിപ്പ് പലർക്കും സംഭവിക്കുന്നു. റിപ്പോർട്ട് ചെയ്യുന്നതിൽ നാണക്കേടില്ല." }
+            ] },
+          "end": { "end": true, "text": "You can use UPI confidently and safely.", "text_ml": "നിങ്ങൾക്ക് ആത്മവിശ്വാസത്തോടെയും സുരക്ഷിതമായും UPI ഉപയോഗിക്കാം." }
+        }
+      },
+      "quiz": [
+        { "q": "To RECEIVE money on UPI you need to enter your PIN.", "q_ml": "UPI-ൽ പണം സ്വീകരിക്കാൻ PIN നൽകണം.", "options": ["True", "False"], "options_ml": ["ശരി", "തെറ്റ്"], "answer": 1, "why": "PIN is only for sending.", "why_ml": "PIN അയക്കാൻ മാത്രം." },
+        { "q": "National cyber fraud helpline is…", "q_ml": "ദേശീയ സൈബർ തട്ടിപ്പ് ഹെൽപ്‌ലൈൻ…", "options": ["1930", "1098", "181"], "options_ml": ["1930", "1098", "181"], "answer": 0, "why": "1930 — call quickly after a fraud.", "why_ml": "1930 — തട്ടിപ്പിന് ശേഷം ഉടൻ വിളിക്കുക." },
+        { "q": "A zero-balance basic savings account…", "q_ml": "സീറോ ബാലൻസ് അടിസ്ഥാന സേവിംഗ്സ് അക്കൗണ്ട്…", "options": ["Needs ₹10,000 deposit", "Can be opened without a minimum balance", "Is only for companies"], "options_ml": ["₹10,000 നിക്ഷേപം വേണം", "മിനിമം ബാലൻസ് ഇല്ലാതെ തുറക്കാം", "കമ്പനികൾക്ക് മാത്രം"], "answer": 1, "why": "BSBD / Jan Dhan accounts have no minimum balance.", "why_ml": "BSBD / ജൻ ധൻ അക്കൗണ്ടുകൾക്ക് മിനിമം ബാലൻസ് ഇല്ല." }
+      ]
+    },
+    {
+      "id": "gov_portals", "track": "digital", "icon": "🏛️", "competency": "DIG.GOV", "minutes": 12,
+      "title": "Government portals & scholarships", "title_ml": "സർക്കാർ പോർട്ടലുകൾ, സ്കോളർഷിപ്പുകൾ",
+      "summary": "Certificates through e-District / Akshaya, scholarship portals, and spotting fake sites.",
+      "summary_ml": "ഇ-ഡിസ്ട്രിക്ട് / അക്ഷയ വഴി സർട്ടിഫിക്കറ്റുകൾ, സ്കോളർഷിപ്പ് പോർട്ടലുകൾ, വ്യാജ സൈറ്റുകൾ തിരിച്ചറിയൽ.",
+      "lessons": [
+        { "id": "gp1", "icon": "📜", "title": "Certificates online", "title_ml": "ഓൺലൈൻ സർട്ടിഫിക്കറ്റുകൾ",
+          "points": ["Community, income and nativity certificates can be applied for through the Kerala e-District portal, usually with help at an Akshaya centre.", "Keep a scan or photo of each certificate in DigiLocker or a safe folder.", "Note the application number and check status online."],
+          "points_ml": ["ജാതി, വരുമാന, നേറ്റിവിറ്റി സർട്ടിഫിക്കറ്റുകൾ കേരള ഇ-ഡിസ്ട്രിക്ട് പോർട്ടൽ വഴി അപേക്ഷിക്കാം, സാധാരണ അക്ഷയ കേന്ദ്രത്തിന്റെ സഹായത്തോടെ.", "ഓരോ സർട്ടിഫിക്കറ്റിന്റെയും സ്കാൻ / ഫോട്ടോ ഡിജിലോക്കറിലോ സുരക്ഷിത ഫോൾഡറിലോ സൂക്ഷിക്കുക.", "അപേക്ഷാ നമ്പർ കുറിച്ചുവെച്ച് ഓൺലൈനിൽ സ്റ്റാറ്റസ് നോക്കുക."] },
+        { "id": "gp2", "icon": "🎓", "title": "Scholarships", "title_ml": "സ്കോളർഷിപ്പുകൾ",
+          "points": ["Kerala post-matric scholarships for ST students are handled through the e-Grantz system; national schemes through the National Scholarship Portal.", "Apply before the deadline — your institution usually verifies it.", "Real government sites end in .gov.in or .kerala.gov.in. Never pay an agent to 'guarantee' a scholarship."],
+          "points_ml": ["ST വിദ്യാർത്ഥികൾക്കുള്ള കേരള പോസ്റ്റ്-മെട്രിക് സ്കോളർഷിപ്പുകൾ ഇ-ഗ്രാന്റ്സ് വഴി; ദേശീയ പദ്ധതികൾ നാഷണൽ സ്കോളർഷിപ്പ് പോർട്ടൽ വഴി.", "അവസാന തീയതിക്ക് മുമ്പ് അപേക്ഷിക്കുക — സ്ഥാപനം സാധാരണ പരിശോധിക്കും.", "യഥാർത്ഥ സർക്കാർ സൈറ്റുകൾ .gov.in അല്ലെങ്കിൽ .kerala.gov.in-ൽ അവസാനിക്കും. സ്കോളർഷിപ്പ് 'ഉറപ്പാക്കാൻ' ഏജന്റിന് പണം കൊടുക്കരുത്."] }
+      ],
+      "scenario": {
+        "title": "Applying for an income certificate", "title_ml": "വരുമാന സർട്ടിഫിക്കറ്റിന് അപേക്ഷ", "start": "s1",
+        "nodes": {
+          "s1": { "text": "You need an income certificate for a scholarship. A website 'kerala-certificates-fast.com' offers it in 1 hour for ₹500.", "text_ml": "സ്കോളർഷിപ്പിന് വരുമാന സർട്ടിഫിക്കറ്റ് വേണം. 'kerala-certificates-fast.com' എന്ന സൈറ്റ് ₹500-ന് 1 മണിക്കൂറിൽ തരാമെന്ന് പറയുന്നു.",
+            "choices": [
+              { "text": "Go to the Akshaya centre / official e-District portal instead.", "text_ml": "പകരം അക്ഷയ കേന്ദ്രം / ഔദ്യോഗിക ഇ-ഡിസ്ട്രിക്ട് പോർട്ടൽ ഉപയോഗിക്കും.", "score": 2, "next": "s2", "feedback": "Right — the site doesn't end in .gov.in, so it's not official.", "feedback_ml": "ശരി — സൈറ്റ് .gov.in-ൽ അവസാനിക്കുന്നില്ല, അതിനാൽ ഔദ്യോഗികമല്ല." },
+              { "text": "Pay ₹500 — it's fast.", "text_ml": "₹500 അടയ്ക്കും — വേഗമാണ്.", "score": 0, "next": "s2", "feedback": "Fake sites take money and personal data. Use official channels.", "feedback_ml": "വ്യാജ സൈറ്റുകൾ പണവും വ്യക്തിവിവരവും എടുക്കും. ഔദ്യോഗിക മാർഗം ഉപയോഗിക്കുക." }
+            ] },
+          "s2": { "text": "You submitted the application. What do you keep?", "text_ml": "അപേക്ഷ സമർപ്പിച്ചു. എന്ത് സൂക്ഷിക്കും?",
+            "choices": [
+              { "text": "The application number and receipt.", "text_ml": "അപേക്ഷാ നമ്പറും രസീതും.", "score": 2, "next": "end", "feedback": "You'll need it to check status and download the certificate.", "feedback_ml": "സ്റ്റാറ്റസ് നോക്കാനും സർട്ടിഫിക്കറ്റ് ഡൗൺലോഡ് ചെയ്യാനും ഇത് വേണം." },
+              { "text": "Nothing.", "text_ml": "ഒന്നുമില്ല.", "score": 0, "next": "end", "feedback": "Without the number, tracking is hard. Always keep it.", "feedback_ml": "നമ്പർ ഇല്ലാതെ ട്രാക്ക് ചെയ്യാൻ പ്രയാസം. എപ്പോഴും സൂക്ഷിക്കുക." }
+            ] },
+          "end": { "end": true, "text": "You can use government services safely online.", "text_ml": "സർക്കാർ സേവനങ്ങൾ ഓൺലൈനിൽ സുരക്ഷിതമായി ഉപയോഗിക്കാം." }
+        }
+      },
+      "quiz": [
+        { "q": "An official Kerala government website usually ends in…", "q_ml": "ഔദ്യോഗിക കേരള സർക്കാർ സൈറ്റ് സാധാരണ അവസാനിക്കുന്നത്…", "options": [".kerala.gov.in", ".xyz", ".fast.com"], "options_ml": [".kerala.gov.in", ".xyz", ".fast.com"], "answer": 0, "why": "Look for .gov.in.", "why_ml": ".gov.in നോക്കുക." },
+        { "q": "Where can you get help applying for certificates?", "q_ml": "സർട്ടിഫിക്കറ്റ് അപേക്ഷയ്ക്ക് സഹായം എവിടെ?", "options": ["Akshaya centre", "A stranger on social media", "Nowhere"], "options_ml": ["അക്ഷയ കേന്ദ്രം", "സോഷ്യൽ മീഡിയയിലെ അപരിചിതൻ", "എവിടെയുമില്ല"], "answer": 0, "why": "Akshaya centres are official service points.", "why_ml": "അക്ഷയ കേന്ദ്രങ്ങൾ ഔദ്യോഗിക സേവന കേന്ദ്രങ്ങളാണ്." },
+        { "q": "After applying online you should keep…", "q_ml": "ഓൺലൈനിൽ അപേക്ഷിച്ച ശേഷം സൂക്ഷിക്കേണ്ടത്…", "options": ["The application number", "Nothing", "Your password written on the wall"], "options_ml": ["അപേക്ഷാ നമ്പർ", "ഒന്നുമില്ല", "ചുമരിൽ എഴുതിയ പാസ്‌വേഡ്"], "answer": 0, "why": "Needed to track status.", "why_ml": "സ്റ്റാറ്റസ് അറിയാൻ ആവശ്യം." }
+      ]
+    }
+  ],
+  "documents": [
+    { "key": "aadhaar", "icon": "🪪", "label": "Aadhaar card", "label_ml": "ആധാർ കാർഡ്", "where": "Aadhaar enrolment centre / Akshaya", "where_ml": "ആധാർ എൻറോൾമെന്റ് കേന്ദ്രം / അക്ഷയ" },
+    { "key": "community_cert", "icon": "📜", "label": "Community (caste) certificate", "label_ml": "ജാതി സർട്ടിഫിക്കറ്റ്", "where": "Village Office via e-District / Akshaya", "where_ml": "വില്ലേജ് ഓഫീസ് — ഇ-ഡിസ്ട്രിക്ട് / അക്ഷയ വഴി" },
+    { "key": "income_cert", "icon": "💵", "label": "Income certificate", "label_ml": "വരുമാന സർട്ടിഫിക്കറ്റ്", "where": "Village Office via e-District / Akshaya", "where_ml": "വില്ലേജ് ഓഫീസ് — ഇ-ഡിസ്ട്രിക്ട് / അക്ഷയ വഴി" },
+    { "key": "bank_account", "icon": "🏦", "label": "Bank account in own name", "label_ml": "സ്വന്തം പേരിൽ ബാങ്ക് അക്കൗണ്ട്", "where": "Any bank branch / bank mitra", "where_ml": "ഏത് ബാങ്ക് ശാഖയും / ബാങ്ക് മിത്ര" },
+    { "key": "sslc_cert", "icon": "🎓", "label": "SSLC certificate", "label_ml": "SSLC സർട്ടിഫിക്കറ്റ്", "where": "School / Pareeksha Bhavan (duplicate)", "where_ml": "സ്കൂൾ / പരീക്ഷാ ഭവൻ (ഡ്യൂപ്ലിക്കേറ്റ്)" },
+    { "key": "pan", "icon": "💳", "label": "PAN card", "label_ml": "പാൻ കാർഡ്", "where": "Online (Income Tax e-filing / authorised centres) / Akshaya", "where_ml": "ഓൺലൈൻ / അംഗീകൃത കേന്ദ്രങ്ങൾ / അക്ഷയ" },
+    { "key": "photos", "icon": "📷", "label": "Passport-size photos", "label_ml": "പാസ്‌പോർട്ട് സൈസ് ഫോട്ടോകൾ", "where": "Any photo studio", "where_ml": "ഏത് ഫോട്ടോ സ്റ്റുഡിയോയും" },
+    { "key": "ration_card", "icon": "🍚", "label": "Ration card (family)", "label_ml": "റേഷൻ കാർഡ് (കുടുംബം)", "where": "Taluk Supply Office / civil supplies portal", "where_ml": "താലൂക്ക് സപ്ലൈ ഓഫീസ് / സിവിൽ സപ്ലൈസ് പോർട്ടൽ" }
+  ],
+  "softskills": [
+    { "key": "communication", "icon": "💬", "label": "Communication", "label_ml": "ആശയവിനിമയം" },
+    { "key": "teamwork", "icon": "🤝", "label": "Teamwork", "label_ml": "ടീം വർക്ക്" },
+    { "key": "punctuality", "icon": "⏰", "label": "Punctuality", "label_ml": "സമയനിഷ്ഠ" },
+    { "key": "confidence", "icon": "💪", "label": "Confidence", "label_ml": "ആത്മവിശ്വാസം" },
+    { "key": "problem_solving", "icon": "🧩", "label": "Problem solving", "label_ml": "പ്രശ്നപരിഹാരം" },
+    { "key": "presentation", "icon": "👔", "label": "Presentation", "label_ml": "അവതരണം" },
+    { "key": "digital", "icon": "📱", "label": "Digital skills", "label_ml": "ഡിജിറ്റൽ കഴിവ്" },
+    { "key": "money", "icon": "💰", "label": "Money management", "label_ml": "പണ കൈകാര്യം" }
+  ],
+  "rubric": [
+    { "level": 1, "icon": "🌱", "label": "Starting", "label_ml": "തുടക്കം", "desc": "Needs a lot of support.", "desc_ml": "ധാരാളം സഹായം വേണം." },
+    { "level": 2, "icon": "🌿", "label": "Growing", "label_ml": "വളരുന്നു", "desc": "Can do it with some help.", "desc_ml": "കുറച്ച് സഹായത്തോടെ ചെയ്യും." },
+    { "level": 3, "icon": "🌳", "label": "Confident", "label_ml": "ആത്മവിശ്വാസം", "desc": "Does it on their own most of the time.", "desc_ml": "മിക്കപ്പോഴും സ്വയം ചെയ്യും." },
+    { "level": 4, "icon": "⭐", "label": "Role model", "label_ml": "മാതൃക", "desc": "Does it well and helps others.", "desc_ml": "നന്നായി ചെയ്യും, മറ്റുള്ളവരെ സഹായിക്കും." }
+  ]
+}

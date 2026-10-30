@@ -1,0 +1,21 @@
+{
+  "id": "channels", "version": "1.0.0",
+  "name": "Reach (SMS · IVR · WhatsApp)", "name_ml": "സന്ദേശങ്ങൾ (SMS · IVR)", "icon": "📞",
+  "description": "Reaches families without smartphones: outbox delivery over SMS, IVR voice and WhatsApp (pluggable providers, simulator in demo), feature-phone simulator, SMS quiz, consent-checked broadcasts and guardian weekly digests.",
+  "tables": {
+    "channels_outbox": ["notification_id", "person_id", "hamlet_id", "agency_id", "module", "kind", "ref_id", "channel", "message", "status", "attempts", "last_error", "created_at", "sent_at"],
+    "channels_deliveries": ["outbox_id", "notification_id", "person_id", "to_person_id", "to_relation", "hamlet_id", "agency_id", "kind", "ref_id", "channel", "provider", "to_masked", "message", "status", "error", "attempt", "cost_paise", "at"],
+    "channels_broadcasts": ["agency_id", "hamlet_id", "programme_id", "audience", "title", "message", "message_ml", "channel", "sent_by", "sent_by_name", "at", "targeted", "skipped_no_consent", "queued"],
+    "channels_quiz": ["date", "track", "question", "question_ml", "options", "answer", "explanation", "explanation_ml"],
+    "channels_quiz_replies": ["quiz_id", "person_id", "hamlet_id", "agency_id", "reply", "correct", "points", "via", "at"],
+    "channels_ivr_calls": ["person_id", "hamlet_id", "lang", "path", "outcome", "duration_s", "at", "handled_by", "status"],
+    "channels_inbound": ["person_id", "hamlet_id", "channel", "body", "parsed", "at"]
+  },
+  "types": { "answer": "INTEGER", "attempts": "INTEGER", "attempt": "INTEGER", "cost_paise": "INTEGER", "targeted": "INTEGER", "skipped_no_consent": "INTEGER", "queued": "INTEGER", "correct": "INTEGER", "points": "INTEGER", "duration_s": "INTEGER" },
+  "emits": ["channels.delivered", "channels.broadcast_sent", "channels.quiz_answered", "channels.callback_requested"],
+  "subscribes": ["row.upsert"],
+  "nav": [
+    { "view": "home", "label": "Reach & Messages", "label_ml": "സന്ദേശങ്ങൾ", "icon": "📞", "roles": ["platform_admin", "agency_admin", "coordinator", "facilitator"], "section": "community" },
+    { "view": "phone", "label": "Feature-phone Simulator", "label_ml": "ഫീച്ചർ ഫോൺ", "icon": "📟", "roles": ["platform_admin", "agency_admin", "coordinator", "facilitator", "learner", "guardian"], "section": "community" }
+  ]
+}

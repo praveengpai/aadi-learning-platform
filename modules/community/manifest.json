@@ -1,0 +1,23 @@
+{
+  "id": "community", "version": "1.0.0",
+  "name": "Family & Community", "name_ml": "കുടുംബം, സമൂഹം", "icon": "🏡",
+  "description": "Guardian home and consent centre, hamlet notice board, cultural archive with community data sovereignty, Oorukoottam meetings and cross-agency hamlet coordination.",
+  "tables": {
+    "community_notices": ["hamlet_id", "agency_id", "category", "title", "title_ml", "body", "body_ml", "audio_en", "audio_ml", "deadline", "date_is_demo", "how_to", "how_to_ml", "contact", "pinned", "posted_by", "posted_by_name", "posted_at"],
+    "community_content": ["hamlet_id", "kind", "title", "title_ml", "body", "body_ml", "language", "contributor_name", "contributor_kind", "contributor_person_id", "credit_as", "licence", "status", "review_note", "reviewed_by", "reviewed_by_name", "submitted_by", "submitted_at", "reviewed_at", "published_at", "tags", "credits"],
+    "community_meetings": ["hamlet_id", "title", "title_ml", "date", "time", "venue", "agenda", "status", "attendance", "women_attendance", "minutes", "minutes_ml", "decisions", "convened_by", "convened_by_name", "agency_id"],
+    "community_actions": ["meeting_id", "hamlet_id", "text", "text_ml", "owner", "owner_agency_id", "due", "status", "done_at"],
+    "community_threads": ["hamlet_id", "topic", "track", "kind", "from_agency_id", "agency_ids", "status", "created_by", "created_by_name", "created_at", "resolution"],
+    "community_posts": ["thread_id", "hamlet_id", "agency_id", "author_id", "author_name", "body", "posted_at"]
+  },
+  "types": { "pinned": "INTEGER", "attendance": "INTEGER", "women_attendance": "INTEGER", "credits": "INTEGER", "date_is_demo": "INTEGER" },
+  "emits": ["community.content_submitted", "community.content_published", "community.notice_posted", "community.meeting_scheduled", "community.coordination_proposed"],
+  "subscribes": [],
+  "nav": [
+    { "view": "family", "label": "My Family", "label_ml": "എന്റെ കുടുംബം", "icon": "👨‍👩‍👧", "roles": ["guardian", "learner"], "section": "community" },
+    { "view": "notices", "label": "Notice Board", "label_ml": "അറിയിപ്പുകൾ", "icon": "📢", "roles": ["guardian", "learner", "facilitator", "coordinator", "agency_admin", "platform_admin", "teacher", "mentor", "counsellor", "cpo", "govt_viewer"], "section": "community" },
+    { "view": "culture", "label": "Our Culture", "label_ml": "നമ്മുടെ സംസ്കാരം", "icon": "🪘", "roles": ["guardian", "learner", "facilitator", "coordinator", "agency_admin", "platform_admin", "teacher", "mentor", "cpo", "donor", "govt_viewer"], "section": "community" },
+    { "view": "meetings", "label": "Oorukoottam", "label_ml": "ഊരുകൂട്ടം", "icon": "🗣️", "roles": ["guardian", "learner", "facilitator", "coordinator", "agency_admin", "platform_admin", "cpo"], "section": "community" },
+    { "view": "coordination", "label": "Hamlet Coordination", "label_ml": "ഊര് ഏകോപനം", "icon": "🤝", "roles": ["facilitator", "coordinator", "agency_admin", "platform_admin", "teacher", "counsellor", "cpo", "govt_viewer"], "section": "ops" }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "id": "language",
+  "version": "1.0.0",
+  "name": "Language Lab",
+  "name_ml": "ഭാഷാ പഠനം",
+  "icon": "🗣️",
+  "description": "Spoken & written English, Hindi, German A1, Malayalam literacy and a community mother-tongue bridge — flashcards, listen-and-repeat, city role-plays, speaking practice with ratings, peer language circles and CEFR-like levels.",
+  "tables": {
+    "language_progress": ["person_id", "hamlet_id", "course_id", "unit_id", "activity_id", "kind", "score", "completed_at", "data"],
+    "language_speaking": ["person_id", "hamlet_id", "course_id", "unit_id", "activity_id", "prompt", "self_rating", "peer_rating", "teacher_rating", "teacher_note", "reviewer", "reviewed_at", "sample", "sample_mime", "sample_bytes", "duration_s", "request_review", "status", "created_at", "checks"],
+    "language_words": ["language", "hamlet_id", "concept", "ml", "en", "word", "pronunciation", "category", "note", "contributor_id", "contributor_name", "status", "reviews", "demo", "created_at"],
+    "language_circles": ["agency_id", "programme_id", "hamlet_id", "title", "title_ml", "date", "time", "place", "roleplay_id", "facilitator", "notes", "status"],
+    "language_attendance": ["circle_id", "programme_id", "person_id", "hamlet_id", "present", "role"],
+    "language_levels": ["person_id", "hamlet_id", "course_id", "level", "awarded_at", "awarded_by", "evidence"]
+  },
+  "types": { "score": "REAL", "self_rating": "INTEGER", "peer_rating": "INTEGER", "teacher_rating": "INTEGER", "sample_bytes": "INTEGER", "duration_s": "INTEGER", "request_review": "INTEGER", "demo": "INTEGER", "present": "INTEGER" },
+  "emits": ["language.activity_completed", "language.speaking_reviewed", "language.level_reached", "language.word_contributed"],
+  "subscribes": [],
+  "nav": [
+    { "view": "home", "label": "Language Lab", "label_ml": "ഭാഷാ പഠനം", "icon": "🗣️", "roles": ["learner", "guardian"], "section": "learn" },
+    { "view": "bridge", "label": "Mother-tongue words", "label_ml": "മാതൃഭാഷാ വാക്കുകൾ", "icon": "🌿", "roles": ["learner", "guardian", "teacher", "facilitator", "mentor", "agency_admin", "coordinator", "platform_admin"], "section": "community" },
+    { "view": "teach", "label": "Language classes", "label_ml": "ഭാഷാ ക്ലാസുകൾ", "icon": "🗣️", "roles": ["teacher", "facilitator", "agency_admin", "coordinator", "platform_admin"], "section": "teach" },
+    { "view": "admin", "label": "Language overview", "label_ml": "ഭാഷാ പഠനം — അവലോകനം", "icon": "📊", "roles": ["platform_admin", "agency_admin", "coordinator", "donor", "govt_viewer", "cpo"], "section": "insight" }
+  ]
+}

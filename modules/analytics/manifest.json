@@ -1,0 +1,17 @@
+{
+  "id": "analytics", "version": "1.0.0",
+  "name": "Impact & Insight", "name_ml": "സ്വാധീനം, വിശകലനം", "icon": "📈",
+  "description": "Platform, agency, hamlet, donor and government dashboards with k-anonymity; transparent dropout-risk alerts; SDG 4/8/10 and Kerala ST Dept impact framework; printable funder report; consent-gated research export.",
+  "tables": {
+    "analytics_snapshots": ["scope", "period", "metrics", "created_by", "at"],
+    "analytics_alert_actions": ["person_id", "hamlet_id", "agency_id", "action", "note", "by_name", "at"]
+  },
+  "emits": ["analytics.research_export"],
+  "subscribes": [],
+  "nav": [
+    { "view": "dashboard", "label": "Impact Dashboard", "label_ml": "സ്വാധീന ഡാഷ്ബോർഡ്", "icon": "📈", "roles": ["platform_admin", "cpo", "agency_admin", "coordinator", "donor", "govt_viewer"], "section": "insight" },
+    { "view": "risk", "label": "Dropout Risk", "label_ml": "കൊഴിഞ്ഞുപോക്ക് സാധ്യത", "icon": "⚠️", "roles": ["platform_admin", "agency_admin", "coordinator", "facilitator", "teacher", "counsellor"], "section": "insight" },
+    { "view": "report", "label": "Impact Report", "label_ml": "സ്വാധീന റിപ്പോർട്ട്", "icon": "🖨️", "roles": ["platform_admin", "agency_admin", "coordinator", "donor", "govt_viewer"], "section": "insight" },
+    { "view": "research", "label": "Research Export", "label_ml": "ഗവേഷണ ഡാറ്റ", "icon": "🔬", "roles": ["platform_admin", "agency_admin"], "section": "insight" }
+  ]
+}

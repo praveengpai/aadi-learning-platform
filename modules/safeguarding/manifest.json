@@ -1,0 +1,22 @@
+{
+  "id": "safeguarding", "version": "1.0.0", "critical": true,
+  "name": "Safeguarding", "name_ml": "സംരക്ഷണം", "icon": "🛟",
+  "description": "Child protection layer: confidential Help button routed only to the Child Protection Officer, CPO case management with audited access, moderation queue for flagged messages and content, staff safeguarding training, incident register and policy.",
+  "tables": {
+    "safeguarding_cases": ["case_no", "source", "kind", "category", "severity", "status", "person_id", "hamlet_id", "description", "reporter_id", "reporter_role", "reporter_relation", "ack_code", "assigned_to", "assigned_name", "moderation_id", "referrals", "outcome", "closure_note", "created_at", "triaged_at", "closed_at"],
+    "safeguarding_actions": ["case_id", "hamlet_id", "action", "note", "by_id", "by_name", "by_role", "at"],
+    "safeguarding_moderation": ["source_module", "source_type", "ref_id", "excerpt", "reasons", "severity", "author_id", "author_role", "target_person_id", "hamlet_id", "status", "note", "case_id", "decided_by", "decided_by_name", "decided_at", "decision_note", "created_at"],
+    "safeguarding_training": ["user_id", "agency_id", "role", "display_name", "course_version", "score", "total", "passed", "completed_at", "expires_at"]
+  },
+  "types": { "score": "INTEGER", "total": "INTEGER", "passed": "INTEGER" },
+  "emits": ["safeguarding.case_opened", "safeguarding.case_closed", "safeguarding.moderation_decided", "safeguarding.training_passed"],
+  "subscribes": ["*.message_flagged", "*.content_flagged", "*.content_submitted"],
+  "nav": [
+    { "view": "help", "label": "Help — I need someone", "label_ml": "സഹായം വേണം", "icon": "🛟", "roles": ["learner", "guardian"], "section": "care" },
+    { "view": "cases", "label": "Child protection cases", "label_ml": "സംരക്ഷണ കേസുകൾ", "icon": "🛡️", "roles": ["cpo", "platform_admin"], "section": "care" },
+    { "view": "moderation", "label": "Moderation queue", "label_ml": "മോഡറേഷൻ", "icon": "🚦", "roles": ["cpo", "platform_admin"], "section": "care" },
+    { "view": "concern", "label": "Report a concern", "label_ml": "ആശങ്ക അറിയിക്കുക", "icon": "📣", "roles": ["facilitator", "teacher", "coordinator", "agency_admin", "counsellor", "mentor"], "section": "care" },
+    { "view": "training", "label": "Safeguarding training", "label_ml": "സംരക്ഷണ പരിശീലനം", "icon": "🎓", "roles": ["facilitator", "teacher", "coordinator", "agency_admin", "counsellor", "mentor", "cpo", "platform_admin"], "section": "care" },
+    { "view": "policy", "label": "Safeguarding policy", "label_ml": "സംരക്ഷണ നയം", "icon": "📘", "roles": ["learner", "guardian", "facilitator", "teacher", "coordinator", "agency_admin", "counsellor", "mentor", "cpo", "platform_admin", "donor", "employer", "govt_viewer"], "section": "care" }
+  ]
+}

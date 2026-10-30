@@ -1,0 +1,172 @@
+{
+  "note": "Pathways are kept general. Ages, marks, heights and exam patterns change with each notification — learners are always told to check the latest official notification. ST candidates usually get age relaxation and reserved seats/posts.",
+  "pathways": [
+    { "key": "police", "icon": "👮", "title": "Police Constable (Civil Police Officer)", "title_ml": "പോലീസ് കോൺസ്റ്റബിൾ (സിവിൽ പോലീസ് ഓഫീസർ)",
+      "match": ["Police (PSC)", "Police"], "sector": "government", "exam_tags": ["psc", "police"], "lifeskills": ["interview", "rights"], "years": 2,
+      "eligibility": ["Pass Plus Two (Higher Secondary)", "Age limit as per notification — ST candidates get extra years", "Minimum height / chest standards (relaxed for ST candidates)"],
+      "eligibility_ml": ["പ്ലസ് ടു പാസ്", "പ്രായപരിധി വിജ്ഞാപനപ്രകാരം — ST വിഭാഗത്തിന് ഇളവ്", "കുറഞ്ഞ ഉയരം / നെഞ്ചളവ് (ST വിഭാഗത്തിന് ഇളവ്)"],
+      "steps": [
+        { "label": "Finish Plus Two", "label_ml": "പ്ലസ് ടു പൂർത്തിയാക്കുക", "months": 0 },
+        { "label": "Register on Kerala PSC Thulasi (One-Time Registration)", "label_ml": "കേരള PSC തുളസിയിൽ ഒറ്റത്തവണ രജിസ്ട്രേഷൻ", "months": 1 },
+        { "label": "Written OMR exam: GK, current affairs, maths, reasoning, Malayalam/English", "label_ml": "എഴുത്തുപരീക്ഷ (OMR): പൊതുവിജ്ഞാനം, ആനുകാലികം, ഗണിതം, യുക്തി, ഭാഷ", "months": 8 },
+        { "label": "Physical measurement + Physical Efficiency Test (running, jumping, throwing)", "label_ml": "ശാരീരിക അളവും കായികക്ഷമതാ പരീക്ഷയും (ഓട്ടം, ചാട്ടം, എറിയൽ)", "months": 4 },
+        { "label": "Rank list, medical check, police verification", "label_ml": "റാങ്ക് ലിസ്റ്റ്, വൈദ്യപരിശോധന, പോലീസ് പരിശോധന", "months": 6 },
+        { "label": "Training at police academy / camp", "label_ml": "പോലീസ് അക്കാദമി / ക്യാമ്പ് പരിശീലനം", "months": 9 }
+      ],
+      "tip": "Kerala has run special recruitment drives for ST youth from forest hamlets. Start running practice early — the physical test is where many people miss out.",
+      "tip_ml": "വനമേഖലയിലെ ST യുവാക്കൾക്കായി കേരളം പ്രത്യേക നിയമനങ്ങൾ നടത്തിയിട്ടുണ്ട്. ഓട്ട പരിശീലനം നേരത്തെ തുടങ്ങുക — കായികക്ഷമതാ പരീക്ഷയിലാണ് പലരും പിന്നോട്ടുപോകുന്നത്." },
+    { "key": "forest", "icon": "🌳", "title": "Beat Forest Officer / Forest Guard", "title_ml": "ബീറ്റ് ഫോറസ്റ്റ് ഓഫീസർ / ഫോറസ്റ്റ് ഗാർഡ്",
+      "match": ["Forest Guard (PSC)"], "sector": "government", "exam_tags": ["psc", "forest"], "lifeskills": ["interview"], "years": 2,
+      "eligibility": ["Pass Plus Two (check notification)", "Physical standards and walking/endurance test", "Age limit as per notification — ST relaxation"],
+      "eligibility_ml": ["പ്ലസ് ടു പാസ് (വിജ്ഞാപനം നോക്കുക)", "ശാരീരിക യോഗ്യതയും നടത്ത / സഹനശേഷി പരീക്ഷയും", "പ്രായപരിധി വിജ്ഞാപനപ്രകാരം — ST ഇളവ്"],
+      "steps": [
+        { "label": "Plus Two + PSC registration", "label_ml": "പ്ലസ് ടു + PSC രജിസ്ട്രേഷൻ", "months": 1 },
+        { "label": "Written exam (GK, forest & environment basics)", "label_ml": "എഴുത്തുപരീക്ഷ (പൊതുവിജ്ഞാനം, വനം, പരിസ്ഥിതി)", "months": 8 },
+        { "label": "Physical efficiency / walking test", "label_ml": "കായികക്ഷമത / നടത്ത പരീക്ഷ", "months": 3 },
+        { "label": "Appointment and forest training", "label_ml": "നിയമനവും വന പരിശീലനവും", "months": 6 }
+      ],
+      "tip": "Your knowledge of the forest, plants and animals is a real advantage. Special recruitment of ST candidates for forest posts has been done in Kerala — watch PSC notices.",
+      "tip_ml": "കാട്, ചെടികൾ, മൃഗങ്ങൾ എന്നിവയെക്കുറിച്ചുള്ള നിങ്ങളുടെ അറിവ് വലിയ ശക്തിയാണ്. വനം വകുപ്പിൽ ST വിഭാഗത്തിന് പ്രത്യേക നിയമനം നടന്നിട്ടുണ്ട് — PSC അറിയിപ്പുകൾ ശ്രദ്ധിക്കുക." },
+    { "key": "nurse", "icon": "🩺", "title": "Nurse", "title_ml": "നഴ്സ്",
+      "match": ["Nurse"], "sector": "health", "exam_tags": [], "lifeskills": ["hygiene", "workplace", "city"], "years": 4,
+      "eligibility": ["Plus Two with Science (Physics, Chemistry, Biology)", "GNM diploma or BSc Nursing admission (marks-based / entrance as notified)"],
+      "eligibility_ml": ["സയൻസ് പ്ലസ് ടു (ഫിസിക്സ്, കെമിസ്ട്രി, ബയോളജി)", "GNM ഡിപ്ലോമ അല്ലെങ്കിൽ BSc നഴ്സിംഗ് പ്രവേശനം (മാർക്ക് / പ്രവേശന പരീക്ഷ)"],
+      "steps": [
+        { "label": "Plus Two Science (Biology group)", "label_ml": "പ്ലസ് ടു സയൻസ് (ബയോളജി ഗ്രൂപ്പ്)", "months": 0 },
+        { "label": "Apply for GNM (3 years) or BSc Nursing (4 years) — ST reserved seats", "label_ml": "GNM (3 വർഷം) / BSc നഴ്സിംഗ് (4 വർഷം) — ST സംവരണ സീറ്റ്", "months": 3 },
+        { "label": "Course with hospital training", "label_ml": "ആശുപത്രി പരിശീലനത്തോടെ കോഴ്സ്", "months": 42 },
+        { "label": "Register with the State Nursing Council", "label_ml": "സംസ്ഥാന നഴ്സിംഗ് കൗൺസിലിൽ രജിസ്ട്രേഷൻ", "months": 3 }
+      ],
+      "tip": "Post-matric scholarships and hostel support for ST students cover much of the cost. Ask your counsellor about e-Grantz.",
+      "tip_ml": "ST വിദ്യാർത്ഥികൾക്കുള്ള പോസ്റ്റ്-മെട്രിക് സ്കോളർഷിപ്പും ഹോസ്റ്റൽ സഹായവും ചെലവിന്റെ വലിയ പങ്ക് വഹിക്കും. ഇ-ഗ്രാന്റ്സിനെക്കുറിച്ച് കൗൺസിലറോട് ചോദിക്കുക." },
+    { "key": "teacher", "icon": "🧑‍🏫", "title": "School Teacher", "title_ml": "സ്കൂൾ അധ്യാപകൻ",
+      "match": ["Teacher"], "sector": "education", "exam_tags": ["psc", "ktet"], "lifeskills": ["interview"], "years": 3,
+      "eligibility": ["Primary (LP/UP): Plus Two + D.El.Ed (2 years)", "High school: Degree + B.Ed", "Pass K-TET for the category"],
+      "eligibility_ml": ["LP/UP: പ്ലസ് ടു + D.El.Ed (2 വർഷം)", "ഹൈസ്കൂൾ: ബിരുദം + B.Ed", "ബന്ധപ്പെട്ട K-TET പാസ്"],
+      "steps": [
+        { "label": "Plus Two (or degree for high school)", "label_ml": "പ്ലസ് ടു (ഹൈസ്കൂളിന് ബിരുദം)", "months": 0 },
+        { "label": "D.El.Ed or B.Ed", "label_ml": "D.El.Ed അല്ലെങ്കിൽ B.Ed", "months": 24 },
+        { "label": "K-TET exam", "label_ml": "K-TET പരീക്ഷ", "months": 4 },
+        { "label": "PSC exam for teacher posts / aided school jobs", "label_ml": "അധ്യാപക തസ്തികയ്ക്ക് PSC പരീക്ഷ / എയ്ഡഡ് സ്കൂൾ", "months": 10 }
+      ],
+      "tip": "Teachers who speak the community language are badly needed in tribal-area schools.", "tip_ml": "സമൂഹ ഭാഷ സംസാരിക്കുന്ന അധ്യാപകരെ ആദിവാസി മേഖലാ സ്കൂളുകളിൽ വളരെ ആവശ്യമുണ്ട്." },
+    { "key": "ldc", "icon": "🗂️", "title": "LDC / Office Assistant (PSC)", "title_ml": "LDC / ഓഫീസ് അസിസ്റ്റന്റ് (PSC)",
+      "match": ["LDC (PSC)"], "sector": "government", "exam_tags": ["psc", "ldc"], "lifeskills": ["workplace", "gov_portals"], "years": 1,
+      "eligibility": ["SSLC pass (minimum)", "Age limit as per notification — ST relaxation"], "eligibility_ml": ["SSLC പാസ് (കുറഞ്ഞത്)", "പ്രായപരിധി വിജ്ഞാപനപ്രകാരം — ST ഇളവ്"],
+      "steps": [
+        { "label": "PSC One-Time Registration", "label_ml": "PSC ഒറ്റത്തവണ രജിസ്ട്രേഷൻ", "months": 1 },
+        { "label": "Preliminary / main OMR exam", "label_ml": "പ്രാഥമിക / മുഖ്യ OMR പരീക്ഷ", "months": 10 },
+        { "label": "Rank list → advice → appointment", "label_ml": "റാങ്ക് ലിസ്റ്റ് → അഡ്വൈസ് → നിയമനം", "months": 8 }
+      ],
+      "tip": "Daily GK and current affairs practice matters most. Use the Exam Prep section.", "tip_ml": "ദിവസേന പൊതുവിജ്ഞാനവും ആനുകാലികവും പരിശീലിക്കുക. പരീക്ഷാ പരിശീലന വിഭാഗം ഉപയോഗിക്കുക." },
+    { "key": "army", "icon": "🎖️", "title": "Armed forces (Agniveer and others)", "title_ml": "സായുധ സേന (അഗ്നിവീർ മുതലായവ)",
+      "match": ["Army"], "sector": "defence", "exam_tags": ["defence"], "lifeskills": ["city", "safety"], "years": 1,
+      "eligibility": ["Class 10 or 12 depending on the trade", "Age band set in each notification", "Physical and medical standards"],
+      "eligibility_ml": ["ട്രേഡ് അനുസരിച്ച് 10 / 12 ക്ലാസ്", "ഓരോ വിജ്ഞാപനത്തിലും പ്രായപരിധി", "ശാരീരിക, വൈദ്യ യോഗ്യത"],
+      "steps": [
+        { "label": "Online registration on the official recruitment site", "label_ml": "ഔദ്യോഗിക റിക്രൂട്ട്മെന്റ് സൈറ്റിൽ ഓൺലൈൻ രജിസ്ട്രേഷൻ", "months": 1 },
+        { "label": "Online common entrance exam", "label_ml": "ഓൺലൈൻ പൊതു പ്രവേശന പരീക്ഷ", "months": 2 },
+        { "label": "Recruitment rally: physical tests + medical", "label_ml": "റിക്രൂട്ട്മെന്റ് റാലി: കായിക പരീക്ഷ + വൈദ്യപരിശോധന", "months": 3 },
+        { "label": "Training", "label_ml": "പരിശീലനം", "months": 6 }
+      ],
+      "tip": "Recruitment is free. Anyone asking for money to 'get you selected' is a fraud.", "tip_ml": "റിക്രൂട്ട്മെന്റ് സൗജന്യമാണ്. 'സെലക്ഷൻ ഉറപ്പാക്കാൻ' പണം ചോദിക്കുന്നവർ തട്ടിപ്പുകാരാണ്." },
+    { "key": "bank", "icon": "🏦", "title": "Bank clerk", "title_ml": "ബാങ്ക് ക്ലർക്ക്",
+      "match": ["Bank clerk"], "sector": "banking", "exam_tags": ["bank"], "lifeskills": ["upi_banking", "interview", "city"], "years": 4,
+      "eligibility": ["A degree in any subject", "Age band per notification — ST relaxation", "Basic computer skills"], "eligibility_ml": ["ഏതെങ്കിലും ബിരുദം", "പ്രായപരിധി വിജ്ഞാപനപ്രകാരം — ST ഇളവ്", "അടിസ്ഥാന കമ്പ്യൂട്ടർ പരിജ്ഞാനം"],
+      "steps": [
+        { "label": "Complete a degree", "label_ml": "ബിരുദം പൂർത്തിയാക്കുക", "months": 36 },
+        { "label": "Preliminary exam (English, reasoning, numerical ability)", "label_ml": "പ്രാഥമിക പരീക്ഷ (ഇംഗ്ലീഷ്, യുക്തി, സംഖ്യാശേഷി)", "months": 6 },
+        { "label": "Main exam + language test", "label_ml": "മുഖ്യ പരീക്ഷ + ഭാഷാ പരീക്ഷ", "months": 2 },
+        { "label": "Allotment to a bank", "label_ml": "ബാങ്കിലേക്ക് അലോട്ട്മെന്റ്", "months": 4 }
+      ],
+      "tip": "Start English practice early — the English Speaking Club helps.", "tip_ml": "ഇംഗ്ലീഷ് പരിശീലനം നേരത്തെ തുടങ്ങുക — ഇംഗ്ലീഷ് ക്ലബ് സഹായിക്കും." },
+    { "key": "driver", "icon": "🚚", "title": "Professional driver", "title_ml": "പ്രൊഫഷണൽ ഡ്രൈവർ",
+      "match": ["Driver"], "sector": "transport", "exam_tags": [], "lifeskills": ["city", "rights", "safety"], "years": 1,
+      "eligibility": ["Age 18+ for a light vehicle licence", "Learner's licence test, then driving test", "Heavy vehicle licence needs experience — check current RTO rules"],
+      "eligibility_ml": ["ലൈറ്റ് വാഹന ലൈസൻസിന് 18+ വയസ്സ്", "ലേണേഴ്സ് ലൈസൻസ് ടെസ്റ്റ്, തുടർന്ന് ഡ്രൈവിംഗ് ടെസ്റ്റ്", "ഹെവി ലൈസൻസിന് പരിചയം വേണം — RTO നിയമം നോക്കുക"],
+      "steps": [
+        { "label": "Learner's licence (road rules test)", "label_ml": "ലേണേഴ്സ് ലൈസൻസ് (റോഡ് നിയമ പരീക്ഷ)", "months": 1 },
+        { "label": "Practice at a recognised driving school", "label_ml": "അംഗീകൃത ഡ്രൈവിംഗ് സ്കൂളിൽ പരിശീലനം", "months": 2 },
+        { "label": "Driving test → licence", "label_ml": "ഡ്രൈവിംഗ് ടെസ്റ്റ് → ലൈസൻസ്", "months": 1 },
+        { "label": "Experience → badge / heavy licence → transport jobs", "label_ml": "പരിചയം → ബാഡ്ജ് / ഹെവി ലൈസൻസ് → ഗതാഗത ജോലി", "months": 12 }
+      ],
+      "tip": "Ask for a written offer and fixed duty hours. Never drive without rest — safety first.", "tip_ml": "എഴുതിയ ഓഫറും നിശ്ചിത ജോലി സമയവും ചോദിക്കുക. വിശ്രമമില്ലാതെ വാഹനമോടിക്കരുത്." },
+    { "key": "hospitality", "icon": "🍽️", "title": "Hotel & hospitality", "title_ml": "ഹോട്ടൽ, ആതിഥ്യ മേഖല",
+      "match": ["Hotel management"], "sector": "private", "exam_tags": [], "lifeskills": ["hygiene", "workplace", "interview", "city", "rights"], "years": 1,
+      "eligibility": ["Short skill courses after Class 10 / 12 (food & beverage, housekeeping, cookery)", "Or Plus Two → hotel management degree (entrance exam)"],
+      "eligibility_ml": ["10 / 12 ക്ലാസിന് ശേഷം ചെറിയ നൈപുണ്യ കോഴ്സുകൾ (ഫുഡ് & ബിവറേജ്, ഹൗസ്കീപ്പിംഗ്, പാചകം)", "അല്ലെങ്കിൽ പ്ലസ് ടു → ഹോട്ടൽ മാനേജ്മെന്റ് ബിരുദം (പ്രവേശന പരീക്ഷ)"],
+      "steps": [
+        { "label": "Choose a government-recognised skill course", "label_ml": "സർക്കാർ അംഗീകൃത നൈപുണ്യ കോഴ്സ് തിരഞ്ഞെടുക്കുക", "months": 1 },
+        { "label": "Course + on-the-job training", "label_ml": "കോഴ്സ് + ജോലിസ്ഥല പരിശീലനം", "months": 4 },
+        { "label": "Placement interview (written offer!)", "label_ml": "പ്ലേസ്മെന്റ് ഇന്റർവ്യൂ (എഴുതിയ ഓഫർ!)", "months": 1 },
+        { "label": "Grow: steward → captain → supervisor", "label_ml": "വളർച്ച: സ്റ്റ്യൂവാർഡ് → ക്യാപ്റ്റൻ → സൂപ്പർവൈസർ", "months": 24 }
+      ],
+      "tip": "Complete Life Skills: hygiene, workplace and city travel before your first placement.", "tip_ml": "ആദ്യ പ്ലേസ്മെന്റിന് മുമ്പ് ജീവിത നൈപുണ്യത്തിലെ ശുചിത്വം, ജോലിസ്ഥലം, നഗര യാത്ര പൂർത്തിയാക്കുക." },
+    { "key": "it", "icon": "💻", "title": "Computer & IT jobs", "title_ml": "കമ്പ്യൂട്ടർ, IT ജോലികൾ",
+      "match": ["IT job"], "sector": "private", "exam_tags": [], "lifeskills": ["digital_citizenship", "upi_banking", "gov_portals", "interview"], "years": 2,
+      "eligibility": ["Short courses (DCA, data entry, DTP) after Class 10/12", "Or diploma / BCA / BSc Computer Science"],
+      "eligibility_ml": ["10/12 ക്ലാസിന് ശേഷം ചെറിയ കോഴ്സുകൾ (DCA, ഡാറ്റാ എൻട്രി, DTP)", "അല്ലെങ്കിൽ ഡിപ്ലോമ / BCA / BSc കമ്പ്യൂട്ടർ സയൻസ്"],
+      "steps": [
+        { "label": "Typing + basic computer course", "label_ml": "ടൈപ്പിംഗ് + അടിസ്ഥാന കമ്പ്യൂട്ടർ കോഴ്സ്", "months": 4 },
+        { "label": "Akshaya / office assistant / data-entry work", "label_ml": "അക്ഷയ / ഓഫീസ് അസിസ്റ്റന്റ് / ഡാറ്റാ എൻട്രി", "months": 6 },
+        { "label": "Diploma or degree for higher roles", "label_ml": "ഉയർന്ന ജോലിക്ക് ഡിപ്ലോമ / ബിരുദം", "months": 24 }
+      ],
+      "tip": "Beware of 'work from home' jobs that ask for a deposit — they are almost always scams.", "tip_ml": "ഡെപ്പോസിറ്റ് ചോദിക്കുന്ന 'വർക്ക് ഫ്രം ഹോം' ജോലികൾ മിക്കവാറും തട്ടിപ്പാണ്." },
+    { "key": "tourism", "icon": "🧭", "title": "Eco-tourism guide", "title_ml": "ഇക്കോ-ടൂറിസം ഗൈഡ്",
+      "match": ["Tourism guide"], "sector": "community", "exam_tags": [], "lifeskills": ["workplace", "upi_banking", "interview"], "years": 1,
+      "eligibility": ["Knowledge of local forest and culture", "Training through forest-department eco-development committees or tourism programmes", "Basic English helps"],
+      "eligibility_ml": ["പ്രാദേശിക കാടിനെയും സംസ്കാരത്തെയും കുറിച്ചുള്ള അറിവ്", "വനം വകുപ്പിന്റെ ഇക്കോ-ഡെവലപ്മെന്റ് കമ്മിറ്റികൾ / ടൂറിസം പരിപാടികൾ വഴി പരിശീലനം", "അടിസ്ഥാന ഇംഗ്ലീഷ് സഹായിക്കും"],
+      "steps": [
+        { "label": "Join a local eco-tourism committee / training", "label_ml": "പ്രാദേശിക ഇക്കോ-ടൂറിസം കമ്മിറ്റി / പരിശീലനം", "months": 2 },
+        { "label": "First aid + guiding + visitor safety", "label_ml": "പ്രഥമശുശ്രൂഷ + ഗൈഡിംഗ് + സന്ദർശക സുരക്ഷ", "months": 2 },
+        { "label": "Guide with a senior, then independently", "label_ml": "മുതിർന്നവരോടൊപ്പം, പിന്നീട് സ്വതന്ത്രമായി", "months": 6 }
+      ],
+      "tip": "Your community decides what knowledge is shared with visitors. Respect sacred places.", "tip_ml": "സന്ദർശകരുമായി ഏത് അറിവ് പങ്കിടണമെന്ന് നിങ്ങളുടെ സമൂഹം തീരുമാനിക്കും. പവിത്ര സ്ഥലങ്ങളെ ബഹുമാനിക്കുക." },
+    { "key": "enterprise", "icon": "🧵", "title": "Tailoring / own small business", "title_ml": "തയ്യൽ / സ്വന്തം ചെറുസംരംഭം",
+      "match": ["Tailoring business"], "sector": "self-employed", "exam_tags": [], "lifeskills": ["upi_banking", "gov_portals"], "years": 1,
+      "eligibility": ["Skill training (tailoring, food processing, crafts…)", "Bank account in own name", "Join a self-help group (e.g., Kudumbashree) for support and credit"],
+      "eligibility_ml": ["നൈപുണ്യ പരിശീലനം (തയ്യൽ, ഭക്ഷ്യ സംസ്കരണം, കരകൗശലം…)", "സ്വന്തം പേരിൽ ബാങ്ക് അക്കൗണ്ട്", "സഹായത്തിനും വായ്പയ്ക്കും സ്വയം സഹായ സംഘത്തിൽ (ഉദാ. കുടുംബശ്രീ) ചേരുക"],
+      "steps": [
+        { "label": "Skill course", "label_ml": "നൈപുണ്യ കോഴ്സ്", "months": 3 },
+        { "label": "Simple business plan + costing", "label_ml": "ലളിതമായ ബിസിനസ് പ്ലാൻ + ചെലവ് കണക്ക്", "months": 1 },
+        { "label": "Small loan / ST development scheme support", "label_ml": "ചെറിയ വായ്പ / ST വികസന പദ്ധതി സഹായം", "months": 3 },
+        { "label": "Start, keep accounts, grow", "label_ml": "തുടങ്ങുക, കണക്ക് സൂക്ഷിക്കുക, വളരുക", "months": 6 }
+      ],
+      "tip": "Keep business and household money separate. Record every sale.", "tip_ml": "ബിസിനസ് പണവും വീട്ടുപണവും വേറിട്ട് സൂക്ഷിക്കുക. ഓരോ വിൽപ്പനയും രേഖപ്പെടുത്തുക." },
+    { "key": "engineer", "icon": "🛠️", "title": "Engineer (diploma or degree)", "title_ml": "എഞ്ചിനീയർ (ഡിപ്ലോമ / ബിരുദം)",
+      "match": ["Engineer"], "sector": "technical", "exam_tags": ["keam"], "lifeskills": ["city", "interview"], "years": 4,
+      "eligibility": ["After SSLC: 3-year polytechnic diploma", "After Plus Two Science with Maths: engineering entrance (KEAM) → BTech (4 years)"],
+      "eligibility_ml": ["SSLC-ക്ക് ശേഷം: 3 വർഷ പോളിടെക്നിക് ഡിപ്ലോമ", "കണക്ക് ഉൾപ്പെട്ട സയൻസ് പ്ലസ് ടുവിന് ശേഷം: KEAM → BTech (4 വർഷം)"],
+      "steps": [
+        { "label": "Polytechnic (after SSLC) or Plus Two Science", "label_ml": "പോളിടെക്നിക് (SSLC-ക്ക് ശേഷം) / സയൻസ് പ്ലസ് ടു", "months": 0 },
+        { "label": "Entrance exam (for BTech)", "label_ml": "പ്രവേശന പരീക്ഷ (BTech-ന്)", "months": 6 },
+        { "label": "Diploma (3 yrs) / BTech (4 yrs) — diploma holders can join BTech in 2nd year", "label_ml": "ഡിപ്ലോമ (3 വർഷം) / BTech (4 വർഷം) — ഡിപ്ലോമക്കാർക്ക് BTech രണ്ടാം വർഷത്തിൽ ചേരാം", "months": 42 }
+      ],
+      "tip": "ST reserved seats and scholarships make government colleges affordable.", "tip_ml": "ST സംവരണ സീറ്റും സ്കോളർഷിപ്പും സർക്കാർ കോളേജ് പഠനം സാധ്യമാക്കും." },
+    { "key": "doctor", "icon": "⚕️", "title": "Doctor (MBBS)", "title_ml": "ഡോക്ടർ (MBBS)",
+      "match": ["Doctor"], "sector": "health", "exam_tags": ["neet"], "lifeskills": ["city"], "years": 7,
+      "eligibility": ["Plus Two Science with Physics, Chemistry, Biology", "Qualify NEET-UG (national entrance)"], "eligibility_ml": ["ഫിസിക്സ്, കെമിസ്ട്രി, ബയോളജി ഉൾപ്പെട്ട പ്ലസ് ടു", "NEET-UG (ദേശീയ പ്രവേശന പരീക്ഷ) യോഗ്യത"],
+      "steps": [
+        { "label": "Plus Two Science (Biology)", "label_ml": "പ്ലസ് ടു സയൻസ് (ബയോളജി)", "months": 0 },
+        { "label": "NEET-UG preparation & exam", "label_ml": "NEET-UG തയ്യാറെടുപ്പും പരീക്ഷയും", "months": 12 },
+        { "label": "MBBS (about 5½ years including internship) — ST reserved seats", "label_ml": "MBBS (ഇന്റേൺഷിപ്പ് ഉൾപ്പെടെ ഏകദേശം 5½ വർഷം) — ST സംവരണ സീറ്റ്", "months": 66 }
+      ],
+      "tip": "Long road — but tribal doctors are rare and badly needed. Talk to your counsellor about free coaching.", "tip_ml": "നീണ്ട വഴി — പക്ഷേ ആദിവാസി ഡോക്ടർമാർ വിരളവും വളരെ ആവശ്യമുള്ളവരുമാണ്. സൗജന്യ കോച്ചിംഗിനെക്കുറിച്ച് കൗൺസിലറോട് സംസാരിക്കുക." },
+    { "key": "sports", "icon": "🏃", "title": "Sports", "title_ml": "കായികം",
+      "match": ["Sports"], "sector": "sports", "exam_tags": [], "lifeskills": ["city", "safety"], "years": 3,
+      "eligibility": ["Selection trials for sports hostels / academies", "Strong school or district-level performance"], "eligibility_ml": ["സ്പോർട്സ് ഹോസ്റ്റൽ / അക്കാദമി സെലക്ഷൻ ട്രയൽ", "സ്കൂൾ / ജില്ലാതല മികച്ച പ്രകടനം"],
+      "steps": [
+        { "label": "School / district competitions", "label_ml": "സ്കൂൾ / ജില്ലാ മത്സരങ്ങൾ", "months": 6 },
+        { "label": "Selection trials → sports hostel", "label_ml": "സെലക്ഷൻ ട്രയൽ → സ്പോർട്സ് ഹോസ്റ്റൽ", "months": 3 },
+        { "label": "State / national events → sports-quota jobs", "label_ml": "സംസ്ഥാന / ദേശീയ മത്സരം → സ്പോർട്സ് ക്വോട്ട ജോലി", "months": 24 }
+      ],
+      "tip": "Keep studying alongside sport — it keeps more doors open.", "tip_ml": "കായികത്തോടൊപ്പം പഠനവും തുടരുക — കൂടുതൽ വാതിലുകൾ തുറന്നിരിക്കും." }
+  ],
+  "moods": [
+    { "v": 1, "icon": "😢", "label": "Very low", "label_ml": "വളരെ വിഷമം" },
+    { "v": 2, "icon": "🙁", "label": "Low", "label_ml": "വിഷമം" },
+    { "v": 3, "icon": "😐", "label": "Okay", "label_ml": "കുഴപ്പമില്ല" },
+    { "v": 4, "icon": "🙂", "label": "Good", "label_ml": "നല്ലത്" },
+    { "v": 5, "icon": "😄", "label": "Great", "label_ml": "വളരെ നല്ലത്" }
+  ]
+}

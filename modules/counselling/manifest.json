@@ -1,0 +1,24 @@
+{
+  "id": "counselling", "version": "1.0.0",
+  "name": "Career, Mentoring & Wellbeing", "name_ml": "കരിയർ, മെന്ററിംഗ്, ക്ഷേമം", "icon": "🌱",
+  "description": "Aspiration mapping with realistic career pathways, supervised 1:1 mentoring with a safety filter, a 5-emoji wellbeing check-in (individual data only to consenting counsellors) and counsellor caseload with private session notes.",
+  "tables": {
+    "counselling_aspirations": ["person_id", "hamlet_id", "pathway_keys", "dream", "strengths", "set_by", "set_by_name", "set_at"],
+    "counselling_mentors": ["user_id", "agency_id", "expertise", "languages", "capacity", "bio", "bio_ml"],
+    "counselling_matches": ["person_id", "hamlet_id", "mentor_id", "mentor_name", "mentor_agency_id", "status", "minor", "pathway_key", "reason", "matched_by", "matched_by_name", "started_at", "ended_at", "end_reason"],
+    "counselling_messages": ["match_id", "person_id", "hamlet_id", "sender_id", "sender_role", "sender_name", "body", "status", "reasons", "adult_minor", "sent_at", "moderated_at"],
+    "counselling_pulses": ["person_id", "hamlet_id", "mood", "need_talk", "note", "at"],
+    "counselling_tasks": ["person_id", "hamlet_id", "kind", "priority", "status", "pulse_id", "assigned_to", "assigned_name", "reason", "due", "created_at", "done_at", "done_by", "outcome"],
+    "counselling_sessions": ["person_id", "hamlet_id", "counsellor_id", "counsellor_name", "date", "mode", "topic", "notes", "follow_up", "follow_up_date"]
+  },
+  "types": { "capacity": "INTEGER", "minor": "INTEGER", "adult_minor": "INTEGER", "mood": "INTEGER", "need_talk": "INTEGER" },
+  "emits": ["counselling.aspiration_set", "counselling.mentor_matched", "counselling.message_flagged", "counselling.session_logged", "counselling.safeguarding_escalation"],
+  "subscribes": ["safeguarding.moderation_decided"],
+  "nav": [
+    { "view": "home", "label": "My future & feelings", "label_ml": "എന്റെ ഭാവി, മനസ്സ്", "icon": "🌱", "roles": ["learner"], "section": "care" },
+    { "view": "pathways", "label": "Career pathways", "label_ml": "കരിയർ വഴികൾ", "icon": "🪜", "roles": ["learner", "guardian", "facilitator", "teacher", "counsellor", "mentor", "coordinator", "agency_admin", "platform_admin"], "section": "learn" },
+    { "view": "mentor", "label": "Mentoring", "label_ml": "മെന്ററിംഗ്", "icon": "🤝", "roles": ["mentor", "counsellor", "cpo", "platform_admin"], "section": "care" },
+    { "view": "caseload", "label": "Counsellor caseload", "label_ml": "കൗൺസിലർ കേസുകൾ", "icon": "🗂️", "roles": ["counsellor", "cpo", "platform_admin"], "section": "care" },
+    { "view": "wellbeing", "label": "Wellbeing overview", "label_ml": "ക്ഷേമ അവലോകനം", "icon": "📈", "roles": ["counsellor", "cpo", "platform_admin", "agency_admin", "coordinator", "facilitator", "donor", "govt_viewer"], "section": "insight" }
+  ]
+}

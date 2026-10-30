@@ -1,0 +1,25 @@
+{
+  "id": "marketplace", "version": "1.0.0",
+  "name": "Volunteers, Donors & Jobs", "name_ml": "സന്നദ്ധസേവനം, സംഭാവന, ജോലി", "icon": "🤲",
+  "description": "Volunteer onboarding with background checks and hour logging; anonymised sponsorships, pledges and 80G-style receipts; fair-work job board with consent-gated candidate pool; CSR reporting.",
+  "tables": {
+    "marketplace_volunteers": ["name", "phone", "email", "city", "agency_id", "hamlet_ids", "skills", "languages", "availability", "motivation", "status", "checks", "check_notes", "user_id", "applied_at", "approved_at", "approved_by", "certificates"],
+    "marketplace_shifts": ["volunteer_id", "programme_id", "agency_id", "hamlet_id", "date", "slot", "role", "hours", "status", "logged_by", "verified_by", "note"],
+    "marketplace_donors": ["name", "kind", "pan_masked", "email", "city", "user_id", "agency_id", "anonymous", "joined_at"],
+    "marketplace_sponsorships": ["kind", "card", "card_ml", "hamlet_id", "person_id", "age_band", "need", "need_ml", "target", "raised", "status", "centre_id", "created_at", "cohort_size"],
+    "marketplace_pledges": ["donor_id", "sponsorship_id", "hamlet_id", "amount", "frequency", "status", "pledged_at", "note"],
+    "marketplace_donations": ["donor_id", "pledge_id", "sponsorship_id", "hamlet_id", "amount", "mode", "paid_at", "receipt_no", "fy"],
+    "marketplace_jobs": ["agency_id", "employer_name", "title", "title_ml", "kind", "sector", "location", "district", "wage_monthly", "wage_floor", "accommodation", "food", "openings", "min_age", "skills", "description", "description_ml", "checklist", "status", "posted_by", "posted_at", "closes_on"],
+    "marketplace_applications": ["job_id", "agency_id", "person_id", "hamlet_id", "status", "source", "history", "applied_at", "note"],
+    "marketplace_placements": ["application_id", "job_id", "agency_id", "person_id", "hamlet_id", "start_date", "wage_monthly", "status", "check_30", "check_90", "note"]
+  },
+  "types": { "hours": "REAL", "amount": "INTEGER", "target": "INTEGER", "raised": "INTEGER", "wage_monthly": "INTEGER", "wage_floor": "INTEGER", "openings": "INTEGER", "min_age": "INTEGER", "anonymous": "INTEGER", "cohort_size": "INTEGER" },
+  "emits": ["marketplace.volunteer_applied", "marketplace.volunteer_approved", "marketplace.pledged", "marketplace.donation_recorded", "marketplace.job_posted", "marketplace.applied", "marketplace.placed"],
+  "subscribes": [],
+  "nav": [
+    { "view": "volunteers", "label": "Volunteers", "label_ml": "സന്നദ്ധപ്രവർത്തകർ", "icon": "🙋", "roles": ["platform_admin", "cpo", "agency_admin", "coordinator", "mentor"], "section": "ops" },
+    { "view": "sponsor", "label": "Sponsor & Impact", "label_ml": "സ്പോൺസർ, ഫലം", "icon": "💚", "roles": ["donor", "platform_admin", "agency_admin"], "section": "insight" },
+    { "view": "jobs", "label": "Jobs & Internships", "label_ml": "ജോലികൾ", "icon": "💼", "roles": ["employer", "learner", "facilitator", "coordinator", "agency_admin", "platform_admin", "mentor", "counsellor"], "section": "community" },
+    { "view": "reports", "label": "CSR / Grant Report", "label_ml": "CSR റിപ്പോർട്ട്", "icon": "📊", "roles": ["donor", "platform_admin", "agency_admin", "govt_viewer"], "section": "insight" }
+  ]
+}
