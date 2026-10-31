@@ -153,6 +153,35 @@ def check_space(path):
         raise DiskFull(f"stopped: only {free:.1f} GB free (keeping at least {MIN_FREE_GB:g} GB for the server)")
 
 
+GS = shutil.which("gs")
+COMPRESS = os.environ.get("AADI_COMPRESS", "1") != "0"
+
+
+def compress_pdf(path):
+    """Re-save a PDF at screen/phone quality (images ~150 dpi, text and fonts untouched).
+    Keeps the smaller file; returns (old_bytes, new_bytes). The original can always be
+    downloaded again from its official source if a print-quality copy is needed."""
+    old = os.path.getsize(path)
+    if not (GS and COMPRESS and path.lower().endswith(".pdf")) or old < 1_500_000:
+        return old, old
+    tmp = path + ".small.pdf"
+    try:
+        import subprocess
+        subprocess.run(["nice", "-n", "15", GS, "-sDEVICE=pdfwrite", "-dCompatibilityLevel=1.5",
+                        "-dPDFSETTINGS=/ebook", "-dDetectDuplicateImages=true", "-dNOPAUSE", "-dQUIET",
+                        "-dBATCH", "-sOutputFile=" + tmp, path], check=True, timeout=1800,
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        new = os.path.getsize(tmp)
+        if 1000 < new < old * 0.9:
+            os.replace(tmp, path)
+            return old, new
+    except Exception:
+        pass
+    if os.path.exists(tmp):
+        os.remove(tmp)
+    return old, old
+
+
 def download(url, dest_dir, title, dry):
     if not dry:
         check_space(dest_dir)
@@ -181,6 +210,9 @@ def download(url, dest_dir, title, dry):
                 break
             f.write(chunk)
     os.replace(tmp, path)
+    old, new = compress_pdf(path)
+    if new < old:
+        print(f"    compressed {old / 1e6:.1f} MB -> {new / 1e6:.1f} MB")
     return "downloaded", path, os.path.getsize(path), sha256(path)
 
 
