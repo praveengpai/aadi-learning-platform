@@ -55,6 +55,14 @@ then run `bash run.sh` again. That owner's items are downloaded to the hub and s
 *Offline* on the library page. (Items the owner publishes as web pages rather than files stay as links; ask the
 owner for the files.)
 
+## File size
+
+Every PDF is re-saved at screen/phone quality right after it is downloaded (Ghostscript, images ~150 dpi; text and
+Malayalam fonts unchanged). SCERT textbooks (~60 MB each) shrink to a fraction of that, which keeps the whole library on
+one server and makes hub sync and phone reading practical. A print-quality copy can always be downloaded again from the
+official source (links in `manifest.csv` and `_reports/download_log.csv`). To keep full size, run with
+`AADI_COMPRESS=0 bash run.sh`. Downloads also stop automatically if the server drops below 10 GB free (`AADI_MIN_FREE_GB`).
+
 ## Folder structure
 
 ```
