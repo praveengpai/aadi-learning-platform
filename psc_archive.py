@@ -95,6 +95,8 @@ def main():
                 try:
                     status, path, size, digest = fetch.download(url, os.path.join(a.dest, folder), kind + " " + medium, a.dry_run)
                     err = ""
+                except fetch.DiskFull as e:
+                    print("\n" + str(e)); print("Kerala PSC archive:", counts); return
                 except Exception as e:
                     status, path, size, digest, err = "error", "", 0, "", str(e)[:200]
                 counts[status] = counts.get(status, 0) + 1

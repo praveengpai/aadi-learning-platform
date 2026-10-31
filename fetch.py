@@ -23,7 +23,7 @@ Usage (on the server, as any user that can write the target folder):
 Standard library only (Python 3.8+). Polite: one request at a time, a pause
 between requests, retries with back-off, identifies itself as AADI.
 """
-import argparse, csv, datetime, hashlib, html.parser, os, re, sys, time
+import argparse, csv, datetime, hashlib, html.parser, os, re, shutil, sys, time
 import urllib.parse, urllib.request, urllib.error
 
 ALLOWED = {"GOV_FREE", "OPEN_LICENCE"}
@@ -137,7 +137,25 @@ def direct_url(url):
     return url, None
 
 
+MIN_FREE_GB = float(os.environ.get("AADI_MIN_FREE_GB", "10"))
+
+
+class DiskFull(Exception):
+    pass
+
+
+def check_space(path):
+    probe = path
+    while not os.path.exists(probe):
+        probe = os.path.dirname(probe) or "/"
+    free = shutil.disk_usage(probe).free / 1e9
+    if free < MIN_FREE_GB:
+        raise DiskFull(f"stopped: only {free:.1f} GB free (keeping at least {MIN_FREE_GB:g} GB for the server)")
+
+
 def download(url, dest_dir, title, dry):
+    if not dry:
+        check_space(dest_dir)
     url, drive_name = direct_url(url)
     name = drive_name or os.path.basename(urllib.parse.unquote(urllib.parse.urlparse(url).path)) or "file"
     stem, ext = os.path.splitext(name)
@@ -212,6 +230,8 @@ def main():
 
     counts = {}
     for i, r in enumerate(todo, 1):
+        if counts.get("stopped_disk_space"):
+            break
         folder = os.path.join(a.dest, folder_for(r))
         urls = [r["file_url"]]
         if (r.get("format") or "").upper() == "INDEX" and a.dry_run:
@@ -232,6 +252,9 @@ def main():
             try:
                 status, path, size, digest = download(u, folder, title, a.dry_run)
                 err = ""
+            except DiskFull as e:
+                print("\n" + str(e)); counts["stopped_disk_space"] = 1
+                break
             except Exception as e:
                 status, path, size, digest, err = "error", "", 0, "", str(e)[:200]
             counts[status] = counts.get(status, 0) + 1
