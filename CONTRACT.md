@@ -74,11 +74,14 @@ brain.passport.entries(pid)
 brain.competencies.list({domain}) / upsert({id, code, domain, title, title_ml, level, stage})
 brain.notify(personId, message, {channel:'auto'|'sms'|'ivr'|'whatsapp'|'app'}, user)    // outbox; channels module delivers
 brain.audit(user, action, target, detail)
+brain.brand → {name, name_ml, short, owner}  (use for SMS/notification prefixes etc.)
 brain.users.get(id) / byRole(role, where) / create({username,password,role,agency_id,...}, actor)
 ```
 **Policy rule you must uphold:** a user sees a person's data only if `brain.policy.canSee(user, personId, scope).ok`.
 Agencies see learners only with enrolment + active consent; wellbeing data only for counsellors; learners see only themselves;
 guardians see their wards. Donors, govt viewers see aggregates only (use `brain.policy.suppress`).
+
+Programmes may carry their own name: `brand`/`brand_ml` (e.g. "AADI Smart Learning Centre") and `sponsor_agency_id` (e.g. CIF sponsoring a programme run by a youth group). The platform is not AADI — AADI is one programme on it.
 
 Core programme tracks: `tuition, literacy` (module learning), `exams`, `language`, `lifeskills, digital` (lifeskills), `counselling`.
 
@@ -107,6 +110,7 @@ export default {
 Route: `#/m/<id>/<view>?a=1` → `k.params = {a:'1'}`. Kit `k`:
 ```
 k.user, k.lang ('en'|'ml'), k.t(en, ml), k.node, k.moduleId
+k.brand → {name, name_ml, short, owner}  — the PLATFORM's name (CIF's product; a setting). Never hard-code a name.
 k.api.get('/path') / post('/path', body) / put / del     → /api/m/<id>/path ; JSON; throws Error(message) on non-2xx
 k.core.get('/persons?hamlet_id=..') / post(...)           → /api/core/...
   GETs are cached for offline use (result has ._offline=true when served from cache).

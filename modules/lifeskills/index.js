@@ -234,7 +234,7 @@ module.exports = function init(ctx) {
         if (!docs.length) continue;
         const missing = docs.filter((d) => d.status === 'missing').map((d) => d.label_ml).join(', ');
         const applied = docs.filter((d) => d.status === 'applied').map((d) => d.label_ml).join(', ');
-        const msg = `AADI: ${missing ? 'ഇനി വേണ്ട രേഖകൾ: ' + missing + '. ' : ''}${applied ? 'അപേക്ഷിച്ചവ പരിശോധിക്കുക: ' + applied + '. ' : ''}സഹായത്തിന് AADI കേന്ദ്രം / അക്ഷയ സന്ദർശിക്കുക.`;
+        const msg = `${brain.brand.short}: ${missing ? 'ഇനി വേണ്ട രേഖകൾ: ' + missing + '. ' : ''}${applied ? 'അപേക്ഷിച്ചവ പരിശോധിക്കുക: ' + applied + '. ' : ''}സഹായത്തിന് പഠനകേന്ദ്രം / അക്ഷയ സന്ദർശിക്കുക.`;
         brain.notify(pid, msg, { channel: 'auto' }, req.user);
         for (const d of docs) {
           const cur = data.find('lifeskills_documents', { person_id: pid, doc_key: d.key })[0];

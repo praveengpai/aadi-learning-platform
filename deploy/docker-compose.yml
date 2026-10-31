@@ -1,4 +1,4 @@
-# AADI demo stack for a single VPS:
+# CIF learning platform — demo stack for a single VPS (AADI is one programme on it):
 #  - aadi-cloud : the central brain (demo data, 10 hamlets)
 #  - aadi-hub   : a simulated centre hub for Pachakkudi, syncing to the cloud — shows offline/sync live
 #  - caddy      : HTTPS reverse proxy (only on servers with no web server yet: --profile caddy)
@@ -10,6 +10,9 @@ services:
     restart: unless-stopped
     environment:
       AADI_NODE: cloud-1
+      PLATFORM_NAME: ${PLATFORM_NAME:-CIF Learning Platform}
+      PLATFORM_NAME_ML: ${PLATFORM_NAME_ML:-സി.ഐ.എഫ് പഠന വേദി}
+      PLATFORM_SHORT: ${PLATFORM_SHORT:-CIF Learning}
       SARVAM_API_KEY: ${SARVAM_API_KEY:-}
       AADI_TRANSLATE_MODE: ${AADI_TRANSLATE_MODE:-classic-colloquial}
       AADI_TRANSLATE_MONTHLY_CAP: ${AADI_TRANSLATE_MONTHLY_CAP:-500000}
@@ -26,6 +29,9 @@ services:
     depends_on: [aadi-cloud]
     environment:
       AADI_NODE: hub-pachakkudi
+      PLATFORM_NAME: ${PLATFORM_NAME:-CIF Learning Platform}
+      PLATFORM_NAME_ML: ${PLATFORM_NAME_ML:-സി.ഐ.എഫ് പഠന വേദി}
+      PLATFORM_SHORT: ${PLATFORM_SHORT:-CIF Learning}
       SARVAM_API_KEY: ${SARVAM_API_KEY:-}
       AADI_TRANSLATE_MODE: ${AADI_TRANSLATE_MODE:-classic-colloquial}
       AADI_TRANSLATE_MONTHLY_CAP: ${AADI_TRANSLATE_MONTHLY_CAP:-500000}

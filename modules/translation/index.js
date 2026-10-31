@@ -27,7 +27,7 @@ const SEED_GLOSSARY = [
   ['learning passport', 'പഠന പാസ്‌പോർട്ട്', 0, ''],
   ['facilitator', 'ഫെസിലിറ്റേറ്റർ', 0, 'Families already use the English word; "സഹായി" also fine in speech.'],
   ['tuition', 'ട്യൂഷൻ', 0, ''],
-  ['AADI', 'ആദി', 0, 'Programme name.'],
+  ['AADI', 'ആദി', 0, 'Name of one programme (AADI Smart Learning Centre, Komalikudi) — not the platform.'],
   ['PSC', 'PSC', 1, 'Keep as is — everyone says PSC.'],
   ['SSLC', 'SSLC', 1, ''],
   ['UPI', 'UPI', 1, ''],
@@ -191,18 +191,18 @@ module.exports = function init(ctx) {
     if (ctx.brain.nodeRole === 'hub') return;
     const now = new Date().toISOString();
     if (!(sqlOne("SELECT COUNT(*) n FROM translation_glossary WHERE kind='fix'") || {}).n) {
-      tx(() => { for (const [term, preferred, note] of SEED_FIXES) data.put('translation_glossary', { kind: 'fix', term, preferred, keep_as_is: 0, note, added_by_name: 'AADI style guide', created_at: now }); });
+      tx(() => { for (const [term, preferred, note] of SEED_FIXES) data.put('translation_glossary', { kind: 'fix', term, preferred, keep_as_is: 0, note, added_by_name: 'CIF style guide', created_at: now }); });
     }
     tx(() => { // reviewed style examples for the current default style (added once per style)
       for (const [en, ml] of SEED_MEMORY) {
         const key = keyOf(en, DEFAULT_MODE);
         if (data.find('translation_memory', { source_key: key })[0]) continue;
-        data.put('translation_memory', { source_key: key, source: en, target: ml, machine_target: ml, source_lang: 'en-IN', target_lang: 'ml-IN', mode: DEFAULT_MODE, provider: 'style-guide', status: 'approved', context: 'AADI style examples', reviewed_by_name: 'AADI style guide', reviewed_at: now, chars: en.length, created_at: now, uses: 0 });
+        data.put('translation_memory', { source_key: key, source: en, target: ml, machine_target: ml, source_lang: 'en-IN', target_lang: 'ml-IN', mode: DEFAULT_MODE, provider: 'style-guide', status: 'approved', context: 'CIF style examples', reviewed_by_name: 'CIF style guide', reviewed_at: now, chars: en.length, created_at: now, uses: 0 });
       }
     });
     if ((sqlOne("SELECT COUNT(*) n FROM translation_glossary WHERE COALESCE(kind,'term')='term'") || {}).n) return;
     tx(() => {
-      for (const [term, preferred, keep, note] of SEED_GLOSSARY) data.put('translation_glossary', { kind: 'term', term, preferred, keep_as_is: keep, note, added_by_name: 'AADI style guide', created_at: now });
+      for (const [term, preferred, keep, note] of SEED_GLOSSARY) data.put('translation_glossary', { kind: 'term', term, preferred, keep_as_is: keep, note, added_by_name: 'CIF style guide', created_at: now });
     });
   }
   try { bootstrap(); } catch (e) { ctx.log('style guide bootstrap skipped:', e.message); }

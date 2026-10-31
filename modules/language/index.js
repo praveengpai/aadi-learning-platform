@@ -94,7 +94,7 @@ module.exports = function init(ctx) {
       const have = sql('SELECT level FROM language_levels WHERE person_id=? AND course_id=? AND deleted=0', pid, cid).map((r) => r.level);
       for (const L of LEVELS.slice(0, LEVELS.indexOf(info.level) + 1)) {
         if (have.includes(L)) continue;
-        data.put('language_levels', { person_id: pid, hamlet_id: p.hamlet_id, course_id: cid, level: L, awarded_at: at || nowIso(), awarded_by: user ? user.display_name : 'AADI (auto)', evidence: { done: info.done, total: info.total } }, user);
+        data.put('language_levels', { person_id: pid, hamlet_id: p.hamlet_id, course_id: cid, level: L, awarded_at: at || nowIso(), awarded_by: user ? user.display_name : `${brain.brand.short} (auto)`, evidence: { done: info.done, total: info.total } }, user);
         const ref = PASSPORT[cid]?.[L];
         if (ref) {
           try { brain.passport.award({ person_id: pid, type: 'competency', ref, title: `${COURSE[cid].title} — ${L}: ${LEVEL_INFO[L].en}`, level: LEVELS.indexOf(L) + 1, evidence: { course: cid, level: L }, agency_id: langAgency(pid) }, user); } catch (e) { ctx.log('award skipped', e.message); }
@@ -240,7 +240,7 @@ module.exports = function init(ctx) {
     if (!r) throw httpError(400, 'rating (1–5) required');
     const out = data.put('language_speaking', { ...s, teacher_rating: r, teacher_note: String(req.body.note || '').slice(0, 400), reviewer: req.user.display_name, reviewed_at: nowIso(), status: 'reviewed', ...(req.body.discard_sample ? { sample: null, sample_mime: null, sample_bytes: 0 } : {}) }, req.user);
     emit('language.speaking_reviewed', { speaking_id: s.id, person_id: s.person_id, rating: r }, req.user, s.hamlet_id);
-    if (brain.consent.has(s.person_id, req.user.agency_id, 'contact')) brain.notify(s.person_id, `AADI Language Lab: your teacher rated your speaking ${r}/5. ${out.teacher_note ? '“' + out.teacher_note.slice(0, 80) + '”' : ''} / അധ്യാപകർ റേറ്റിംഗ് നൽകി.`, { channel: 'app' }, req.user);
+    if (brain.consent.has(s.person_id, req.user.agency_id, 'contact')) brain.notify(s.person_id, `${brain.brand.short} Language Lab: your teacher rated your speaking ${r}/5. ${out.teacher_note ? '“' + out.teacher_note.slice(0, 80) + '”' : ''} / അധ്യാപകർ റേറ്റിംഗ് നൽകി.`, { channel: 'app' }, req.user);
     const awarded = syncLevels(s.person_id, req.user);
     const { sample, ...pub } = out;
     res.json({ ...pub, awarded });
@@ -256,7 +256,7 @@ module.exports = function init(ctx) {
     const counts = {};
     for (const x of data.find('language_words', {}, { limit: 5000 })) counts[x.language] = (counts[x.language] || 0) + 1;
     res.json({
-      disclaimer: 'Community-contributed words. AADI does not claim linguistic accuracy; entries stay "community draft, pending review" until checked by community reviewers.',
+      disclaimer: 'Community-contributed words. The platform does not claim linguistic accuracy; entries stay "community draft, pending review" until checked by community reviewers.',
       disclaimer_ml: 'സമൂഹം സംഭാവന ചെയ്ത വാക്കുകൾ. ഭാഷാശാസ്ത്രപരമായ കൃത്യത അവകാശപ്പെടുന്നില്ല; പരിശോധന വരെ "കരട്".',
       languages: BRIDGE_LANGS.map((l) => ({ id: l, count: counts[l] || 0 })),
       concepts: BRIDGE_CONCEPTS.map(([en, ml, category]) => ({ en, ml, category })),
@@ -274,7 +274,7 @@ module.exports = function init(ctx) {
     const row = data.put('language_words', { language: b.language, hamlet_id: pr?.hamlet_id || null, concept: concept ? concept[0] : String(b.en).toLowerCase().slice(0, 40), en: String(b.en).slice(0, 60), ml: String(b.ml || (concept ? concept[1] : '')).slice(0, 60), word, pronunciation: String(b.pronunciation || '').slice(0, 60), category: concept ? concept[2] : 'words', note: String(b.note || '').slice(0, 200), contributor_id: req.user.id, contributor_name: name, status: 'draft', reviews: [], demo: 0, created_at: nowIso() }, req.user);
     emit('language.word_contributed', { word_id: row.id, language: row.language }, req.user, row.hamlet_id);
     if (pr && sql('SELECT COUNT(*) n FROM language_words WHERE contributor_id=? AND deleted=0', req.user.id)[0].n >= 3) {
-      try { brain.passport.award({ person_id: pr.id, type: 'milestone', ref: 'MT.BRIDGE', title: 'Contributed mother-tongue words to the AADI community bridge', level: 1, agency_id: langAgency(pr.id) }, req.user); } catch (_) { /* ignore */ }
+      try { brain.passport.award({ person_id: pr.id, type: 'milestone', ref: 'MT.BRIDGE', title: 'Contributed mother-tongue words to the community bridge', level: 1, agency_id: langAgency(pr.id) }, req.user); } catch (_) { /* ignore */ }
     }
     res.json(row);
   });

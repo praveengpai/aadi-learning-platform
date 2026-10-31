@@ -21,6 +21,16 @@ class Brain {
   constructor({ dbFile, nodeId, role = 'cloud' }) {
     this.db = openDb(dbFile);
     migrateCore(this.db);
+    // The platform is CIF's product; programmes such as AADI run on it under their own names.
+    // The platform's public name is a setting until it is chosen.
+    this.brand = {
+      name: process.env.PLATFORM_NAME || 'CIF Learning Platform',
+      name_ml: process.env.PLATFORM_NAME_ML || 'സി.ഐ.എഫ് പഠന വേദി',
+      short: process.env.PLATFORM_SHORT || 'CIF Learning',
+      owner: process.env.PLATFORM_OWNER || 'Community Innovations Foundation',
+      tagline: process.env.PLATFORM_TAGLINE || 'One learning platform for every tribal hamlet — from the first letter to the first job.',
+      tagline_ml: process.env.PLATFORM_TAGLINE_ML || 'ഓരോ ഊരിനും ഒരു പഠന വേദി — ആദ്യ അക്ഷരം മുതൽ ആദ്യ ജോലി വരെ.',
+    };
     this.nodeId = nodeId;
     this.nodeRole = role; // 'cloud' | 'hub'
     this.store = new Store(this.db, nodeId, { ...CORE_TABLES });
@@ -144,7 +154,7 @@ class Brain {
     const enrol = this.store.all(`SELECT e.*, pr.title, pr.title_ml, pr.module, pr.track, a.name agency_name FROM enrolments e
       JOIN programmes pr ON pr.id=e.programme_id LEFT JOIN agencies a ON a.id=e.agency_id WHERE e.person_id=? AND e.deleted=0`, personId);
     const hamlet = this.store.get('hamlets', p.hamlet_id);
-    return { person: p, hamlet, entries, enrolments: enrol, verify_code: personId.slice(-8).toUpperCase(), issued_by: 'AADI Platform · Community Innovations Foundation' };
+    return { person: p, hamlet, entries, enrolments: enrol, verify_code: personId.slice(-8).toUpperCase(), issued_by: `${this.brand.name} · ${this.brand.owner}` };
   }
 
   // ---------- notifications (outbox, delivered by channels module) ----------
@@ -159,6 +169,7 @@ class Brain {
     return {
       nodeId: b.nodeId,
       nodeRole: b.nodeRole,
+      brand: b.brand,
       policy: { can: b.policy.can, canSee: b.policy.canSee, suppress: b.policy.suppress, isMinor: b.policy.isMinor, ROLES: b.policy.ROLES, SCOPES: b.policy.SCOPES },
       persons: {
         visible: (user, opts) => b.personsVisible(user, opts),

@@ -117,7 +117,7 @@ async function volDetail(el, k, id, self, changed) {
 
 async function apply(el, k) {
   setup(k);
-  el.append(hero(k, 'Volunteer with AADI', 'AADI-യിൽ സന്നദ്ധസേവനം', 'Teach, mentor or coach children and youth in tribal hamlets — in person or online.', 'ആദിവാസി ഊരുകളിലെ കുട്ടികളെയും യുവാക്കളെയും പഠിപ്പിക്കാം.'));
+  el.append(hero(k, 'Volunteer with us', 'ഞങ്ങളോടൊപ്പം സന്നദ്ധസേവനം', 'Teach, mentor or coach children and youth in tribal hamlets — in person or online.', 'ആദിവാസി ഊരുകളിലെ കുട്ടികളെയും യുവാക്കളെയും പഠിപ്പിക്കാം.'));
   el.append(k.ui.card({ body: k.ui.form([
     { name: 'name', label: k.t('Full name', 'പേര്'), required: true }, { name: 'phone', label: k.t('Phone', 'ഫോൺ'), required: true }, { name: 'email', label: 'Email', type: 'email' }, { name: 'city', label: k.t('City', 'നഗരം') },
     { name: 'skills', label: k.t('What can you teach? (comma separated)', 'എന്ത് പഠിപ്പിക്കാം?') }, { name: 'languages', label: k.t('Languages', 'ഭാഷകൾ'), value: 'Malayalam, English' }, { name: 'availability', label: k.t('When are you free?', 'എപ്പോൾ ഒഴിവുണ്ട്?') },
@@ -314,7 +314,7 @@ function candView(k, c) {
 }
 async function pool(el, k) {
   const { h } = k;
-  el.append(h('p', { class: 'small muted' }, '🔒 ' + k.t('Only adults who chose to share their job profile with your organisation appear here. Contact happens through the AADI facilitator.', 'നിങ്ങളുമായി പ്രൊഫൈൽ പങ്കിട്ട മുതിർന്നവർ മാത്രം.')));
+  el.append(h('p', { class: 'small muted' }, '🔒 ' + k.t('Only adults who chose to share their job profile with your organisation appear here. Contact happens through their facilitator.', 'നിങ്ങളുമായി പ്രൊഫൈൽ പങ്കിട്ട മുതിർന്നവർ മാത്രം.')));
   const q = h('input', { class: 'input', type: 'search', placeholder: k.t('Filter by skill, aspiration…', 'തിരയുക…'), style: { maxWidth: '320px', marginBottom: '10px' } });
   const grid = h('div');
   const load = async () => { const rows = await k.api.get('/candidates' + (q.value ? '?q=' + encodeURIComponent(q.value) : '')); grid.replaceChildren(rows.length ? k.ui.grid(rows.map((c) => candView(k, c)), 240) : k.ui.empty(k.t('No candidates match.', 'പൊരുത്തമില്ല.'))); };

@@ -34,7 +34,7 @@ export default {
       k.style(CSS, 'translation');
       const st = await k.api.get('/status');
       el.append(k.h('h1', null, k.t('Translate to everyday Malayalam', 'സാധാരണ മലയാളത്തിലേക്ക്')),
-        k.h('p', { class: 'muted' }, k.t('Write in English. AADI translates into the Malayalam people actually speak — warm and simple, not formal or Sanskrit-heavy. PSC, SSLC and similar stay in English; if a glossary word (ഊര്, ഊരുകൂട്ടം…) is missed, you will see a hint to fix it.', 'ഇംഗ്ലീഷിൽ എഴുതുക. ആളുകൾ സംസാരിക്കുന്ന ലളിതമായ മലയാളത്തിലേക്ക് മാറ്റും.')));
+        k.h('p', { class: 'muted' }, k.t(`Write in English. ${k.brand.short} translates into the Malayalam people actually speak — warm and simple, not formal or Sanskrit-heavy. PSC, SSLC and similar stay in English; if a glossary word (ഊര്, ഊരുകൂട്ടം…) is missed, you will see a hint to fix it.`, 'ഇംഗ്ലീഷിൽ എഴുതുക. ആളുകൾ സംസാരിക്കുന്ന ലളിതമായ മലയാളത്തിലേക്ക് മാറ്റും.')));
       const note = setupNote(k, st); if (note) el.append(note);
       const src = k.h('textarea', { placeholder: k.t('e.g. Tomorrow\'s class starts at 4 pm. Please bring your notebook.', 'ഉദാ: Tomorrow\'s class starts at 4 pm.'), 'aria-label': 'English text' });
       const out = k.h('div', { class: 'translation-out empty', 'aria-live': 'polite' }, k.t('The Malayalam will appear here.', 'മലയാളം ഇവിടെ കാണാം.'));

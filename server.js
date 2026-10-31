@@ -1,5 +1,5 @@
 'use strict';
-// AADI Platform — entry point. The same code runs as the cloud core or as a centre hub.
+// Learning platform (CIF) — entry point. The same code runs as the cloud core or as a centre hub.
 //   AADI_NODE=cloud-1  AADI_ROLE=cloud  node server.js
 //   AADI_NODE=hub-komalikudi AADI_ROLE=hub AADI_UPSTREAM=https://cloud AADI_SYNC_KEY=... node server.js
 const path = require('path');
@@ -43,9 +43,19 @@ function createApp(opts = {}) {
     if (!/^[a-z0-9-]+$/.test(req.params.id)) return res.status(404).end();
     express.static(path.join(cfg.modulesDir, req.params.id, 'public'), { maxAge: '1h' })(req, res, next);
   });
-  app.use(express.static(path.join(__dirname, 'public'), { maxAge: 0 }));
+  // Pages that carry the platform's name are rendered from the brand setting.
+  const fs = require('fs');
+  const indexTpl = fs.readFileSync(path.join(__dirname, 'public', 'index.html'), 'utf8');
+  const escHtml = (x) => String(x).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const renderIndex = (req, res) => { const b = brain.brand; res.type('html').send(indexTpl.replace(/{{NAME}}/g, escHtml(b.name)).replace(/{{NAME_ML}}/g, escHtml(b.name_ml)).replace(/{{OWNER}}/g, escHtml(b.owner))); };
+  app.get('/manifest.webmanifest', (req, res) => res.type('application/manifest+json').send(JSON.stringify({
+    name: brain.brand.name, short_name: brain.brand.short, description: `${brain.brand.tagline} ${brain.brand.owner}.`,
+    start_url: '/#/home', display: 'standalone', background_color: '#f6f8f5', theme_color: '#0b4f45',
+    icons: [{ src: '/img/cif-mark.png', sizes: '256x256', type: 'image/png', purpose: 'any' }] })));
+  app.get(['/', '/index.html'], renderIndex);
+  app.use(express.static(path.join(__dirname, 'public'), { maxAge: 0, index: false }));
   app.use('/api', (req, res) => res.status(404).json({ error: 'not_found' }));
-  app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
+  app.get('*', renderIndex);
   // last-resort error handler: never leak stack traces, never crash
   app.use((err, req, res, _next) => { console.error('[http]', err.message); if (!res.headersSent) res.status(err.status || 500).json({ error: 'error', message: err.status ? err.message : 'Internal error' }); });
 

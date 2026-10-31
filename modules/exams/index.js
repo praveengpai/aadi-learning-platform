@@ -286,7 +286,7 @@ module.exports = function init(ctx) {
     const self = req.user.person_id === p.id;
     const row = data.put('exams_applications', { person_id: p.id, hamlet_id: p.hamlet_id, calendar_id: c.id, status: 'interested', steps: { interested: today() }, docs: {}, remind: req.body.remind === false ? 0 : 1, assisted_by: self ? null : req.user.display_name }, req.user);
     emit('exams.application_updated', { application_id: row.id, person_id: p.id, status: 'interested' }, req.user, p.hamlet_id);
-    if (row.remind && c.apply_by) brain.notify(p.id, `AADI: ${c.title} — apply by ${c.apply_by}. Keep your documents ready. / അപേക്ഷിക്കേണ്ട അവസാന തീയതി ${c.apply_by}.`, { channel: 'auto' }, req.user);
+    if (row.remind && c.apply_by) brain.notify(p.id, `${brain.brand.short}: ${c.title} — apply by ${c.apply_by}. Keep your documents ready. / അപേക്ഷിക്കേണ്ട അവസാന തീയതി ${c.apply_by}.`, { channel: 'auto' }, req.user);
     res.json(row);
   });
   router.put('/applications/:id', authed, (req, res) => {
@@ -322,8 +322,8 @@ module.exports = function init(ctx) {
         const c = cal[a.calendar_id]; if (!c) continue;
         if (a.last_reminded === t) continue;
         let msg = null;
-        if (['interested', 'docs_ready'].includes(a.status) && c.days_to_deadline !== null && c.days_to_deadline >= 0 && c.days_to_deadline <= 7) msg = `AADI reminder: ${c.title} — last date to apply is ${c.apply_by} (${c.days_to_deadline} day(s) left). / അപേക്ഷിക്കാൻ ${c.days_to_deadline} ദിവസം കൂടി.`;
-        else if (['applied', 'hall_ticket'].includes(a.status) && c.days_to_exam !== null && c.days_to_exam >= 0 && c.days_to_exam <= 7) msg = `AADI reminder: ${c.title} exam on ${c.exam_date}. ${a.status === 'applied' ? 'Download your hall ticket. / ഹാൾ ടിക്കറ്റ് ഡൗൺലോഡ് ചെയ്യുക.' : 'Carry hall ticket + original ID. / ഹാൾ ടിക്കറ്റും ഐ.ഡിയും കരുതുക.'}`;
+        if (['interested', 'docs_ready'].includes(a.status) && c.days_to_deadline !== null && c.days_to_deadline >= 0 && c.days_to_deadline <= 7) msg = `${brain.brand.short} reminder: ${c.title} — last date to apply is ${c.apply_by} (${c.days_to_deadline} day(s) left). / അപേക്ഷിക്കാൻ ${c.days_to_deadline} ദിവസം കൂടി.`;
+        else if (['applied', 'hall_ticket'].includes(a.status) && c.days_to_exam !== null && c.days_to_exam >= 0 && c.days_to_exam <= 7) msg = `${brain.brand.short} reminder: ${c.title} exam on ${c.exam_date}. ${a.status === 'applied' ? 'Download your hall ticket. / ഹാൾ ടിക്കറ്റ് ഡൗൺലോഡ് ചെയ്യുക.' : 'Carry hall ticket + original ID. / ഹാൾ ടിക്കറ്റും ഐ.ഡിയും കരുതുക.'}`;
         if (!msg) continue;
         brain.notify(a.person_id, msg, { channel: 'auto' }, user);
         data.put('exams_applications', { ...a, last_reminded: t }, user);
@@ -389,7 +389,7 @@ module.exports = function init(ctx) {
     emit('exams.assignment_created', { assignment_id: row.id, programme_id: prog.id }, req.user, prog.hamlet_id);
     // tell enrolled learners (only those who consented to contact by this agency)
     for (const e of brain.enrolments.forProgramme(prog.id).filter((e) => e.status === 'active')) {
-      if (brain.consent.has(e.person_id, prog.agency_id, 'contact')) brain.notify(e.person_id, `AADI: new mock test assigned — ${row.title}, due ${row.due}. / പുതിയ മോക്ക് ടെസ്റ്റ്.`, { channel: 'app' }, req.user);
+      if (brain.consent.has(e.person_id, prog.agency_id, 'contact')) brain.notify(e.person_id, `${brain.brand.short}: new mock test assigned — ${row.title}, due ${row.due}. / പുതിയ മോക്ക് ടെസ്റ്റ്.`, { channel: 'app' }, req.user);
     }
     res.json(row);
   });
@@ -513,7 +513,7 @@ module.exports = function init(ctx) {
   on('core.enrolled', (ev) => {
     const p = ev.payload || {};
     if (p.track !== 'exams' || !ev.actor) return; // seeded enrolments have no actor → skip
-    try { brain.notify(p.person_id, 'Welcome to AADI exam coaching! Try a 15-minute PSC mini mock. / പരീക്ഷാ പരിശീലനത്തിലേക്ക് സ്വാഗതം!', { channel: 'auto' }, null); } catch (_) { /* ignore */ }
+    try { brain.notify(p.person_id, `Welcome to ${brain.brand.short} exam coaching! Try a 15-minute PSC mini mock. / പരീക്ഷാ പരിശീലനത്തിലേക്ക് സ്വാഗതം!`, { channel: 'auto' }, null); } catch (_) { /* ignore */ }
   });
 
   // ---------------------------------------------------------------- seed + health

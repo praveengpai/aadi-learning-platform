@@ -5,7 +5,7 @@ const CACHE_PREFIX = 'aadi.c:';
 const OUTBOX_KEY = 'aadi.outbox';
 const MAX_CACHE_ENTRIES = 400;
 
-export const state = { user: null, node: null, lang: localStorage.getItem('aadi.lang') || 'en', online: navigator.onLine, lastServerOk: null, simple: localStorage.getItem('aadi.simple') === '1' };
+export const state = { brand: { name: 'CIF Learning Platform', name_ml: 'സി.ഐ.എഫ് പഠന വേദി', short: 'CIF Learning', owner: 'Community Innovations Foundation' }, user: null, node: null, lang: localStorage.getItem('aadi.lang') || 'en', online: navigator.onLine, lastServerOk: null, simple: localStorage.getItem('aadi.simple') === '1' };
 
 function lsGet(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (_) { return null; } }
 function lsSet(k, v) {
@@ -301,7 +301,7 @@ export function makeKit(moduleId, { params = {}, go, refresh } = {}) {
     del: (p) => http('DELETE', prefix + p),
   });
   return {
-    user: state.user, lang: state.lang, node: state.node, moduleId, params, simple: state.simple,
+    user: state.user, lang: state.lang, node: state.node, brand: state.brand, moduleId, params, simple: state.simple,
     t, h, esc, toast, speak, style, ui, go, refresh,
     api: mk(base), core: mk('/api/core'),
   };

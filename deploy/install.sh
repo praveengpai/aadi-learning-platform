@@ -31,6 +31,15 @@ else
 fi
 set -a; . ./.env; set +a
 
+# Optional: start the demo over with fresh demo data (DEMO ONLY — deletes AADI's demo databases, nothing else):
+#   AADI_RESET_DEMO=1 bash deploy/install.sh <cloud-domain> <hub-domain>
+if [ "${AADI_RESET_DEMO:-0}" = "1" ]; then
+  echo "==> Resetting AADI demo data (other projects on this server are not touched)"
+  docker compose stop aadi-cloud aadi-hub >/dev/null 2>&1 || true
+  docker compose rm -f aadi-cloud aadi-hub >/dev/null 2>&1 || true
+  docker volume rm -f deploy_cloud-data deploy_hub-data >/dev/null 2>&1 || true
+fi
+
 # Who owns port 80? (ignore our own old caddy container, if any)
 docker rm -f deploy-caddy-1 >/dev/null 2>&1 || true
 PORT80_OWNER=$(ss -ltnpH 'sport = :80' 2>/dev/null | sed -n 's/.*users:(("\([^"]*\)".*/\1/p' | head -1)

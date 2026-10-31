@@ -233,7 +233,7 @@ async function training(el, k) {
   } }];
   if (['cpo', 'platform_admin', 'agency_admin'].includes(k.user.role)) tabs.push({ id: 'staff', label: k.t('Staff status', 'ജീവനക്കാരുടെ നില'), render: async (t) => {
     const rows = await k.api.get('/training/staff');
-    t.append(k.h('p', { class: 'small muted' }, k.t('Passing here records training in AADI. To activate an account, use Users → "Mark safeguarding-trained" (core).', 'അക്കൗണ്ട് സജീവമാക്കാൻ Users → "Mark safeguarding-trained" ഉപയോഗിക്കുക.')),
+    t.append(k.h('p', { class: 'small muted' }, k.t(`Passing here records training in ${k.brand.short}. To activate an account, use Users → "Mark safeguarding-trained" (core).`, 'അക്കൗണ്ട് സജീവമാക്കാൻ Users → "Mark safeguarding-trained" ഉപയോഗിക്കുക.')),
       k.ui.table([{ key: 'display_name', label: k.t('Name', 'പേര്') }, { key: 'role', label: k.t('Role', 'റോൾ') }, { key: 'agency', label: k.t('Agency', 'ഏജൻസി') },
         { key: 'module_trained', label: k.t('Course', 'കോഴ്സ്'), render: (u) => k.ui.badge(u.module_trained ? '✅ ' + new Date(u.expires_at).toLocaleDateString('en-IN') : k.t('Not done', 'ചെയ്തിട്ടില്ല'), u.module_trained ? 'good' : 'bad') },
         { key: 'active', label: k.t('Account', 'അക്കൗണ്ട്'), render: (u) => (u.active ? k.t('Active', 'സജീവം') : k.t('Inactive', 'നിഷ്ക്രിയം')) },

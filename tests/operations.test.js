@@ -10,7 +10,7 @@ test.after(async () => { await N.close(); });
 test('hierarchy: steward sees all hamlets; facilitator only own centre details', async () => {
   const s = await N.as('demo.steward').get('/api/m/operations/hierarchy');
   assert.equal(s.status, 200);
-  assert.equal(s.body.totals.hamlets, 10);
+  assert.equal(s.body.totals.hamlets, 11);
   assert.ok(s.body.totals.centres >= 25);
   const f = await N.as('demo.facilitator').get('/api/m/operations/hierarchy');
   assert.equal(f.status, 200);

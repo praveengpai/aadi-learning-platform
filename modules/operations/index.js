@@ -26,7 +26,7 @@ const FEE_PLANS = ['standard', 'sliding', 'waiver', 'sponsored'];
 const BANDS = { A: 1, B: 0.5, C: 0.25, D: 0 };
 const BASE_FEE = { tuition: 200, exams: 300, language: 150, lifeskills: 100, digital: 100, literacy: 0, counselling: 0 };
 const KIT = [
-  { key: 'mini_pc', qty: 1, en: 'Mini-PC hub (AADI server)', ml: 'മിനി-പിസി ഹബ്' },
+  { key: 'mini_pc', qty: 1, en: 'Mini-PC hub (offline learning server)', ml: 'മിനി-പിസി ഹബ്' },
   { key: 'router', qty: 1, en: 'Wi-Fi router', ml: 'വൈ-ഫൈ റൂട്ടർ' },
   { key: 'solar', qty: 1, en: 'Solar panels + charge controller', ml: 'സോളാർ പാനലുകൾ' },
   { key: 'ups', qty: 1, en: 'UPS / battery bank', ml: 'യുപിഎസ്' },
@@ -159,7 +159,7 @@ module.exports = function init(ctx) {
     if (!brain.agencies.get(agency_id)) throw httpError(400, 'Choose an agency');
     const sc = scope(u);
     if (u.role === 'coordinator' && !sc.hamlets.has(h.id)) throw httpError(403, 'Coordinators can set up centres only in their own hamlets.');
-    const name = S(b.name, 160) || `AADI Smart Learning Centre — ${h.name}`;
+    const name = S(b.name, 160) || `${brain.agencies.get(agency_id).name} Learning Centre — ${h.name}`;
     let coreCentre = null;
     if (b.centre_id) {
       coreCentre = brain.centres.get(S(b.centre_id, 64));

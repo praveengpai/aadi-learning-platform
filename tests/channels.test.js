@@ -130,7 +130,7 @@ test('guardian weekly digest is queued only for consented wards', async () => {
   const r = await N.as('demo.facilitator').post('/api/m/channels/digest/run', {});
   assert.equal(r.status, 200);
   assert.ok(r.body.queued > 0);
-  assert.ok(r.body.preview[0].message.startsWith('AADI'));
+  assert.ok(r.body.preview[0].message.startsWith(brain.brand.short));
   const rows = brain.store.find('channels_outbox', { kind: 'digest', ref_id: 'digest-' + new Date().toISOString().slice(0, 10) });
   assert.equal(rows.length, r.body.queued);
   for (const o of rows) assert.ok(brain.policy.activeConsent(o.person_id, fac.agency_id, 'contact'));

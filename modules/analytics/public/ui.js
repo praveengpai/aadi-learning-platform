@@ -155,7 +155,7 @@ async function report(el, k) {
   rep.append(k.h('header', { class: 'analytics-cover' },
     k.h('img', { src: '/img/cif-mark.png', alt: 'CIF' }),
     k.h('div', { class: 'gold' }, k.h('div', null, k.t('Impact Report', 'സ്വാധീന റിപ്പോർട്ട്')), k.h('div', null, `${d.period.from} → ${d.period.to}`)),
-    k.h('h1', null, 'AADI — ', k.t('learning reaches every hamlet', 'എല്ലാ ഊരിലും പഠനം')),
+    k.h('h1', null, `${k.brand.short} — `, k.t('learning reaches every hamlet', 'എല്ലാ ഊരിലും പഠനം')),
     k.h('div', { class: 'sub' }, k.t('Offline-first learning platform for tribal children and youth in Kerala · Community Innovations Foundation', 'കേരളത്തിലെ ആദിവാസി കുട്ടികൾക്കും യുവാക്കൾക്കുമുള്ള പഠന വേദി')),
     k.h('div', { class: 'small', style: { marginTop: '14px', color: '#cfe3dc' } }, `${date} · ${M.hamlets_served} ${k.t('hamlets', 'ഊരുകൾ')} · ${M.agencies_active} ${k.t('partner agencies', 'പങ്കാളി ഏജൻസികൾ')} · DEMO data`)));
   const page = k.h('div', { class: 'analytics-page' });
@@ -174,7 +174,7 @@ async function report(el, k) {
     k.h('tbody', null, d.hamlets.map((h) => k.h('tr', null, k.h('td', null, k.t(h.name, h.name_ml)), k.h('td', null, h.district), k.h('td', null, h.community), k.h('td', null, `${h.connectivity} / ${h.power}`), k.h('td', null, String(h.agencies)), k.h('td', null, fmt(h.reached)), k.h('td', null, fmt(h.attendance, '%'))))))));
   page.append(k.h('h2', null, k.t('Stories from the field', 'അനുഭവങ്ങൾ')), ...d.stories.map((s) => k.h('div', { class: 'analytics-story' }, k.h('b', null, s.title), k.h('p', { style: { margin: '2px 0 0' } }, s.body))));
   page.append(k.h('h2', null, k.t('How we count', 'എങ്ങനെ എണ്ണുന്നു')), k.h('ul', { class: 'small' }, d.method.map((m) => k.h('li', null, m))));
-  rep.append(page, k.h('footer', { class: 'analytics-foot' }, `AADI Platform · Community Innovations Foundation (Section 8), Kochi · Generated ${date} · ${d.audience.label}. Learners and guardians own their data; this report contains no personal information.`));
+  rep.append(page, k.h('footer', { class: 'analytics-foot' }, `${k.brand.name} · ${k.brand.owner} (Section 8), Kochi · Generated ${date} · ${d.audience.label}. Learners and guardians own their data; this report contains no personal information.`));
   el.append(rep);
 }
 

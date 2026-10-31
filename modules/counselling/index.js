@@ -174,7 +174,7 @@ module.exports = function init(ctx) {
     if (scan.flagged) {
       emit('counselling.message_flagged', { ref_id: row.id, match_id: mt.id, text: body, reasons: scan.reasons, severity: scan.severity === 'none' ? 'low' : scan.severity, author_id: u.id, author_role: u.role, target_person_id: mt.person_id, hamlet_id: mt.hamlet_id }, u, mt.hamlet_id);
     }
-    if (!scan.flagged && u.role === 'mentor' && p) brain.notify(p.id, 'AADI: നിങ്ങളുടെ മെന്ററിൽ നിന്ന് പുതിയ സന്ദേശം.', { channel: 'app' }, u);
+    if (!scan.flagged && u.role === 'mentor' && p) brain.notify(p.id, `${brain.brand.short}: നിങ്ങളുടെ മെന്ററിൽ നിന്ന് പുതിയ സന്ദേശം.`, { channel: 'app' }, u);
     res.json({ id: row.id, status: row.status, held: scan.flagged, reasons: scan.reasons, message: scan.flagged ? 'This message is being checked by the safety team before it is delivered. Please keep contact details and meeting plans out of chat.' : undefined, message_ml: scan.flagged ? 'ഈ സന്ദേശം അയക്കും മുമ്പ് സുരക്ഷാ ടീം പരിശോധിക്കുന്നു. ഫോൺ നമ്പറും കൂടിക്കാഴ്ച പദ്ധതികളും ചാറ്റിൽ ഒഴിവാക്കുക.' : undefined });
   });
 
@@ -210,7 +210,7 @@ module.exports = function init(ctx) {
         const cs = counsellorsFor(pid);
         const priority = needTalk || danger || mood === 1 || lowStreak ? 'urgent' : 'normal';
         task = data.put('counselling_tasks', { person_id: pid, hamlet_id: p.hamlet_id, kind: needTalk ? 'need_talk' : 'low_pulse', priority, status: 'open', pulse_id: row.id, assigned_to: cs[0] ? cs[0].id : null, assigned_name: cs[0] ? cs[0].display_name : null, reason: needTalk ? 'Learner asked to talk to someone.' : `Check-in mood ${mood}/5${lowStreak ? ' (low twice in a row)' : ''}.`, created_at: now(), due: new Date(Date.now() + (priority === 'urgent' ? 1 : 3) * 864e5).toISOString().slice(0, 10) }, req.user);
-        if (cs[0]) brain.notify(pid, 'AADI: ഞങ്ങളുടെ കൗൺസിലർ ഉടൻ നിങ്ങളെ കാണും.', { channel: 'app' }, req.user);
+        if (cs[0]) brain.notify(pid, `${brain.brand.short}: ഞങ്ങളുടെ കൗൺസിലർ ഉടൻ നിങ്ങളെ കാണും.`, { channel: 'app' }, req.user);
         if (danger || (needTalk && !cs.length) || (needTalk && mood === 1)) {
           emit('counselling.safeguarding_escalation', { person_id: pid, severity: danger || mood === 1 ? 'high' : 'medium', reason: danger ? 'Distress words in wellbeing check-in' : needTalk && !cs.length ? 'Learner asked to talk; no consenting counsellor available' : 'Very low mood and asked to talk', task_id: task.id }, req.user, p.hamlet_id);
           escalated = true;

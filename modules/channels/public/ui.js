@@ -164,13 +164,13 @@ async function phone(el, k) {
     if (st.mode === 'inbox') {
       const sms = d.inbox.filter((m) => m.channel !== 'ivr');
       const m = sms[st.idx];
-      screenBody.textContent = m ? `${st.idx + 1}/${sms.length}  ${ago(m.at)}\nFrom: AADI\n\n${m.message}` : (st.lang === 'ml' ? 'സന്ദേശങ്ങളില്ല' : 'No messages');
+      screenBody.textContent = m ? `${st.idx + 1}/${sms.length}  ${ago(m.at)}\nFrom: ${k.brand.short}\n\n${m.message}` : (st.lang === 'ml' ? 'സന്ദേശങ്ങളില്ല' : 'No messages');
       soft.replaceChildren(k.h('span', null, st.lang === 'ml' ? 'മറുപടി' : 'Reply'), k.h('span', null, '▲▼'), k.h('span', null, st.lang === 'ml' ? 'വിളി' : 'Call'));
     } else if (st.mode === 'reply') {
       screenBody.textContent = (st.lang === 'ml' ? 'മറുപടി (QUIZ 1-4):\n' : 'Reply (QUIZ 1-4):\n') + 'QUIZ ' + st.typed + '▌';
       soft.replaceChildren(k.h('span', null, st.lang === 'ml' ? 'അയയ്ക്കുക' : 'Send'), k.h('span', null, ''), k.h('span', null, st.lang === 'ml' ? 'തിരികെ' : 'Back'));
     } else if (st.mode === 'call') {
-      screenBody.textContent = `📞 AADI IVR\n${st.digits.join(' ') || ''}\n\n${(st.ivr && st.ivr.say.slice(-1)[0]) || (st.lang === 'ml' ? 'ബന്ധിപ്പിക്കുന്നു…' : 'Connecting…')}`;
+      screenBody.textContent = `📞 ${k.brand.short} IVR\n${st.digits.join(' ') || ''}\n\n${(st.ivr && st.ivr.say.slice(-1)[0]) || (st.lang === 'ml' ? 'ബന്ധിപ്പിക്കുന്നു…' : 'Connecting…')}`;
       soft.replaceChildren(k.h('span', null, st.lang === 'ml' ? 'ഭാഷ' : 'Lang'), k.h('span', null, '0:' + String(Math.min(59, st.digits.length * 12 + 5)).padStart(2, '0')), k.h('span', null, st.lang === 'ml' ? 'അവസാനിപ്പിക്കുക' : 'End'));
     }
   };
@@ -203,11 +203,11 @@ async function phone(el, k) {
     paint();
   };
   const K = (label, sub, key, cls = '') => k.h('button', { class: 'channels-key ' + cls, type: 'button', 'aria-label': key, onclick: () => press(key).catch((e) => k.toast(e.message, 'bad')) }, label, sub ? k.h('small', null, sub) : null);
-  const ph = k.h('div', { class: 'channels-phone' }, k.h('div', { class: 'channels-brand' }, 'AADI · 2G'), screen,
+  const ph = k.h('div', { class: 'channels-phone' }, k.h('div', { class: 'channels-brand' }, `${k.brand.short} · 2G`), screen,
     k.h('div', { class: 'channels-nav' }, K('◀', '', 'left', 'dpad'), k.h('div', { class: 'row', style: { justifyContent: 'center', gap: '4px' } }, K('▲', '', 'up', 'dpad'), K('▼', '', 'down', 'dpad')), K('▶', '', 'right', 'dpad')),
     k.h('div', { class: 'channels-nav' }, K('📞', '', 'call', 'call'), K('OK', '', 'ok'), K('⏻', '', 'end', 'end')),
     k.h('div', { class: 'channels-keys' }, [['1', ''], ['2', 'abc'], ['3', 'def'], ['4', 'ghi'], ['5', 'jkl'], ['6', 'mno'], ['7', 'pqrs'], ['8', 'tuv'], ['9', 'wxyz'], ['*', ''], ['0', '+'], ['#', '']].map(([n, s]) => K(n, s, n))));
-  left.append(isSelf && people.length === 1 ? null : sel, ph, k.h('p', { class: 'small muted', style: { textAlign: 'center' } }, k.t('▲▼ read SMS · ◀ reply to quiz · 📞 call AADI IVR · ⏻ hang up', '▲▼ വായിക്കുക · ◀ മറുപടി · 📞 IVR')), ivrBox);
+  left.append(isSelf && people.length === 1 ? null : sel, ph, k.h('p', { class: 'small muted', style: { textAlign: 'center' } }, k.t(`▲▼ read SMS · ◀ reply to quiz · 📞 call ${k.brand.short} IVR · ⏻ hang up`, '▲▼ വായിക്കുക · ◀ മറുപടി · 📞 IVR')), ivrBox);
   const load = async () => {
     st.data = await k.api.get('/phone/' + sel.value);
     const d = st.data;

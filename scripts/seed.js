@@ -28,15 +28,17 @@ const HAMLETS = [
   { key: 'h8', name: 'Kattuppara', name_ml: 'കാട്ടുപ്പാറ', district: 'Kannur', panchayat: 'Demo Panchayat H', community: 'Malavettuvan', population: 470, households: 110, lat: 12.11, lng: 75.62, connectivity: '4g', power: 'grid' },
   { key: 'h9', name: 'Ponmudikudi', name_ml: 'പൊന്മുടിക്കുടി', district: 'Idukki', panchayat: 'Demo Panchayat I', community: 'Mannan', population: 360, households: 83, lat: 9.86, lng: 77.03, connectivity: '2g', power: 'grid' },
   { key: 'h10', name: 'Arayanchal', name_ml: 'അരയാഞ്ചൽ', district: 'Kottayam', panchayat: 'Demo Panchayat J', community: 'Malayaraya', population: 520, households: 124, lat: 9.58, lng: 76.92, connectivity: '4g', power: 'grid' },
+  { key: 'h11', name: 'Komalikudi', name_ml: 'കോമളിക്കുടി', district: 'Idukki', panchayat: 'Baisonvalley', community: 'Muthuvan', population: 300, households: 70, lat: 9.97, lng: 77.11, connectivity: '2g', power: 'grid', pilot: 1 },
 ];
 
 const AGENCIES = [
-  { key: 'cif', name: 'Community Innovations Foundation', type: 'ngo', steward: 1, colour: '#0f5a4e', about: 'Platform steward (Section 8 company). Runs AADI Smart Learning Centres.' },
+  { key: 'cif', name: 'Community Innovations Foundation', type: 'ngo', steward: 1, colour: '#0f5a4e', about: 'Owner and steward of the platform (Section 8 company). Sponsors community-run programmes such as AADI.' },
   { key: 'vjt', name: 'Vanajyothi Trust (demo)', type: 'ngo', steward: 0, colour: '#b5651d', about: 'Fictional partner NGO — literacy and tuition in forest hamlets.' },
   { key: 'syf', name: 'Sahyadri Youth Forum (demo)', type: 'ngo', steward: 0, colour: '#6a4c93', about: 'Fictional youth organisation — PSC coaching and sports.' },
   { key: 'std', name: 'ST Development Office (demo)', type: 'govt', steward: 0, colour: '#1d4e89', about: 'Fictional government programme office — hostels, scholarships, literacy.' },
   { key: 'glc', name: 'GreenLeaf CSR Foundation (demo)', type: 'csr', steward: 0, colour: '#2e7d32', about: 'Fictional CSR funder — devices, digital literacy and placements.' },
   { key: 'sto', name: 'Sneha Outreach (demo)', type: 'faith', steward: 0, colour: '#c2185b', about: 'Fictional faith-based outreach — counselling and life skills.' },
+  { key: 'kyg', name: 'Komalikudi Youth Group (led by Mr. Rajendran)', type: 'community', steward: 0, colour: '#a0522d', about: 'Local youth group that runs the AADI Smart Learning Centre at Komalikudi, Baisonvalley — sponsored by CIF.' },
   { key: 'uoc', name: 'University Outreach Cell (demo)', type: 'academic', steward: 0, colour: '#00838f', about: 'Fictional university partner — remote teachers, language lab, research.' },
 ];
 
@@ -52,6 +54,7 @@ const PRESENCE = {
   h8: { syf: ['exams', 'lifeskills'], glc: ['digital', 'lifeskills'], cif: ['language', 'counselling', 'exams'] },
   h9: { cif: ['tuition', 'exams', 'language'], vjt: ['tuition'], uoc: ['language'] },
   h10: { std: ['literacy', 'tuition'], sto: ['counselling'], syf: ['exams'], cif: ['lifeskills', 'digital'] },
+  h11: { kyg: ['tuition', 'exams', 'counselling', 'digital', 'literacy'] },
 };
 
 const TRACK_MODULE = { tuition: 'learning', literacy: 'learning', exams: 'exams', language: 'language', lifeskills: 'lifeskills', digital: 'lifeskills', counselling: 'counselling' };
@@ -73,7 +76,12 @@ const LANG = { Muthuvan: 'Muthuvan', Irula: 'Irula', Paniya: 'Paniya', Kurichiya
 const ASPIRE = ['Police (PSC)', 'Forest Guard (PSC)', 'Teacher', 'Nurse', 'Bank clerk', 'LDC (PSC)', 'Army', 'Driver', 'Hotel management', 'IT job', 'Tailoring business', 'Tourism guide', 'Engineer', 'Doctor', 'Sports'];
 
 async function seed({ app, brain, host }) {
-  const R = rngFactory();
+  // The pilot hamlet (Komalikudi) draws from its own random stream, so adding it leaves every
+  // other demo hamlet's data exactly as before.
+  const mainR = rngFactory(); const pilotR = rngFactory(7262);
+  let curR = mainR;
+  const R = { rnd: () => curR.rnd(), int: (a, b) => curR.int(a, b), pick: (x) => curR.pick(x), chance: (p) => curR.chance(p), sample: (x, n) => curR.sample(x, n) };
+  const usePilot = (on) => { curR = on ? pilotR : mainR; };
   const { store } = brain;
   const daysAgo = (n) => new Date(Date.now() - n * 86400e3).toISOString();
   const dobForAge = (age) => { const d = new Date(Date.now() - (age * 365.25 + R.int(0, 300)) * 86400e3); return d.toISOString().slice(0, 10); };
@@ -83,22 +91,23 @@ async function seed({ app, brain, host }) {
 
   store.tx(() => {
     for (const a of AGENCIES) out.agencies[a.key] = store.put('agencies', { ...a, key: undefined, status: 'active', contact: a.key === 'cif' ? 'Kochi, Kerala' : 'demo@example.org' });
-    for (const h of HAMLETS) out.hamlets[h.key] = store.put('hamlets', { ...h, key: undefined, hub_node: 'hub-' + h.name.toLowerCase().replace(/[^a-z]/g, ''), notes: 'DEMO hamlet — fictional data' });
+    for (const h of HAMLETS) out.hamlets[h.key] = store.put('hamlets', { ...h, key: undefined, pilot: undefined, hub_node: 'hub-' + h.name.toLowerCase().replace(/[^a-z]/g, ''), notes: h.pilot ? 'Pilot site of the AADI programme (CIF-sponsored, run by the local youth group). Learners shown in the demo are fictional.' : 'DEMO hamlet — fictional data' });
 
     // presence, centres, programmes
     for (const [hk, agMap] of Object.entries(PRESENCE)) {
       const h = out.hamlets[hk];
+      usePilot(hk === 'h11');
       for (const [ak, tracks] of Object.entries(agMap)) {
         const a = out.agencies[ak];
         store.put('agency_presence', { agency_id: a.id, hamlet_id: h.id, services: tracks, since: daysAgo(R.int(60, 500)).slice(0, 10), status: 'active' });
-        const c = store.put('centres', { hamlet_id: h.id, agency_id: a.id, name: `${a.key === 'cif' ? 'AADI Smart Learning Centre' : a.name.replace(' (demo)', '') + ' Centre'} — ${h.name}`, kind: ak === 'cif' ? 'hub' : 'centre', hub_status: ak === 'cif' ? (h.connectivity === 'none' ? 'courier' : 'online') : 'n/a', devices: R.int(2, 12), last_sync: daysAgo(h.connectivity === 'none' ? R.int(3, 9) : 0) });
+        const c = store.put('centres', { hamlet_id: h.id, agency_id: a.id, name: ak === 'kyg' ? 'AADI Smart Learning Centre — Komalikudi' : `${ak === 'cif' ? 'CIF Learning Centre' : a.name.replace(' (demo)', '') + ' Centre'} — ${h.name}`, kind: (ak === 'cif' || ak === 'kyg') ? 'hub' : 'centre', hub_status: (ak === 'cif' || ak === 'kyg') ? (h.connectivity === 'none' ? 'courier' : 'online') : 'n/a', devices: R.int(2, 12), last_sync: daysAgo(h.connectivity === 'none' ? R.int(3, 9) : 0) });
         out.centres.push(c);
         for (const t of tracks) {
           const titles = TRACK_TITLES[t];
           const variants = t === 'tuition' ? [0, 2] : [0];
           for (const v of variants) {
             const slotCount = t === 'tuition' ? 3 : 2;
-            out.programmes.push(store.put('programmes', { agency_id: a.id, hamlet_id: h.id, centre_id: c.id, module: TRACK_MODULE[t], track: t, title: titles[v], title_ml: titles[v + 1], schedule: R.sample(SLOTS, slotCount), capacity: R.int(15, 40), status: 'active' }));
+            out.programmes.push(store.put('programmes', { agency_id: a.id, hamlet_id: h.id, centre_id: c.id, module: TRACK_MODULE[t], track: t, title: titles[v], title_ml: titles[v + 1], ...(ak === 'kyg' ? { brand: 'AADI Smart Learning Centre', brand_ml: 'ആദി സ്മാർട്ട് ലേണിംഗ് സെന്റർ', sponsor_agency_id: out.agencies.cif.id } : {}), schedule: R.sample(SLOTS, slotCount), capacity: R.int(15, 40), status: 'active' }));
           }
         }
       }
@@ -106,6 +115,7 @@ async function seed({ app, brain, host }) {
 
     // people: families with children, youth, adults
     for (const h of Object.values(out.hamlets)) {
+      usePilot(h === out.hamlets.h11);
       const families = R.int(14, 20);
       for (let f = 0; f < families; f++) {
         const gG = R.chance(0.7) ? 'F' : 'M';
@@ -138,11 +148,15 @@ async function seed({ app, brain, host }) {
     for (const [code, domain, title, title_ml, level, stage] of COMP) store.put('competencies', { id: 'cmp_' + code.toLowerCase().replace(/\./g, '_'), code, domain, title, title_ml, level, stage });
   });
 
+  usePilot(false);
   // consents + enrolments (outside tx loop per hamlet for speed is fine)
   const progByHamlet = {};
   for (const p of out.programmes) (progByHamlet[p.hamlet_id] = progByHamlet[p.hamlet_id] || []).push(p);
   store.tx(() => {
-    for (const p of [...out.children, ...out.youth, ...out.adults]) {
+    const pilotId = out.hamlets.h11 && out.hamlets.h11.id;
+    const everyone = [...out.children, ...out.youth, ...out.adults];
+    for (const p of [...everyone.filter((x) => x.hamlet_id !== pilotId), ...everyone.filter((x) => x.hamlet_id === pilotId)]) {
+      usePilot(p.hamlet_id === pilotId);
       const progs = progByHamlet[p.hamlet_id] || [];
       const age = (Date.now() - new Date(p.dob)) / 3.15576e10;
       const fits = progs.filter((pr) => {
@@ -192,6 +206,8 @@ async function seed({ app, brain, host }) {
     mk('glc.admin', 'agency_admin', 'GreenLeaf Admin', { agency_id: A.glc.id });
     mk('sto.admin', 'agency_admin', 'Sneha Outreach Admin', { agency_id: A.sto.id });
     mk('uoc.admin', 'agency_admin', 'University Outreach Admin', { agency_id: A.uoc.id });
+    mk('aadi.lead', 'agency_admin', 'AADI programme lead — Komalikudi Youth Group', { agency_id: A.kyg.id });
+    mk('aadi.facilitator', 'facilitator', 'AADI facilitator — Komalikudi', { agency_id: A.kyg.id, hamlet_ids: [H.h11.id] });
     mk('coordinator', 'coordinator', 'Idukki Hamlet Coordinator (CIF)', { agency_id: A.cif.id, hamlet_ids: [H.h1.id, H.h9.id] });
     mk('facilitator', 'facilitator', 'Remya — Facilitator, Pachakkudi (CIF)', { agency_id: A.cif.id, centre_id: out.centres.find((c) => c.hamlet_id === H.h1.id && c.agency_id === A.cif.id).id, hamlet_ids: [H.h1.id] });
     mk('facilitator.vjt', 'facilitator', 'Biju — Facilitator, Pachakkudi (Vanajyothi)', { agency_id: A.vjt.id, hamlet_ids: [H.h1.id] });
@@ -208,6 +224,7 @@ async function seed({ app, brain, host }) {
     mk('govt', 'govt_viewer', 'District ST Office — Viewer', { agency_id: A.std.id });
   });
 
+  usePilot(false);
   const demo = {
     brain, store, R, daysAgo, DEMO_PASSWORD,
     hamlets: Object.values(out.hamlets), hamletByKey: out.hamlets,

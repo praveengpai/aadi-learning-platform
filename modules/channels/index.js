@@ -14,7 +14,7 @@ const MAX_ATTEMPTS = 3;
 const FALLBACK = { whatsapp: 'sms', sms: 'ivr', ivr: 'sms' };
 
 const IVR_MENU = {
-  root: { en: 'Welcome to AADI. Press 1 for attendance. Press 2 for today\'s quiz. Press 3 for scheme information. Press 9 to talk to your facilitator.', ml: 'ആദിയിലേക്ക് സ്വാഗതം. ഹാജർ അറിയാൻ 1 അമർത്തുക. ഇന്നത്തെ ക്വിസിന് 2. പദ്ധതി വിവരങ്ങൾക്ക് 3. ഫെസിലിറ്റേറ്ററോട് സംസാരിക്കാൻ 9 അമർത്തുക.' },
+  root: (b) => ({ en: `Welcome to ${b.short}. Press 1 for attendance. Press 2 for today\'s quiz. Press 3 for scheme information. Press 9 to talk to your facilitator.`, ml: `${b.name_ml} — സ്വാഗതം. ഹാജർ അറിയാൻ 1 അമർത്തുക. ഇന്നത്തെ ക്വിസിന് 2. പദ്ധതി വിവരങ്ങൾക്ക് 3. ഫെസിലിറ്റേറ്ററോട് സംസാരിക്കാൻ 9 അമർത്തുക.` }),
   options: {
     1: { en: 'Attendance', ml: 'ഹാജർ' }, 2: { en: 'Today\'s quiz', ml: 'ഇന്നത്തെ ക്വിസ്' },
     3: { en: 'Scheme information', ml: 'പദ്ധതി വിവരം' }, 9: { en: 'Talk to facilitator', ml: 'ഫെസിലിറ്റേറ്റർ' },
@@ -23,7 +23,7 @@ const IVR_MENU = {
 const SCHEMES = [
   { en: 'Post-matric scholarship for ST students: apply through the e-Grantz portal with help at your centre.', ml: 'പട്ടികവർഗ വിദ്യാർത്ഥികൾക്കുള്ള പോസ്റ്റ്-മെട്രിക് സ്കോളർഷിപ്പ്: കേന്ദ്രത്തിന്റെ സഹായത്തോടെ ഇ-ഗ്രാന്റ്സ് വഴി അപേക്ഷിക്കുക.' },
   { en: 'Model Residential School admissions open for Class 5. Ask your facilitator for the form.', ml: 'മോഡൽ റസിഡൻഷ്യൽ സ്കൂൾ അഞ്ചാം ക്ലാസ് പ്രവേശനം. ഫോമിനായി ഫെസിലിറ്റേറ്ററെ സമീപിക്കുക.' },
-  { en: 'PSC special recruitment for ST candidates: free coaching at the AADI centre on Saturdays.', ml: 'പട്ടികവർഗക്കാർക്കുള്ള PSC പ്രത്യേക നിയമനം: ശനിയാഴ്ചകളിൽ ആദി കേന്ദ്രത്തിൽ സൗജന്യ പരിശീലനം.' },
+  { en: 'PSC special recruitment for ST candidates: free coaching at the learning centre on Saturdays.', ml: 'പട്ടികവർഗക്കാർക്കുള്ള PSC പ്രത്യേക നിയമനം: ശനിയാഴ്ചകളിൽ പഠനകേന്ദ്രത്തിൽ സൗജന്യ പരിശീലനം.' },
 ];
 const QUIZ_BANK = [
   ['tuition', 'What is 7 x 8?', '7 x 8 എത്ര?', ['54', '56', '64', '48'], 1, '7 eights are 56.', '7 എട്ടുകൾ 56.'],
@@ -50,6 +50,7 @@ const QUIZ_BANK = [
 
 module.exports = function init(ctx) {
   const { router, requires, authed, data, sql, sqlOne, tx, emit, on, brain, httpError } = ctx;
+  const brand = brain.brand;
   const now = () => new Date().toISOString();
   const S = (v, max = 500) => (v === undefined || v === null ? '' : String(v).slice(0, max).trim());
   const inList = (ids) => ids.map(() => '?').join(',') || "''";
@@ -224,7 +225,7 @@ module.exports = function init(ctx) {
     if (!p) throw httpError(404, 'Not found');
     const lang = b.lang === 'en' ? 'en' : 'ml';
     const digits = String(b.digits || '').split(/[,\s]+/).filter(Boolean).slice(0, 4);
-    const say = [IVR_MENU.root[lang]];
+    const say = [IVR_MENU.root(brand)[lang]];
     let outcome = 'menu', status = 'done';
     const d = digits[0];
     if (d === '1') {
@@ -304,7 +305,7 @@ module.exports = function init(ctx) {
   router.post('/quiz/send', STAFF_ONLY, (req, res) => {
     const q = todaysQuiz();
     if (!q) throw httpError(400, 'No quiz in the bank');
-    const msg = `AADI Quiz: ${q.question_ml || q.question} ${q.options.map((o, i) => `${i + 1}) ${o}`).join(' ')} — reply QUIZ <number>`;
+    const msg = `${brand.short} Quiz: ${q.question_ml || q.question} ${q.options.map((o, i) => `${i + 1}) ${o}`).join(' ')} — reply QUIZ <number>`;
     const r = sendToCohort(req.user, { ...req.body, message: msg, kind: 'quiz', ref: q.id, title: 'Daily SMS quiz', channel: 'sms' });
     res.json(r);
   });
@@ -316,16 +317,16 @@ module.exports = function init(ctx) {
     const p = brain.persons.raw(pid);
     const body = S(b.body, 160);
     const m = /^\s*(?:QUIZ|Q|ക്വിസ്)?\s*([1-4])\s*$/i.exec(body);
-    let parsed = { kind: 'unknown' }, reply = 'AADI: Sorry, we did not understand. Reply QUIZ 1-4, or call the centre.';
+    let parsed = { kind: 'unknown' }, reply = `${brand.short}: Sorry, we did not understand. Reply QUIZ 1-4, or call the centre.`;
     if (m) {
       const q = todaysQuiz();
       if (q) {
         const r = scoreReply(pid, q, Number(m[1]) - 1, 'sms', u);
         parsed = { kind: 'quiz', choice: Number(m[1]), correct: !!r.correct, duplicate: !!r.duplicate };
         const tot = points(pid);
-        reply = r.duplicate ? 'AADI: You already answered today. New question tomorrow!' : r.correct ? `AADI: ശരി! Correct! +10 points. Total ${tot.p}.` : `AADI: ${q.explanation_ml || q.explanation} +2 points for trying. Total ${tot.p}.`;
+        reply = r.duplicate ? `${brand.short}: You already answered today. New question tomorrow!` : r.correct ? `${brand.short}: ശരി! Correct! +10 points. Total ${tot.p}.` : `${brand.short}: ${q.explanation_ml || q.explanation} +2 points for trying. Total ${tot.p}.`;
       }
-    } else if (/^\s*(STOP|നിർത്തുക)\s*$/i.test(body)) { parsed = { kind: 'stop' }; reply = 'AADI: Noted. Your facilitator will confirm and update your consent with you.'; }
+    } else if (/^\s*(STOP|നിർത്തുക)\s*$/i.test(body)) { parsed = { kind: 'stop' }; reply = `${brand.short}: Noted. Your facilitator will confirm and update your consent with you.`; }
     data.put('channels_inbound', { person_id: pid, hamlet_id: p.hamlet_id, channel: 'sms', body, parsed, at: now() }, u);
     // reply goes straight back to the same handset (it initiated the conversation)
     const r = route(p, 'sms');
@@ -407,7 +408,7 @@ module.exports = function init(ctx) {
     try { lessons = sqlOne('SELECT COUNT(*) n FROM learning_progress WHERE deleted=0 AND person_id=? AND completed_at>=?', child.id, since).n; } catch (_) { /* absent */ }
     const badges = brain.passport.entries(child.id).filter((e) => e.issued_at >= since).map((e) => e.title).slice(0, 2);
     const first = String(child.name).split(' ')[0];
-    const parts = [`AADI ${first}:`];
+    const parts = [`${brand.short} ${first}:`];
     parts.push(att ? `ഈ ആഴ്ച ${att.total}-ൽ ${att.present} ക്ലാസിൽ ഹാജർ.` : 'ഈ ആഴ്ച ഹാജർ രേഖയില്ല.');
     if (lessons) parts.push(`${lessons} പാഠം പൂർത്തിയാക്കി.`);
     if (badges.length) parts.push(`പുതിയ നേട്ടം: ${badges.join(', ')}.`);
@@ -449,12 +450,12 @@ module.exports = function init(ctx) {
       const reachable = all.filter((p) => p.kind !== 'adult').map((p) => ({ p, a: agencyFor(p.id) })).filter((x) => x.a);
       // 6 months of history: broadcasts, reminders, digests, quizzes
       const TEMPL = [
-        ['reminder', 'ക്ലാസ് ഇന്ന് വൈകിട്ട് 4 മണിക്ക്. മറക്കരുതേ! — AADI'],
+        ['reminder', `ക്ലാസ് ഇന്ന് വൈകിട്ട് 4 മണിക്ക്. മറക്കരുതേ! — ${brand.short}`],
         ['reminder', 'Tomorrow is the PSC mock test at the centre, 10 AM.'],
         ['broadcast', 'സ്കോളർഷിപ്പ് അപേക്ഷ അവസാന തീയതി അടുത്തു. കേന്ദ്രത്തിൽ സഹായം ലഭ്യം.'],
         ['broadcast', 'ആരോഗ്യ ക്യാമ്പ് ശനിയാഴ്ച ഊരിൽ. എല്ലാവരും വരിക.'],
-        ['digest', 'AADI: ഈ ആഴ്ച 4-ൽ 3 ക്ലാസിൽ ഹാജർ. 2 പാഠം പൂർത്തിയാക്കി. നന്നായി! തുടരുക.'],
-        ['quiz', 'AADI Quiz: 7 x 8 എത്ര? 1) 54 2) 56 3) 64 4) 48 — reply QUIZ <number>'],
+        ['digest', `${brand.short}: ഈ ആഴ്ച 4-ൽ 3 ക്ലാസിൽ ഹാജർ. 2 പാഠം പൂർത്തിയാക്കി. നന്നായി! തുടരുക.`],
+        ['quiz', `${brand.short} Quiz: 7 x 8 എത്ര? 1) 54 2) 56 3) 64 4) 48 — reply QUIZ <number>`],
       ];
       for (let i = 0; i < 900 && reachable.length; i++) {
         const { p, a } = R.pick(reachable);

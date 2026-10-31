@@ -15,8 +15,8 @@
           "points": ["People online may not be who they say they are.", "Do not send photos, your address or school name to people you have not met with your family.", "If someone asks you to keep a chat secret, that is a warning sign. Tell a trusted adult."],
           "points_ml": ["ഓൺലൈനിലുള്ളവർ പറയുന്ന ആളുകളായിരിക്കണമെന്നില്ല.", "കുടുംബത്തോടൊപ്പം നേരിൽ കണ്ടിട്ടില്ലാത്തവർക്ക് ഫോട്ടോ, വിലാസം, സ്കൂളിന്റെ പേര് അയക്കരുത്.", "ചാറ്റ് രഹസ്യമാക്കാൻ ആരെങ്കിലും പറഞ്ഞാൽ അത് അപകട സൂചനയാണ്. വിശ്വസിക്കുന്ന മുതിർന്നവരോട് പറയുക."] },
         { "id": "dc3", "icon": "🗣️", "title": "Be kind, think before you share", "title_ml": "ദയയോടെ, പങ്കിടും മുമ്പ് ചിന്തിക്കൂ",
-          "points": ["Forwarding a rumour can hurt real people. Check before you share.", "Do not post other people's photos without asking them.", "If you are bullied online: do not reply, take a screenshot, block, and tell someone. You can use the Help button in AADI any time."],
-          "points_ml": ["കിംവദന്തി ഫോർവേഡ് ചെയ്യുന്നത് ആളുകളെ വേദനിപ്പിക്കും. പങ്കിടും മുമ്പ് പരിശോധിക്കുക.", "മറ്റുള്ളവരുടെ ഫോട്ടോ ചോദിക്കാതെ പോസ്റ്റ് ചെയ്യരുത്.", "ഓൺലൈനിൽ ശല്യം ചെയ്യപ്പെട്ടാൽ: മറുപടി കൊടുക്കരുത്, സ്ക്രീൻഷോട്ട് എടുക്കുക, ബ്ലോക്ക് ചെയ്യുക, ആരോടെങ്കിലും പറയുക. AADI-യിലെ സഹായ ബട്ടൺ എപ്പോഴും ഉപയോഗിക്കാം."] }
+          "points": ["Forwarding a rumour can hurt real people. Check before you share.", "Do not post other people's photos without asking them.", "If you are bullied online: do not reply, take a screenshot, block, and tell someone. You can use the Help button in the app any time."],
+          "points_ml": ["കിംവദന്തി ഫോർവേഡ് ചെയ്യുന്നത് ആളുകളെ വേദനിപ്പിക്കും. പങ്കിടും മുമ്പ് പരിശോധിക്കുക.", "മറ്റുള്ളവരുടെ ഫോട്ടോ ചോദിക്കാതെ പോസ്റ്റ് ചെയ്യരുത്.", "ഓൺലൈനിൽ ശല്യം ചെയ്യപ്പെട്ടാൽ: മറുപടി കൊടുക്കരുത്, സ്ക്രീൻഷോട്ട് എടുക്കുക, ബ്ലോക്ക് ചെയ്യുക, ആരോടെങ്കിലും പറയുക. ആപ്പിലെ സഹായ ബട്ടൺ എപ്പോഴും ഉപയോഗിക്കാം."] }
       ],
       "scenario": {
         "title": "A message from a stranger", "title_ml": "അപരിചിതന്റെ സന്ദേശം",
@@ -224,8 +224,8 @@
           "points": ["Ask for a written offer or appointment letter that shows salary, hours and job.", "Show original documents for checking, but give only photocopies. No employer or agent should keep your Aadhaar, certificates or bank passbook.", "Never pay a big 'fee' to an agent to get a job."],
           "points_ml": ["ശമ്പളം, സമയം, ജോലി എന്നിവ കാണിക്കുന്ന എഴുതിയ ഓഫർ / നിയമന കത്ത് ചോദിക്കുക.", "പരിശോധനയ്ക്ക് ഒറിജിനൽ കാണിക്കാം, ഫോട്ടോകോപ്പി മാത്രം കൊടുക്കുക. ഒരു തൊഴിലുടമയോ ഏജന്റോ ആധാർ, സർട്ടിഫിക്കറ്റ്, ബാങ്ക് പാസ്ബുക്ക് പിടിച്ചുവെക്കരുത്.", "ജോലി കിട്ടാൻ ഏജന്റിന് വലിയ 'ഫീസ്' കൊടുക്കരുത്."] },
         { "id": "rt3", "icon": "☎️", "title": "Where to get help", "title_ml": "സഹായം എവിടെ",
-          "points": ["Police emergency: 112. Women's helpline: 181. Children under 18: Childline 1098. Cyber fraud: 1930.", "The district Labour Office handles wage complaints.", "ST Promoters and your AADI facilitator can help you contact the right office."],
-          "points_ml": ["പോലീസ് അടിയന്തരം: 112. വനിതാ ഹെൽപ്‌ലൈൻ: 181. 18 വയസ്സിൽ താഴെയുള്ളവർ: ചൈൽഡ്‌ലൈൻ 1098. സൈബർ തട്ടിപ്പ്: 1930.", "കൂലി പരാതികൾ ജില്ലാ ലേബർ ഓഫീസ് കൈകാര്യം ചെയ്യുന്നു.", "ST പ്രൊമോട്ടർമാരും AADI ഫെസിലിറ്റേറ്ററും ശരിയായ ഓഫീസുമായി ബന്ധപ്പെടാൻ സഹായിക്കും."] }
+          "points": ["Police emergency: 112. Women's helpline: 181. Children under 18: Childline 1098. Cyber fraud: 1930.", "The district Labour Office handles wage complaints.", "ST Promoters and your facilitator can help you contact the right office."],
+          "points_ml": ["പോലീസ് അടിയന്തരം: 112. വനിതാ ഹെൽപ്‌ലൈൻ: 181. 18 വയസ്സിൽ താഴെയുള്ളവർ: ചൈൽഡ്‌ലൈൻ 1098. സൈബർ തട്ടിപ്പ്: 1930.", "കൂലി പരാതികൾ ജില്ലാ ലേബർ ഓഫീസ് കൈകാര്യം ചെയ്യുന്നു.", "ST പ്രൊമോട്ടർമാരും നിങ്ങളുടെ ഫെസിലിറ്റേറ്ററും ശരിയായ ഓഫീസുമായി ബന്ധപ്പെടാൻ സഹായിക്കും."] }
       ],
       "scenario": {
         "title": "Salary not paid", "title_ml": "ശമ്പളം കിട്ടിയില്ല", "start": "s1",
@@ -259,8 +259,8 @@
           "points": ["Salary that sounds too good for the work, with no interview.", "Asks you to pay a fee, or to hand over your documents or bank card.", "Asks you to travel quickly, keep it secret from family, or travel with someone you don't know."],
           "points_ml": ["അഭിമുഖമില്ലാതെ, ജോലിക്ക് അനുയോജ്യമല്ലാത്തത്ര വലിയ ശമ്പളം.", "ഫീസ് ചോദിക്കുന്നു, അല്ലെങ്കിൽ രേഖകളോ ബാങ്ക് കാർഡോ ചോദിക്കുന്നു.", "പെട്ടെന്ന് യാത്ര ചെയ്യാൻ, കുടുംബത്തിൽ നിന്ന് രഹസ്യമാക്കാൻ, അറിയാത്തവരോടൊപ്പം പോകാൻ പറയുന്നു."] },
         { "id": "sf2", "icon": "🔎", "title": "Check before you go", "title_ml": "പോകും മുമ്പ് പരിശോധിക്കുക",
-          "points": ["Ask for the company name, full address and a landline. Ask your facilitator to check it.", "Leave the employer's details and your travel plan with family and your AADI facilitator.", "Keep some emergency money and a list of phone numbers on paper."],
-          "points_ml": ["കമ്പനിയുടെ പേര്, പൂർണ്ണ വിലാസം, ലാൻഡ്‌ലൈൻ ചോദിക്കുക. ഫെസിലിറ്റേറ്ററോട് പരിശോധിക്കാൻ പറയുക.", "തൊഴിലുടമയുടെ വിവരങ്ങളും യാത്രാ പദ്ധതിയും കുടുംബത്തിനും AADI ഫെസിലിറ്റേറ്റർക്കും നൽകുക.", "അടിയന്തര പണവും ഫോൺ നമ്പറുകളുടെ ലിസ്റ്റും കടലാസിൽ കരുതുക."] }
+          "points": ["Ask for the company name, full address and a landline. Ask your facilitator to check it.", "Leave the employer's details and your travel plan with family and your facilitator.", "Keep some emergency money and a list of phone numbers on paper."],
+          "points_ml": ["കമ്പനിയുടെ പേര്, പൂർണ്ണ വിലാസം, ലാൻഡ്‌ലൈൻ ചോദിക്കുക. ഫെസിലിറ്റേറ്ററോട് പരിശോധിക്കാൻ പറയുക.", "തൊഴിലുടമയുടെ വിവരങ്ങളും യാത്രാ പദ്ധതിയും കുടുംബത്തിനും ഫെസിലിറ്റേറ്റർക്കും നൽകുക.", "അടിയന്തര പണവും ഫോൺ നമ്പറുകളുടെ ലിസ്റ്റും കടലാസിൽ കരുതുക."] }
       ],
       "scenario": {
         "title": "An exciting offer", "title_ml": "ആകർഷകമായ ഒരു വാഗ്ദാനം", "start": "s1",
@@ -272,7 +272,7 @@
             ] },
           "s2": { "text": "Your friend has already gone with him and now messages: \"They took my phone and Aadhaar. I can't leave.\"", "text_ml": "കൂട്ടുകാരി അയാളോടൊപ്പം പോയി, ഇപ്പോൾ സന്ദേശം: \"അവർ എന്റെ ഫോണും ആധാറും എടുത്തു. പോകാൻ പറ്റുന്നില്ല.\"",
             "choices": [
-              { "text": "Call 112 with whatever location details I have, and tell the facilitator / use the AADI Help button.", "text_ml": "അറിയാവുന്ന സ്ഥല വിവരങ്ങളോടെ 112 വിളിക്കും, ഫെസിലിറ്റേറ്ററോട് പറയും / AADI സഹായ ബട്ടൺ ഉപയോഗിക്കും.", "score": 2, "next": "end_good", "feedback": "Fast reporting helps rescue. You did the right thing.", "feedback_ml": "വേഗത്തിലുള്ള റിപ്പോർട്ടിംഗ് രക്ഷാപ്രവർത്തനത്തെ സഹായിക്കും. നിങ്ങൾ ശരി ചെയ്തു." },
+              { "text": "Call 112 with whatever location details I have, and tell the facilitator / use the app's Help button.", "text_ml": "അറിയാവുന്ന സ്ഥല വിവരങ്ങളോടെ 112 വിളിക്കും, ഫെസിലിറ്റേറ്ററോട് പറയും / ആപ്പിലെ സഹായ ബട്ടൺ ഉപയോഗിക്കും.", "score": 2, "next": "end_good", "feedback": "Fast reporting helps rescue. You did the right thing.", "feedback_ml": "വേഗത്തിലുള്ള റിപ്പോർട്ടിംഗ് രക്ഷാപ്രവർത്തനത്തെ സഹായിക്കും. നിങ്ങൾ ശരി ചെയ്തു." },
               { "text": "Wait and see.", "text_ml": "കാത്തിരിക്കാം.", "score": 0, "next": "end_good", "feedback": "Waiting can put your friend in more danger. Report immediately.", "feedback_ml": "കാത്തിരിക്കുന്നത് കൂട്ടുകാരിയെ കൂടുതൽ അപകടത്തിലാക്കും. ഉടൻ റിപ്പോർട്ട് ചെയ്യുക." }
             ] },
           "end_good": { "end": true, "text": "You know the red flags and how to act. You can protect yourself and your friends.", "text_ml": "അപകട സൂചനകളും പ്രവർത്തിക്കേണ്ട രീതിയും നിങ്ങൾക്കറിയാം. നിങ്ങൾക്കും കൂട്ടുകാർക്കും സംരക്ഷണം നൽകാം." },

@@ -148,7 +148,7 @@ module.exports = function init(ctx) {
     if (!v.hours_verified) throw httpError(409, 'No verified hours yet');
     const progs = sql('SELECT DISTINCT p.title, h.name hamlet FROM marketplace_shifts s JOIN programmes p ON p.id=s.programme_id JOIN hamlets h ON h.id=s.hamlet_id WHERE s.volunteer_id=? AND s.deleted=0 AND s.status=\'verified\'', v.id);
     const first = sqlOne('SELECT MIN(date) a, MAX(date) b FROM marketplace_shifts WHERE volunteer_id=? AND deleted=0 AND status=\'verified\'', v.id);
-    res.json({ name: v.name, agency: v.agency_name, hours: v.hours_verified, sessions: v.sessions_verified, from: first.a, to: first.b, programmes: progs, code: 'VOL-' + v.id.slice(-8).toUpperCase(), issued_at: now().slice(0, 10), issuer: 'AADI Platform · ' + CIF.name });
+    res.json({ name: v.name, agency: v.agency_name, hours: v.hours_verified, sessions: v.sessions_verified, from: first.a, to: first.b, programmes: progs, code: 'VOL-' + v.id.slice(-8).toUpperCase(), issued_at: now().slice(0, 10), issuer: brain.brand.name + ' · ' + CIF.name });
   });
 
   // ======================================================================
@@ -429,7 +429,7 @@ module.exports = function init(ctx) {
     }
     if (!pid || u.role === 'guardian') throw httpError(403, 'Only youth (or staff referring them) can apply');
     const p = brain.persons.raw(pid);
-    if (!isAdultPerson(p)) throw httpError(403, 'Jobs are for adults (18+) only. Minors cannot be placed through AADI.');
+    if (!isAdultPerson(p)) throw httpError(403, `Jobs are for adults (18+) only. Minors cannot be placed through ${brain.brand.short}.`);
     const age = ageOf(p);
     if (j.min_age && age < j.min_age) throw httpError(400, `Minimum age for this job is ${j.min_age}`);
     const gate = consentGate(p, j.agency_id);
@@ -457,7 +457,7 @@ module.exports = function init(ctx) {
         const wage = Math.max(Number(req.body.wage_monthly) || j.wage_monthly, j.wage_monthly);
         data.put('marketplace_placements', { application_id: a.id, job_id: j.id, agency_id: j.agency_id, person_id: a.person_id, hamlet_id: a.hamlet_id, start_date: S(req.body.start_date, 10) || now().slice(0, 10), wage_monthly: wage, status: 'active', check_30: null, check_90: null }, u);
         brain.passport.award({ person_id: a.person_id, type: 'milestone', ref: 'placement:' + j.id, title: `Placed: ${j.title} (${j.employer_name})`, level: 1, agency_id: j.agency_id }, u);
-        try { brain.notify(a.person_id, `Congratulations! You are selected for ${j.title}. Never hand over your original certificates. Call the AADI helpline if anything feels unsafe.`, { channel: 'auto' }, u); } catch (_) { /* best effort */ }
+        try { brain.notify(a.person_id, `Congratulations! You are selected for ${j.title}. Never hand over your original certificates. Call the ${brain.brand.short} helpline if anything feels unsafe.`, { channel: 'auto' }, u); } catch (_) { /* best effort */ }
       }
       return row;
     });
@@ -528,7 +528,7 @@ module.exports = function init(ctx) {
   router.get('/reports/summary', requires('donate', 'analytics.aggregate', 'agency.manage'), (req, res) => res.json(report(req.user)));
   router.get('/reports/csr.csv', requires('donate', 'analytics.aggregate', 'agency.manage'), (req, res) => {
     const r = report(req.user);
-    const head = `# AADI CSR / grant report (DEMO data) — ${r.issuer} — FY ${r.fy} — generated ${r.generated_at}\n# ${r.method}\n`;
+    const head = `# ${brain.brand.name} CSR / grant report (DEMO data) — ${r.issuer} — FY ${r.fy} — generated ${r.generated_at}\n# ${r.method}\n`;
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
     res.setHeader('Content-Disposition', `attachment; filename="aadi-csr-report-${r.fy}.csv"`);
     res.send(head + toCsv(r.by_hamlet) + '\n');
@@ -584,9 +584,9 @@ module.exports = function init(ctx) {
         sps.push(data.put('marketplace_sponsorships', { kind: 'learner', card: `${p.name.charAt(0)}. · ${p.gender === 'F' ? 'girl' : 'boy'}, ${band} yrs · ${h.name}`, card_ml: `${p.name.charAt(0)}. · ${band} വയസ്സ് · ${h.name_ml}`, hamlet_id: h.id, person_id: p.id, age_band: band, need: need[0], need_ml: need[1], target: need[2], raised: 0, status: 'open', created_at: daysAgo(R.int(30, 160)), cohort_size: sqlOne('SELECT COUNT(*) n FROM persons WHERE hamlet_id=? AND deleted=0 AND kind=\'child\'', h.id).n }, sys));
       }
       for (const h of hamlets) {
-        sps.push(data.put('marketplace_sponsorships', { kind: 'centre', card: `AADI Smart Learning Centre — ${h.name}`, card_ml: `AADI പഠനകേന്ദ്രം — ${h.name_ml}`, hamlet_id: h.id, age_band: null, need: `One year of facilitator honorarium, solar power and connectivity for the centre at ${h.name} (${h.district}).`, need_ml: 'ഒരു വർഷത്തെ ഫെസിലിറ്റേറ്റർ ഓണറേറിയം, സോളാർ, കണക്റ്റിവിറ്റി.', target: 240000, raised: 0, status: 'open', created_at: daysAgo(R.int(60, 170)) }, sys));
+        sps.push(data.put('marketplace_sponsorships', { kind: 'centre', card: `Learning Centre — ${h.name}`, card_ml: `പഠനകേന്ദ്രം — ${h.name_ml}`, hamlet_id: h.id, age_band: null, need: `One year of facilitator honorarium, solar power and connectivity for the centre at ${h.name} (${h.district}).`, need_ml: 'ഒരു വർഷത്തെ ഫെസിലിറ്റേറ്റർ ഓണറേറിയം, സോളാർ, കണക്റ്റിവിറ്റി.', target: 240000, raised: 0, status: 'open', created_at: daysAgo(R.int(60, 170)) }, sys));
       }
-      for (const h of [H.h5, H.h6, H.h7, H.h1]) sps.push(data.put('marketplace_sponsorships', { kind: 'device', card: `10 offline learning tablets — ${h.name}`, card_ml: `10 ഓഫ്‌ലൈൻ പഠന ടാബ്‌ലറ്റുകൾ — ${h.name_ml}`, hamlet_id: h.id, need: 'Rugged tablets pre-loaded with AADI content that work without internet; synced weekly by the hub.', need_ml: 'ഇന്റർനെറ്റ് ഇല്ലാതെ പ്രവർത്തിക്കുന്ന ടാബ്‌ലറ്റുകൾ.', target: 120000, raised: 0, status: 'open', created_at: daysAgo(R.int(20, 120)) }, sys));
+      for (const h of [H.h5, H.h6, H.h7, H.h1]) sps.push(data.put('marketplace_sponsorships', { kind: 'device', card: `10 offline learning tablets — ${h.name}`, card_ml: `10 ഓഫ്‌ലൈൻ പഠന ടാബ്‌ലറ്റുകൾ — ${h.name_ml}`, hamlet_id: h.id, need: 'Rugged tablets pre-loaded with learning content that work without internet; synced weekly by the hub.', need_ml: 'ഇന്റർനെറ്റ് ഇല്ലാതെ പ്രവർത്തിക്കുന്ന ടാബ്‌ലറ്റുകൾ.', target: 120000, raised: 0, status: 'open', created_at: daysAgo(R.int(20, 120)) }, sys));
       for (const [h, t] of [[H.h2, 'PSC residential camp (10 days)'], [H.h8, 'Football & leadership camp'], [H.h3, 'Summer reading camp']]) sps.push(data.put('marketplace_sponsorships', { kind: 'camp', card: `${t} — ${h.name}`, card_ml: `${t} — ${h.name_ml}`, hamlet_id: h.id, need: 'Food, stay, travel and resource persons for youth and children.', need_ml: 'ഭക്ഷണം, താമസം, യാത്ര, പരിശീലകർ.', target: 90000, raised: 0, status: 'open', created_at: daysAgo(R.int(15, 90)) }, sys));
 
       // ---- donors, pledges and donations

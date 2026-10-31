@@ -1,4 +1,4 @@
-// AADI shell — router, frame, navigation, module loading with isolation.
+// Platform shell — router, frame, navigation, module loading with isolation.
 import { state, http, t, h, toast, makeKit, ui, onNetChange, outboxCount, replayOutbox } from './kit.js';
 import { coreViews, coreNav } from './core-views.js';
 
@@ -14,6 +14,8 @@ async function boot() {
   window.addEventListener('aadi:unauth', () => { state.user = null; render(); });
   window.addEventListener('hashchange', render);
   onNetChange(() => paintStatus());
+  try { Object.assign(state.brand, await http('GET', '/api/core/brand')); } catch (_) { /* offline: keep cached/default brand */ }
+  document.title = `${state.brand.name} · ${state.brand.name_ml}`;
   try {
     const me = await http('GET', '/api/core/me');
     state.user = me.user; state.node = me.node;
@@ -135,7 +137,7 @@ async function renderModule(id, view, params, el) {
 function buildFrame() {
   const f = h('div', { class: 'app' },
     h('aside', { class: 'side', 'aria-label': 'Main navigation' },
-      h('a', { class: 'brand', href: '#/home' }, h('img', { src: '/img/cif-mark.png', alt: '' }), h('span', null, h('b', { class: 'ml' }, 'ആദി AADI'), h('small', null, t('Learning for every hamlet', 'ഓരോ ഊരിനും പഠനം')))),
+      h('a', { class: 'brand', href: '#/home' }, h('img', { src: '/img/cif-mark.png', alt: '' }), h('span', null, h('b', null, state.brand.short), h('small', null, t('Learning for every hamlet', 'ഓരോ ഊരിനും പഠനം')))),
       h('nav', { class: 'nav' })),
     h('div', { class: 'main' },
       h('header', { class: 'top' },
@@ -229,8 +231,8 @@ async function renderLogin() {
     h('section', { class: 'login-art' },
       h('div', { class: 'row' }, h('img', { class: 'mark', src: '/img/cif-mark.png', alt: 'Community Innovations Foundation' }), h('div', null, h('b', null, 'Community Innovations Foundation'), h('div', { class: 'small', style: { color: '#a9c4bc' } }, 'Section 8 Company · Kerala'))),
       h('div', null,
-        h('p', { class: 'word' }, 'ആദി'),
-        h('p', { class: 'tag' }, t('One learning platform for every tribal hamlet — from the first letter to the first job.', 'ഓരോ ഊരിനും ഒരു പഠന വേദി — ആദ്യ അക്ഷരം മുതൽ ആദ്യ ജോലി വരെ.'))),
+        h('p', { class: 'word' }, t(state.brand.name, state.brand.name_ml)),
+        h('p', { class: 'tag' }, t(state.brand.tagline || '', state.brand.tagline_ml || ''))),
       h('div', { class: 'layers' },
         h('div', null, t('Works without internet at the centre hub, and syncs when it can.', 'ഇന്റർനെറ്റില്ലാതെയും കേന്ദ്രത്തിൽ പ്രവർത്തിക്കും.')),
         h('div', null, t('The family owns the learner\'s record. Agencies see it only with consent.', 'പഠിതാവിന്റെ വിവരങ്ങൾ കുടുംബത്തിന്റേത്. സമ്മതത്തോടെ മാത്രം ഏജൻസികൾക്ക്.')),
@@ -244,7 +246,7 @@ async function renderLogin() {
     const accts = await http('GET', '/api/core/demo-accounts');
     if (accts.length) {
       demoBox.append(h('h3', { style: { marginTop: '8px' } }, t('Demo: sign in as…', 'ഡെമോ: ഇങ്ങനെ പ്രവേശിക്കുക…')),
-        h('p', { class: 'small muted' }, t('This is the demonstration instance with fictional people in 10 sample hamlets.', '10 മാതൃകാ ഊരുകളിലെ സാങ്കൽപ്പിക വിവരങ്ങളുള്ള ഡെമോ.')),
+        h('p', { class: 'small muted' }, t('This is the demonstration instance: 10 sample hamlets plus the Komalikudi pilot site, all with fictional learners.', '10 മാതൃകാ ഊരുകളും കോമളിക്കുടിയും — സാങ്കൽപ്പിക പഠിതാക്കളുമായി ഡെമോ.')),
         h('div', { class: 'demo-list' }, accts.map((a) => h('button', { type: 'button', onclick: () => doLogin(a.username, 'demo1234') }, h('b', null, a.display_name), h('span', null, a.role_label + (a.agency && !['learner', 'guardian'].includes(a.role) ? ' · ' + a.agency : ''))))));
     }
   } catch (_) { /* offline */ }

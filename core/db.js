@@ -23,7 +23,7 @@ const CORE_TABLES = {
   agencies: ['name', 'type', 'steward', 'contact', 'status', 'colour', 'about'],
   agency_presence: ['agency_id', 'hamlet_id', 'services', 'since', 'status'],
   centres: ['hamlet_id', 'agency_id', 'name', 'kind', 'hub_status', 'devices', 'last_sync'],
-  programmes: ['agency_id', 'hamlet_id', 'centre_id', 'module', 'track', 'title', 'title_ml', 'schedule', 'capacity', 'status'],
+  programmes: ['agency_id', 'hamlet_id', 'centre_id', 'module', 'track', 'title', 'title_ml', 'schedule', 'capacity', 'status', 'sponsor_agency_id', 'brand', 'brand_ml'],
   persons: ['hamlet_id', 'name', 'gender', 'dob', 'kind', 'language', 'school_class', 'phone', 'guardian_id', 'relation', 'aspirations', 'literacy_level', 'notes'],
   users: ['person_id', 'username', 'pass_hash', 'role', 'agency_id', 'centre_id', 'hamlet_ids', 'display_name', 'active', 'safeguarding_trained'],
   enrolments: ['person_id', 'programme_id', 'agency_id', 'hamlet_id', 'status', 'start_date'],
@@ -36,6 +36,9 @@ const CORE_TABLES = {
 function migrateCore(db) {
   for (const [t, cols] of Object.entries(CORE_TABLES)) {
     db.exec(`CREATE TABLE IF NOT EXISTS ${t} (${STD_COLS}, ${cols.map((c) => `${c} ${colType(c)}`).join(', ')})`);
+    // additive migration: new columns appear on existing databases without touching data
+    const have = new Set(db.prepare(`PRAGMA table_info(${t})`).all().map((r) => r.name));
+    for (const c of cols) if (!have.has(c)) db.exec(`ALTER TABLE ${t} ADD COLUMN ${c} ${colType(c)}`);
   }
   db.exec(`
     CREATE TABLE IF NOT EXISTS events (

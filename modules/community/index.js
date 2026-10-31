@@ -281,7 +281,7 @@ module.exports = function init(ctx) {
     const row = data.put('community_content', { id: c.id, status, review_note: S(req.body.note, 1000) || c.review_note, reviewed_by: u.id, reviewed_by_name: u.display_name, reviewed_at: now(), published_at: d === 'publish' ? now() : c.published_at, credits }, u);
     if (d === 'publish') {
       emit('community.content_published', { content_id: c.id, kind: c.kind, licence: c.licence }, u, c.hamlet_id);
-      if (c.contributor_person_id) { try { brain.notify(c.contributor_person_id, `Your ${c.kind} "${c.title}" is now published in the AADI cultural archive. Thank you! / നിങ്ങളുടെ സംഭാവന പ്രസിദ്ധീകരിച്ചു.`, { channel: 'auto' }, u); } catch (_) { /* outbox best-effort */ } }
+      if (c.contributor_person_id) { try { brain.notify(c.contributor_person_id, `Your ${c.kind} "${c.title}" is now published in the ${brain.brand.short} cultural archive. Thank you! / നിങ്ങളുടെ സംഭാവന പ്രസിദ്ധീകരിച്ചു.`, { channel: 'auto' }, u); } catch (_) { /* outbox best-effort */ } }
     }
     res.json(shapeContent(u, row));
   });

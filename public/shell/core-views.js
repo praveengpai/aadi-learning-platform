@@ -18,7 +18,7 @@ export const coreNav = [
   { view: 'platform', label: 'Services (modules)', label_ml: 'സേവനങ്ങൾ', icon: '🧩', section: 'admin', roles: ['platform_admin'] },
   { view: 'resilience', label: 'Sync & resilience', label_ml: 'സിങ്ക്, പ്രതിരോധം', icon: '🛡️', section: 'admin', roles: ['platform_admin', 'agency_admin', 'coordinator', 'facilitator'] },
   { view: 'audit', label: 'Audit trail', label_ml: 'ഓഡിറ്റ്', icon: '📜', section: 'admin', roles: ['platform_admin', 'cpo'] },
-  { view: 'architecture', label: 'How AADI works', label_ml: 'ആദി എങ്ങനെ', icon: '🧠', section: 'admin' },
+  { view: 'architecture', label: 'How the platform works', label_ml: 'വേദി എങ്ങനെ', icon: '🧠', section: 'admin' },
   { view: 'settings', label: 'Settings', label_ml: 'ക്രമീകരണം', icon: '⚙️', section: 'admin' },
 ];
 
@@ -99,6 +99,7 @@ export const coreViews = {
       return h('div', { class: 'card' + (ps.length ? '' : ' tone-warn') }, h('h3', null, trackLabel(tr)),
         ps.length ? h('div', { class: 'stack' }, ps.map((p) => h('div', null,
           h('b', null, h('span', { 'aria-hidden': 'true', style: { width: '10px', height: '10px', borderRadius: '50%', background: p.agency_colour, display: 'inline-block', marginRight: '8px' } }), t(p.title, p.title_ml)),
+          p.brand ? h('div', { class: 'small', style: { color: 'var(--forest-2)', fontWeight: 700 } }, t(p.brand, p.brand_ml) + (p.sponsor_name ? t(` · sponsored by ${p.sponsor_name.replace('Community Innovations Foundation', 'CIF')}`, ` · ${p.sponsor_name.replace('Community Innovations Foundation', 'CIF')} പിന്തുണ`) : '')) : null,
           h('div', { class: 'small muted' }, `${p.agency_name} · ${(p.schedule || []).join(', ')} · ${p.enrolled} ${t('enrolled', 'പേർ')}`))))
           : h('p', { class: 'small muted' }, t('No agency runs this here yet — a gap to fill.', 'ഇവിടെ ഇത് നടത്തുന്ന ഏജൻസിയില്ല.')));
     });
@@ -214,7 +215,7 @@ export const coreViews = {
     const verifyUrl = `${location.origin}/#/verify/${pp.verify_code}`;
     el.append(h('div', { class: 'row no-print', style: { marginBottom: '12px' } }, h('h1', { style: { flex: 1, margin: 0 } }, t('Learning Passport', 'പഠന പാസ്‌പോർട്ട്')), ui.button('🖨️ ' + t('Print / save PDF', 'പ്രിന്റ് / PDF'), () => window.print())));
     el.append(h('div', { class: 'passport' },
-      h('div', { class: 'ph' }, h('img', { src: '/img/cif-mark.png', alt: '' }), h('div', { style: { flex: 1 } }, h('div', { class: 'small', style: { color: '#b9d2cb' } }, t('AADI Learning Passport', 'ആദി പഠന പാസ്‌പോർട്ട്')), h('h2', { style: { margin: 0 } }, pp.person.name), h('div', { class: 'small', style: { color: '#cfe2dc' } }, `${pp.hamlet ? pp.hamlet.name + ', ' + pp.hamlet.district : ''}`)),
+      h('div', { class: 'ph' }, h('img', { src: '/img/cif-mark.png', alt: '' }), h('div', { style: { flex: 1 } }, h('div', { class: 'small', style: { color: '#b9d2cb' } }, t('Learning Passport', 'പഠന പാസ്‌പോർട്ട്') + ' · ' + state.brand.short), h('h2', { style: { margin: 0 } }, pp.person.name), h('div', { class: 'small', style: { color: '#cfe2dc' } }, `${pp.hamlet ? pp.hamlet.name + ', ' + pp.hamlet.district : ''}`)),
         h('div', { style: { background: '#fff', padding: '6px', borderRadius: '6px' }, title: verifyUrl }, pseudoQr(pp.verify_code))),
       h('div', { class: 'pb' },
         ui.grid([ui.stat(t('Skills earned', 'നേടിയ കഴിവുകൾ'), byType('competency').length), ui.stat(t('Certificates', 'സർട്ടിഫിക്കറ്റുകൾ'), byType('certificate').length), ui.stat(t('Milestones', 'നാഴികക്കല്ലുകൾ'), byType('milestone').length), ui.stat(t('Programmes', 'പരിപാടികൾ'), pp.enrolments.length)], 150),
@@ -229,7 +230,7 @@ export const coreViews = {
     el.append(h('div', { class: 'row', style: { marginBottom: '16px' } }, h('img', { src: '/img/cif-mark.png', alt: '', style: { width: '48px' } }), h('h2', { style: { margin: 0 } }, t('Passport verification', 'പാസ്‌പോർട്ട് പരിശോധന'))));
     try {
       const r = await http('GET', '/api/core/passport/verify/' + encodeURIComponent(k.id || ''));
-      el.append(ui.card({ tone: 'good', title: '✓ ' + t('Valid AADI Learning Passport', 'സാധുവായ പാസ്‌പോർട്ട്'), body: ui.kv([[t('Holder', 'ഉടമ'), r.name], [t('Recorded achievements', 'നേട്ടങ്ങൾ'), r.entries], [t('Issuer', 'നൽകിയത്'), r.issuer]]) }));
+      el.append(ui.card({ tone: 'good', title: '✓ ' + t('Valid Learning Passport', 'സാധുവായ പാസ്‌പോർട്ട്'), body: ui.kv([[t('Holder', 'ഉടമ'), r.name], [t('Recorded achievements', 'നേട്ടങ്ങൾ'), r.entries], [t('Issuer', 'നൽകിയത്'), r.issuer]]) }));
       el.append(h('p', { class: 'small muted' }, t('Only minimal details are shown publicly to protect the learner\'s privacy.', 'സ്വകാര്യതയ്ക്കായി കുറഞ്ഞ വിവരങ്ങൾ മാത്രം.')));
     } catch (e) { el.append(ui.card({ tone: 'bad', title: t('Not found', 'കണ്ടെത്തിയില്ല'), body: t('This code does not match any passport.', 'ഈ കോഡിന് പാസ്‌പോർട്ടില്ല.') })); }
   },
@@ -337,7 +338,7 @@ export const coreViews = {
   // ---------------------------------------------------------------- architecture (for funders & partners)
   async architecture(el, k) {
     const mods = k.modules;
-    el.append(h('h1', null, t('How AADI works', 'ആദി എങ്ങനെ പ്രവർത്തിക്കുന്നു')),
+    el.append(h('h1', null, t('How the platform works', 'ഈ വേദി എങ്ങനെ പ്രവർത്തിക്കുന്നു')),
       h('p', { class: 'muted' }, t('One central brain, many services plugged into it, and a working copy in every hamlet.', 'ഒരു കേന്ദ്ര ബ്രെയിൻ, അതിൽ ബന്ധിപ്പിച്ച നിരവധി സേവനങ്ങൾ, ഓരോ ഊരിലും പ്രവർത്തിക്കുന്ന പകർപ്പ്.')));
     el.append(diagram(mods));
     el.append(ui.section(t('What the brain guarantees', 'ബ്രെയിൻ ഉറപ്പാക്കുന്നത്'), ui.grid([
@@ -356,7 +357,7 @@ export const coreViews = {
     const big = document.documentElement.classList.contains('big-text');
     el.append(ui.card({ title: t('Reading comfort', 'വായനാ സൗകര്യം'), body: h('div', { class: 'stack' },
       h('label', { class: 'row' }, h('input', { type: 'checkbox', checked: big, onchange: (e) => { document.documentElement.classList.toggle('big-text', e.target.checked); localStorage.setItem('aadi.bigtext', e.target.checked ? '1' : '0'); } }), t('Larger text', 'വലിയ അക്ഷരങ്ങൾ')),
-      h('div', { class: 'row' }, ui.button('🔊 ' + t('Test read-aloud', 'വായിച്ചുകേൾക്കൽ പരീക്ഷിക്കുക'), () => speak(t('Welcome to AADI', 'ആദിയിലേക്ക് സ്വാഗതം'))))) }));
+      h('div', { class: 'row' }, ui.button('🔊 ' + t('Test read-aloud', 'വായിച്ചുകേൾക്കൽ പരീക്ഷിക്കുക'), () => speak(t('Welcome', 'സ്വാഗതം'))))) }));
     el.append(ui.card({ title: t('This device', 'ഈ ഉപകരണം'), body: h('div', { class: 'stack' }, h('p', { class: 'small' }, t('Pages you open are kept on this device so they work offline. On a shared phone, sign out after use.', 'തുറന്ന പേജുകൾ ഓഫ്‌ലൈനിനായി സൂക്ഷിക്കുന്നു. പങ്കിട്ട ഫോണിൽ ഉപയോഗശേഷം പുറത്തിറങ്ങുക.')),
       ui.button(t('Clear saved pages on this device', 'സൂക്ഷിച്ച പേജുകൾ മായ്ക്കുക'), async () => { Object.keys(localStorage).filter((x) => x.startsWith('aadi.c:')).forEach((x) => localStorage.removeItem(x)); toast(t('Cleared.', 'മായ്ച്ചു.'), 'good'); })) }));
   },
@@ -413,7 +414,7 @@ function diagram(mods) {
   const W = 980, H = 470;
   const ns = 'http://www.w3.org/2000/svg';
   const svg = document.createElementNS(ns, 'svg');
-  svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('role', 'img'); svg.setAttribute('aria-label', 'AADI architecture: brain, modules, hubs, channels');
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('role', 'img'); svg.setAttribute('aria-label', 'Platform architecture: brain, modules, hubs, channels');
   svg.style.width = '100%'; svg.style.height = 'auto'; svg.style.background = '#fff'; svg.style.border = '1px solid var(--line)'; svg.style.borderRadius = '10px';
   const el = (tag, attrs, text) => { const e = document.createElementNS(ns, tag); for (const [a, v] of Object.entries(attrs)) e.setAttribute(a, v); if (text) e.textContent = text; svg.append(e); return e; };
   const cx = W / 2, cy = 215;

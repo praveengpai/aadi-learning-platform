@@ -20,6 +20,7 @@ module.exports = function coreApi(brain, host) {
     res.json(out);
   }));
   r.post('/auth/logout', brain.authed, A((req, res) => { brain.logout(req.token); res.setHeader('Set-Cookie', 'aadi_t=; Path=/; Max-Age=0'); res.json({ ok: true }); }));
+  r.get('/brand', A((req, res) => res.json(brain.brand)));
   r.get('/me', brain.authed, A((req, res) => res.json({ user: brain.publicUser(req.user), node: { id: brain.nodeId, role: brain.nodeRole } })));
   r.get('/demo-accounts', A((req, res) => {
     if (process.env.AADI_DEMO !== '1') return res.json([]);
@@ -57,7 +58,7 @@ module.exports = function coreApi(brain, host) {
     const list = store.find('programmes', w, { order: 'title' });
     const ag = Object.fromEntries(store.find('agencies').map((a) => [a.id, a]));
     const counts = Object.fromEntries(store.all('SELECT programme_id, COUNT(*) n FROM enrolments WHERE deleted=0 AND status=\'active\' GROUP BY programme_id').map((x) => [x.programme_id, x.n]));
-    res.json(list.map((p) => ({ ...p, agency_name: ag[p.agency_id]?.name, agency_colour: ag[p.agency_id]?.colour, enrolled: counts[p.id] || 0 })));
+    res.json(list.map((p) => ({ ...p, agency_name: ag[p.agency_id]?.name, agency_colour: ag[p.agency_id]?.colour, sponsor_name: p.sponsor_agency_id ? ag[p.sponsor_agency_id]?.name : null, enrolled: counts[p.id] || 0 })));
   }));
   r.post('/programmes', need('agency.manage', 'hamlet.coordinate'), A((req, res) => {
     const agency_id = req.user.role === 'platform_admin' ? req.body.agency_id : req.user.agency_id;
@@ -69,7 +70,7 @@ module.exports = function coreApi(brain, host) {
   r.get('/hamlets/:id/service-map', brain.authed, A((req, res) => {
     const h = store.get('hamlets', req.params.id);
     if (!h) return res.status(404).json({ error: 'not_found' });
-    const progs = store.all(`SELECT p.*, a.name agency_name, a.colour agency_colour,
+    const progs = store.all(`SELECT p.*, a.name agency_name, a.colour agency_colour, (SELECT s.name FROM agencies s WHERE s.id=p.sponsor_agency_id) sponsor_name,
       (SELECT COUNT(*) FROM enrolments e WHERE e.programme_id=p.id AND e.deleted=0 AND e.status='active') enrolled
       FROM programmes p JOIN agencies a ON a.id=p.agency_id WHERE p.hamlet_id=? AND p.deleted=0 AND p.status='active'`, h.id);
     const byTrack = {};
@@ -156,7 +157,7 @@ module.exports = function coreApi(brain, host) {
     const p = store.one('SELECT id, name, hamlet_id FROM persons WHERE deleted=0 AND upper(substr(id, -8))=?', String(req.params.code).toUpperCase());
     if (!p) return res.status(404).json({ valid: false });
     const n = store.one('SELECT COUNT(*) n FROM passport_entries WHERE person_id=? AND deleted=0', p.id);
-    res.json({ valid: true, name: p.name.split(' ')[0] + ' ' + (p.name.split(' ')[1] || '').charAt(0) + '.', entries: n.n, issuer: 'AADI · CIF' });
+    res.json({ valid: true, name: p.name.split(' ')[0] + ' ' + (p.name.split(' ')[1] || '').charAt(0) + '.', entries: n.n, issuer: brain.brand.owner });
   }));
   r.post('/passport/award', need('assess', 'counsel'), A((req, res) => {
     if (!policy.canSee(req.user, req.body.person_id, 'progress').ok) return res.status(403).json({ error: 'forbidden', message: 'No progress consent for this learner.' });

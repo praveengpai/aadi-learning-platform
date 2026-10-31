@@ -1,12 +1,20 @@
-# AADI · ആദി — Learning Platform for Tribal Hamlets
+# CIF Learning Platform — for Tribal Hamlets
 
-An initiative of **Community Innovations Foundation (CIF)**. One platform that serves a tribal
+**Owned by Community Innovations Foundation (CIF), a Section 8 company. © CIF. All rights reserved.**
+The platform's public name is still to be chosen; it is a setting (`PLATFORM_NAME`), so nothing
+in the code depends on it.
+
+**AADI is one programme on this platform:** the AADI Smart Learning Centre at Komalikudi,
+Baisonvalley (Idukki) — sponsored by CIF and run by the local youth group led by Mr. Rajendran.
+Other agencies run their own programmes on the same platform in the same or other hamlets.
+
+One platform that serves a tribal
 child or young person from the first letter to the first job — school tuition, literacy,
 PSC/Bank/SSC coaching, languages, life skills and city readiness, counselling and mentoring —
 across many hamlets and many agencies, online or offline.
 
-This repository is the **demo instance**: 10 fictional hamlets across Kerala, 7 agencies
-(CIF plus six fictional partners) with deliberately overlapping services, ~600 fictional people
+This repository is the **demo instance**: 10 fictional hamlets plus the Komalikudi pilot site,
+8 agencies (CIF, the Komalikudi youth group, and six fictional partners) with deliberately overlapping services, ~600 fictional people
 and six months of activity. The same code becomes the production platform with `scripts/seed.js`
 left out.
 

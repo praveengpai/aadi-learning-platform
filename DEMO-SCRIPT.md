@@ -1,4 +1,7 @@
-# AADI — 15-minute funder demo script
+# CIF Learning Platform — 15-minute funder demo script
+
+The platform is CIF's; AADI (Komalikudi) is one programme on it — show both: the platform
+serving many agencies, and AADI as the flagship community-run programme.
 
 All people are fictional. Password for every demo account: `demo1234` (or click the name on the sign-in page).
 
@@ -22,6 +25,11 @@ internet. The family owns the data. Many agencies, one hamlet, no duplication."
 - Sees each child's progress in plain Malayalam.
 - Opens a child → **Consent** → withdraws consent for an agency → that agency instantly loses access.
   (Show it: sign in as `demo.facilitator` before and after.)
+
+## 4b. AADI — a community-run programme on the platform (1 min)
+- `demo.aadi.lead` (Komalikudi Youth Group) → **Hamlets** → Komalikudi → each programme shows
+  "AADI Smart Learning Centre · sponsored by CIF": tuition 1–SSLC, PSC coaching, counselling,
+  digital skills, literacy — the same services as the AADI poster.
 
 ## 5. The facilitator and the shared hamlet (3 min)
 - `demo.facilitator` (Remya, CIF) → **Teaching Console**: today's sessions, one-tap attendance, at-risk learners with reasons.

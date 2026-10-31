@@ -137,15 +137,16 @@ async function openWizard(k) {
   const st = { step: 0, hamlet_id: opts.hamlets[0]?.id, agency_id: opts.agencies[0]?.id, name: '', kind: 'hub', funded_by: '', kit: opts.kit.map((x) => ({ ...x, have: false })), facilitator_ids: [], programmes: [{ track: 'tuition', title: 'Tuition Class 1–4', title_ml: 'ട്യൂഷൻ ക്ലാസ് 1–4', schedule: ['Mon 16:00', 'Wed 16:00', 'Fri 16:00'], capacity: 25 }] };
   const STEPS = [k.t('Hamlet', 'ഊര്'), k.t('Hub kit', 'ഹബ് കിറ്റ്'), k.t('People', 'ആളുകൾ'), k.t('Programmes', 'പരിപാടികൾ'), k.t('Review', 'പരിശോധന')];
   const body = k.h('div');
-  const m = k.ui.modal(k.t('Set up a centre — replicate the model AADI centre', 'പുതിയ കേന്ദ്രം — മാതൃകാ കേന്ദ്രം പകർത്തുക'), body);
+  const m = k.ui.modal(k.t('Set up a centre — replicate the model centre', 'പുതിയ കേന്ദ്രം — മാതൃകാ കേന്ദ്രം പകർത്തുക'), body);
   const hamlet = () => opts.hamlets.find((h) => h.id === st.hamlet_id) || {};
+  const defaultName = (h) => `${(opts.agencies.find((a) => a.id === st.agency_id) || {}).name || ''} Learning Centre — ${h.name || ''}`.trim();
   const render = () => {
     const steps = k.h('div', { class: 'operations-steps' }, STEPS.map((s, i) => k.h('span', { class: i === st.step ? 'on' : i < st.step ? 'done' : '' }, `${i + 1}. ${s}`)));
     let content;
     if (st.step === 0) {
       const sel = k.h('select', { class: 'input', onchange: (e) => { st.hamlet_id = e.target.value; render(); } }, opts.hamlets.map((h) => k.h('option', { value: h.id, selected: h.id === st.hamlet_id }, `${k.t(h.name, h.name_ml)} · ${h.district}`)));
-      const ag = k.h('select', { class: 'input', onchange: (e) => { st.agency_id = e.target.value; } }, opts.agencies.map((a) => k.h('option', { value: a.id, selected: a.id === st.agency_id }, a.name)));
-      const nm = k.h('input', { class: 'input', placeholder: `AADI Smart Learning Centre — ${hamlet().name || ''}`, value: st.name, oninput: (e) => { st.name = e.target.value; } });
+      const ag = k.h('select', { class: 'input', onchange: (e) => { st.agency_id = e.target.value; render(); } }, opts.agencies.map((a) => k.h('option', { value: a.id, selected: a.id === st.agency_id }, a.name)));
+      const nm = k.h('input', { class: 'input', placeholder: defaultName(hamlet()), value: st.name, oninput: (e) => { st.name = e.target.value; } });
       const h = hamlet();
       content = k.h('div', { class: 'stack' },
         k.h('label', null, k.t('Hamlet', 'ഊര്'), sel), k.h('label', null, k.t('Agency', 'ഏജൻസി'), ag), k.h('label', null, k.t('Centre name', 'കേന്ദ്രത്തിന്റെ പേര്'), nm),
@@ -176,12 +177,12 @@ async function openWizard(k) {
           k.ui.button('✕', () => { st.programmes.splice(i, 1); render(); }, { tone: 'ghost', small: true })),
         k.h('div', { class: 'row small', style: { marginTop: '8px' } }, opts.slots.map((s) => k.h('label', null, k.h('input', { type: 'checkbox', checked: p.schedule.includes(s), onchange: (e) => { p.schedule = e.target.checked ? [...p.schedule, s] : p.schedule.filter((x) => x !== s); } }), ' ', s)))));
       });
-      content = k.h('div', null, k.h('p', { class: 'muted' }, k.t('First programmes are registered with the AADI brain and appear in the hamlet timetable.', 'ആദ്യ പരിപാടികൾ.')), list,
+      content = k.h('div', null, k.h('p', { class: 'muted' }, k.t(`First programmes are registered with ${k.brand.short} and appear in the hamlet timetable.`, 'ആദ്യ പരിപാടികൾ.')), list,
         k.ui.button('＋ ' + k.t('Add programme', 'പരിപാടി ചേർക്കുക'), () => { st.programmes.push({ track: 'language', title: 'English Speaking Club', schedule: ['Sat 10:00'], capacity: 20 }); render(); }, { tone: 'ghost' }));
     } else {
       const h = hamlet();
       content = k.h('div', null, k.ui.kv([
-        [k.t('Hamlet', 'ഊര്'), `${h.name} · ${h.district}`], [k.t('Name', 'പേര്'), st.name || `AADI Smart Learning Centre — ${h.name}`],
+        [k.t('Hamlet', 'ഊര്'), `${h.name} · ${h.district}`], [k.t('Name', 'പേര്'), st.name || defaultName(h)],
         [k.t('Kit on site', 'ഉള്ള കിറ്റ്'), st.kit.filter((x) => x.have).map((x) => `${x.qty}× ${x.en}`).join(', ') || '—'],
         [k.t('To procure', 'വാങ്ങേണ്ടത്'), st.kit.filter((x) => !x.have && x.qty).map((x) => `${x.qty}× ${x.en}`).join(', ') || '—'],
         [k.t('Facilitators', 'ഫെസിലിറ്റേറ്റർമാർ'), String(st.facilitator_ids.length)], [k.t('Programmes', 'പരിപാടികൾ'), st.programmes.map((p) => `${p.title} (${p.schedule.join(', ')})`).join('; ') || '—'],

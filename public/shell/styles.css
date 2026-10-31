@@ -1,4 +1,4 @@
-/* AADI shell — design tokens.
+/* Platform shell — design tokens.
    Palette drawn from the CIF emblem: forest teal, sunrise gold, leaf, on a cool paper.
    Type: Atkinson Hyperlegible (built for low-vision readers) + Manjari for Malayalam. */
 :root {
@@ -150,7 +150,8 @@ form.f textarea { min-height: 90px; }
 /* ---------- login ---------- */
 .login { min-height: 100vh; display: grid; grid-template-columns: minmax(320px, 1.1fr) 1fr; }
 .login-art { background: var(--forest-ink); color: #e6f0ed; padding: 48px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; }
-.login-art .word { font-family: var(--font-ml); font-size: clamp(4.5rem, 12vw, 9rem); line-height: 1.25; color: #fff; margin: 0 0 .1em; }
+.login-art .word { font-size: clamp(2.4rem, 5.5vw, 4.2rem); font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; color: #fff; margin: 0 0 .3em; max-width: 14ch; }
+html[lang="ml"] .login-art .word { font-family: var(--font-ml); }
 .login-art .tag { font-size: var(--step-1); max-width: 30ch; color: #cfe2dc; }
 .login-art .layers { display: grid; gap: 6px; max-width: 420px; font-size: .9rem; }
 .login-art .layers div { padding: 8px 12px; border-left: 3px solid var(--gold); background: rgba(255,255,255,.05); }

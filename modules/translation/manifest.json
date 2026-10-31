@@ -1,7 +1,7 @@
 {
   "id": "translation", "version": "1.0.0",
   "name": "Malayalam Translation", "name_ml": "മലയാളം പരിഭാഷ", "icon": "🔤",
-  "description": "Natural, everyday Malayalam (not formal or Sanskrit-heavy) via Sarvam Mayura (classic-colloquial by default), with an AADI glossary, a shared translation memory that works offline on hubs, native-speaker review, and a monthly spending cap.",
+  "description": "Natural, everyday Malayalam (not formal or Sanskrit-heavy) via Sarvam Mayura (classic-colloquial by default), with a glossary, a shared translation memory that works offline on hubs, native-speaker review, and a monthly spending cap.",
   "tables": {
     "translation_memory": ["source_key", "source", "target", "source_lang", "target_lang", "mode", "provider", "status", "context", "requested_by", "requested_by_name", "reviewed_by", "reviewed_by_name", "reviewed_at", "machine_target", "hints", "chars", "created_at", "uses"],
     "translation_glossary": ["kind", "term", "preferred", "keep_as_is", "note", "added_by_name", "created_at"],
