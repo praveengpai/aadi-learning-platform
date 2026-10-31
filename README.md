@@ -33,6 +33,17 @@ class, medium, offline/online and learner/teacher:
 own part (a Class 5 learner sees Class 5, in their medium, for learners — not the teacher texts or the whole list).
 Do not publish the library folder on a public web address: government textbooks are for AADI learners on the hubs.
 
+## Kerala PSC question papers and answer keys
+
+`run.sh` also runs `psc_archive.py`, which walks Kerala PSC's own archive (keralapsc.gov.in, ~243 pages, newest first)
+and downloads the official question paper and answer key for every exam AADI youth prepare for, in Malayalam or
+English, into `02_Exam_Prep/Kerala_PSC/Question_Papers/<year>/<exam>/`. Which posts are taken is set in
+`psc_filter.txt` (common prelims, LDC/clerk, LGS/office attendant, police, excise, forest, fire, field assistant,
+ST special recruitment, nursing assistant, LP/UP teacher; engineers, lecturers, technicians and similar excluded).
+Edit that file and re-run to widen or narrow it. Kerala PSC allows free reproduction with acknowledgement.
+
+Blogs that retype these papers (e.g. pscpqsonline.com) are linked online only; the official PDFs are taken from PSC.
+
 ## When an owner gives permission
 
 Add one line to `lists/permissions_granted.csv` (owner IDs are in `lists/copyright_owners.csv`):

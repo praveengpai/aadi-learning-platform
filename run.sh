@@ -20,7 +20,9 @@ cp "$HERE/manifest.csv" "$HERE/README.md" "$DEST/"
 mkdir -p "$DEST/_lists" && cp "$HERE"/lists/*.csv "$DEST/_lists/"
 
 LOG="$DEST/_reports/run-$(date +%Y%m%d-%H%M).log"
-nohup python3 "$HERE/fetch.py" --manifest "$HERE/manifest.csv" --dest "$DEST" --delay 2 > "$LOG" 2>&1 &
+nohup bash -c "python3 '$HERE/fetch.py' --manifest '$HERE/manifest.csv' --dest '$DEST' --delay 2; \
+  python3 '$HERE/psc_archive.py' --dest '$DEST'; \
+  python3 '$HERE/build_index.py' --manifest '$HERE/manifest.csv' --dest '$DEST'" > "$LOG" 2>&1 &
 echo "Started (process $!). It runs in the background, so you can close this window."
 echo "Watch progress:   tail -f $LOG"
 echo "When it finishes: tail -5 $LOG"

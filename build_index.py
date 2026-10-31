@@ -86,11 +86,30 @@ def main():
             continue
         items.append(dict(base, title=r["title"], access="online", href=url, note=ONLINE_LABEL.get(lc, "Online")))
 
+    # Kerala PSC official papers and keys from psc_archive.py
+    plog = os.path.join(a.dest, "_reports", "psc_archive_log.csv")
+    if os.path.exists(plog):
+        seen = set()
+        for l in csv.DictReader(open(plog, encoding="utf-8")):
+            p = os.path.join(l["folder"], l["file"])
+            if l["status"] not in ("downloaded", "exists") or not l["file"] or p in seen \
+                    or not os.path.exists(os.path.join(a.dest, p)):
+                continue
+            seen.add(p)
+            items.append(dict(manifest_id="PSC", section=SECTION["02"][0], track="exams", category=f"Kerala PSC papers {l['year']}",
+                              cls="", subject="Kerala PSC question papers", medium=l["medium"], edition=l["year"],
+                              owner="Kerala Public Service Commission", owner_id="", licence="GOV_FREE",
+                              licence_detail="Kerala PSC: free reproduction with acknowledgement",
+                              audience="learner", sort=-int(l["year"]) if l["year"].isdigit() else 0,
+                              source_page="https://www.keralapsc.gov.in/index.php/answerkey_omrexams?tid=All",
+                              title=f"{l['post']} — {l['kind']} ({l['medium']}, {l['year']})", access="offline",
+                              href=urllib.parse.quote(p), bytes=int(l["bytes"] or 0), sha256=l["sha256"]))
+
     order = {v[0]: k for k, v in SECTION.items()}
     def ckey(c):
         m = re.search(r"\d+", c or "")
         return int(m.group()) if m else 99
-    items.sort(key=lambda i: (order.get(i["section"], "99"), ckey(i["cls"]), i["subject"], i["medium"], i["title"]))
+    items.sort(key=lambda i: (order.get(i["section"], "99"), i.get("sort", -9999), ckey(i["cls"]), i["subject"], i["medium"], i["title"]))
 
     meta = dict(built=str(date.today()), total=len(items),
                 offline=sum(i["access"] == "offline" for i in items),

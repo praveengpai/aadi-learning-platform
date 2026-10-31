@@ -1,0 +1,80 @@
+# Which Kerala PSC exams to take from keralapsc.gov.in (one pattern per line, case-insensitive).
+# These are the posts AADI youth (SSLC / Plus Two / degree) actually prepare for. Edit freely, then re-run.
+# A line starting with "-" EXCLUDES posts that match it, even if another line includes them.
+
+# Common preliminary exams (10th, Plus Two, degree level)
+preliminary
+prelims
+
+# Clerical and office posts
+clerk
+LDC
+L\.?D\.? ?Typist
+typist
+assistant grade
+secretariat assistant
+university assistant
+assistant \(universities
+office attendant
+last grade
+LGS
+attender
+peon
+watchman
+security guard
+sales assistant
+amenities assistant
+village field assistant
+field assistant
+village extension officer
+VEO
+binder
+store attender
+store assistant
+receptionist
+
+# Uniformed services
+police constable
+civil police officer
+women police
+havildar
+excise
+beat forest officer
+forest watcher
+fireman
+firewoman
+fire and rescue
+prison officer
+special branch assistant
+driver
+home guard
+
+# Special recruitment for Scheduled Tribes
+SR for ST
+SR for SC/ST
+scheduled tribe
+special recruitment
+
+# Health and care posts open to Plus Two / diploma holders
+nursing assistant
+JPHN
+junior public health nurse
+auxiliary nurse
+
+# Teaching (for youth who go on to TTC / B.Ed)
+LP school teacher
+UP school teacher
+pre-?primary teacher
+
+# Exclusions: senior/technical posts outside AADI's scope
+-engineer
+-HSST
+-lecturer
+-professor
+-medical officer
+-scientist
+-chemist
+-pharmacist
+-technician
+-overseer
+-draftsman
