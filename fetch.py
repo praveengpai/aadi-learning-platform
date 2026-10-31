@@ -195,8 +195,17 @@ def main():
         w.writerow(["when", "manifest_id", "status", "folder", "file", "bytes", "sha256",
                     "file_url", "source_page", "publisher_owner", "licence_class", "licence_detail", "error"])
 
-    skipped = [r for r in rows if r.get("licence_class") not in ALLOWED]
-    todo = [r for r in rows if r.get("licence_class") in ALLOWED and r.get("file_url")]
+    # owners who have given written permission -> their items become downloadable
+    granted = set()
+    gpath = os.path.join(os.path.dirname(os.path.abspath(a.manifest)), "lists", "permissions_granted.csv")
+    if os.path.exists(gpath):
+        granted = {g["owner_id"].strip() for g in csv.DictReader(open(gpath, encoding="utf-8")) if g.get("owner_id")}
+    for r in rows:
+        if r.get("licence_class") in ("COPYRIGHTED", "MANUAL") and r.get("owner_id") in granted:
+            r["licence_class"] = "PERMITTED"
+    allowed = ALLOWED | {"PERMITTED"}
+    skipped = [r for r in rows if r.get("licence_class") not in allowed]
+    todo = [r for r in rows if r.get("licence_class") in allowed and r.get("file_url")]
     if a.only:
         todo = [r for r in todo if folder_for(r).startswith(a.only)]
     print(f"{len(rows)} manifest rows: {len(todo)} to fetch, {len(skipped)} not downloadable (copyright / link-only)")
@@ -241,6 +250,10 @@ def main():
         ww.writeheader(); ww.writerows(skipped)
     print("\nSummary:", counts)
     print("Log:", log_path)
+    if not a.dry_run:
+        import subprocess
+        subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), "build_index.py"),
+                        "--manifest", a.manifest, "--dest", a.dest], check=False)
 
 
 def now():

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Learning Library</title>
+<style>
+:root{--bg:#f7f5f0;--card:#fff;--ink:#1d2a2f;--mute:#5d6b70;--line:#e3ded3;--brand:#1f4e5f;--brand-ink:#fff;
+--off:#2e7d4f;--off-bg:#e3f2e8;--on:#8a5a00;--on-bg:#fbefd6;--teach:#5b3f8f;--teach-bg:#ece5f7;--focus:#d98e04}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12191c;--card:#1b2428;--ink:#e8eef0;--mute:#9fb0b6;
+--line:#2c383d;--brand:#7fb8c9;--brand-ink:#0f1a1e;--off:#7fd3a0;--off-bg:#173226;--on:#f0c46a;--on-bg:#3a2d12;--teach:#c3a8f0;--teach-bg:#2c2340}}
+:root[data-theme="dark"]{--bg:#12191c;--card:#1b2428;--ink:#e8eef0;--mute:#9fb0b6;--line:#2c383d;--brand:#7fb8c9;--brand-ink:#0f1a1e;
+--off:#7fd3a0;--off-bg:#173226;--on:#f0c46a;--on-bg:#3a2d12;--teach:#c3a8f0;--teach-bg:#2c2340}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Atkinson Hyperlegible","Manjari","Noto Sans Malayalam",system-ui,sans-serif}
+header{background:var(--brand);color:var(--brand-ink);padding:20px 16px}
+header h1{margin:0 0 4px;font-size:1.4rem}
+header p{margin:0;opacity:.85;font-size:.9rem}
+.wrap{max-width:1000px;margin:0 auto;padding:0 16px}
+.bar{position:sticky;top:0;z-index:2;background:var(--bg);border-bottom:1px solid var(--line);padding:12px 0}
+.bar .wrap{display:flex;flex-wrap:wrap;gap:8px}
+input,select{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-height:42px}
+input[type=search]{flex:1 1 220px}
+select{flex:1 1 150px;min-width:0;max-width:100%}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.count{width:100%;color:var(--mute);font-size:.85rem}
+h2{font-size:1.15rem;margin:28px 0 8px;color:var(--brand)}
+h3{font-size:.95rem;margin:16px 0 6px;color:var(--mute);text-transform:uppercase;letter-spacing:.04em}
+ul{list-style:none;margin:0;padding:0}
+li{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;display:flex;gap:12px;align-items:center}
+.txt{flex:1;min-width:0}
+.t{font-weight:600;overflow-wrap:anywhere}
+.m{color:var(--mute);font-size:.82rem;overflow-wrap:anywhere}
+.badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.b{font-size:.72rem;font-weight:700;border-radius:999px;padding:2px 8px}
+.b.off{color:var(--off);background:var(--off-bg)} .b.on{color:var(--on);background:var(--on-bg)} .b.teach{color:var(--teach);background:var(--teach-bg)}
+a.go{flex:none;text-decoration:none;font-weight:700;font-size:.9rem;border-radius:8px;padding:9px 14px;border:2px solid var(--brand);color:var(--brand);white-space:nowrap}
+a.go.off{background:var(--brand);color:var(--brand-ink)}
+.note{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:16px 0;font-size:.88rem;color:var(--mute)}
+.empty{color:var(--mute);padding:24px 0}
+@media (max-width:560px){li{flex-direction:column;align-items:stretch} a.go{text-align:center}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1>Learning Library · പഠന ലൈബ്രറി</h1>
+  <p id="sub"></p>
+</div></header>
+
+<div class="bar"><div class="wrap">
+  <input type="search" id="q" placeholder="Search title, subject…  തിരയുക" aria-label="Search">
+  <select id="sec" aria-label="Section"><option value="">All sections</option></select>
+  <select id="cls" aria-label="Class"><option value="">All classes</option></select>
+  <select id="med" aria-label="Medium"><option value="">All mediums</option></select>
+  <select id="acc" aria-label="Access">
+    <option value="">Offline + online</option><option value="offline">Offline (on the hub)</option><option value="online">Online only</option>
+  </select>
+  <select id="aud" aria-label="For">
+    <option value="">Learners + teachers</option><option value="learner">For learners</option><option value="teacher">For teachers</option>
+  </select>
+  <div class="count" id="count" aria-live="polite"></div>
+</div></div>
+
+<main class="wrap">
+  <div class="note"><b>Offline</b> items are stored on this centre's hub and open without internet.
+  <b>Online only</b> items open at the owner's own web page, exactly as found online; they need internet and will move to
+  the hub once the owner gives permission.</div>
+  <div id="list"></div>
+</main>
+
+<script>
+const DATA = __DATA__;
+const $ = id => document.getElementById(id);
+const items = DATA.items;
+$('sub').textContent = `${DATA.meta.total} items · ${DATA.meta.offline} offline on the hub · ${DATA.meta.online} online only · updated ${DATA.meta.built}`;
+
+function fill(sel, vals){ [...new Set(vals)].filter(Boolean).forEach(v => { const o=document.createElement('option'); o.value=o.textContent=v; sel.append(o); }); }
+const num = c => { const m=(c||'').match(/\d+/); return m?+m[0]:99; };
+fill($('sec'), items.map(i=>i.section));
+fill($('cls'), items.map(i=>i.cls).sort((a,b)=>num(a)-num(b)||a.localeCompare(b)));
+fill($('med'), items.map(i=>i.medium).sort());
+
+function el(tag, attrs={}, ...kids){ const e=document.createElement(tag); for(const [k,v] of Object.entries(attrs)) e.setAttribute(k,v); kids.flat().forEach(k=>k!=null&&e.append(k)); return e; }
+
+function render(){
+  const q=$('q').value.trim().toLowerCase(), s=$('sec').value, c=$('cls').value, m=$('med').value, a=$('acc').value, u=$('aud').value;
+  const shown = items.filter(i => (!s||i.section===s) && (!c||i.cls===c) && (!m||i.medium===m) && (!a||i.access===a) && (!u||i.audience===u)
+    && (!q || [i.title,i.subject,i.category,i.owner,i.medium].join(' ').toLowerCase().includes(q)));
+  $('count').textContent = `${shown.length} shown`;
+  const list=$('list'); list.replaceChildren();
+  if(!shown.length){ list.append(el('p',{class:'empty'},'Nothing matches. Clear a filter or the search.')); return; }
+  let sec, grp, ul;
+  for(const i of shown.slice(0,1500)){
+    if(i.section!==sec){ sec=i.section; grp=null; list.append(el('h2',{},sec)); }
+    const g = (i.cls ? (/^[\d\s\-–,&]+$/.test(i.cls)?`Class ${i.cls.replace('-','–')}`:i.cls) : i.category.replace(/_/g,' '));
+    if(g!==grp){ grp=g; list.append(el('h3',{},g)); ul=el('ul'); list.append(ul); }
+    const meta=[i.subject,i.medium,i.edition,i.owner].filter(v=>v&&!/^(all|na|n\/a|-)$/i.test(v)).join(' · ');
+    const badges=el('div',{class:'badges'},
+      i.access==='offline' ? el('span',{class:'b off'},'Offline') : el('span',{class:'b on'},i.note||'Online only'),
+      i.audience==='teacher' ? el('span',{class:'b teach'},'For teachers') : null);
+    const link = i.access==='offline'
+      ? el('a',{class:'go off',href:i.href,target:'_blank',rel:'noopener'},'Open')
+      : el('a',{class:'go',href:i.href,target:'_blank',rel:'noopener noreferrer'},'Open online ↗');
+    ul.append(el('li',{}, el('div',{class:'txt'}, el('div',{class:'t'},i.title), el('div',{class:'m'},meta), badges), link));
+  }
+}
+['q','sec','cls','med','acc','aud'].forEach(id => $(id).addEventListener(id==='q'?'input':'change', render));
+render();
+</script>
+</body>
+</html>

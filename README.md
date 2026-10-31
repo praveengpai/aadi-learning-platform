@@ -19,6 +19,31 @@ It runs in the background (a few hours; ~6–10 GB). Run the same `run.sh` again
 skipped, so it only retries failures and adds new manifest rows. Test first with
 `python3 fetch.py --dry-run`.
 
+## The library page (offline + online in one place)
+
+After every run, `/opt/aadi-content/index.html` lists every usable item, searchable and filterable by section,
+class, medium, offline/online and learner/teacher:
+
+* **Offline** — downloaded official and openly licensed files; open from the hub without internet.
+* **Online only** — everything we may not copy (teacher-made notes, private publishers, portals, videos, items that
+  need a free sign-in). The button opens the **owner's original web page**, exactly as found online. We point to it;
+  we never copy it. Needs internet.
+
+`catalogue.json` holds the same list as data for the platform's library module, which will show each role only its
+own part (a Class 5 learner sees Class 5, in their medium, for learners — not the teacher texts or the whole list).
+Do not publish the library folder on a public web address: government textbooks are for AADI learners on the hubs.
+
+## When an owner gives permission
+
+Add one line to `lists/permissions_granted.csv` (owner IDs are in `lists/copyright_owners.csv`):
+```
+owner_id,granted_on,scope,note
+CO01,2026-11-15,"hub copies, non-commercial, with credit","letter from Biju B Vilappuram"
+```
+then run `bash run.sh` again. That owner's items are downloaded to the hub and switch from *Online only* to
+*Offline* on the library page. (Items the owner publishes as web pages rather than files stay as links; ask the
+owner for the files.)
+
 ## Folder structure
 
 ```
@@ -35,6 +60,8 @@ skipped, so it only retries failures and adds new manifest rows. Test first with
   99_Other/
   manifest.csv                every item: title, class, subject, medium, edition, file link, source page, owner, licence
   _lists/                     what was NOT downloaded, and why (see below)
+  index.html                  the library page (see above)
+  catalogue.json              the same list as data, for the platform
   _reports/download_log.csv   every file: where it came from, size, SHA-256 checksum, date, errors
 ```
 Every downloaded file can be traced back to its source through `_reports/download_log.csv` (file name → source
@@ -49,7 +76,8 @@ URL, source page, publisher and licence).
 | MANUAL | Open or free, but needs a browser or a free login (StoryWeaver, NCERT Barkha flipbooks, DIKSHA, NCFE Malayalam handbook). | No — see `_lists/manual_downloads.csv`. |
 | MIRROR | A blog's re-upload of an official SCERT file. The official copy is taken instead. | No |
 | OUTDATED | An older edition superseded by the 2024/2025 books. | No — listed for reference |
-| COPYRIGHTED | Made by private teachers, blogs, publishers or NGOs. | No — see `_lists/permission_needed.csv` and `_lists/copyright_owners.csv` |
+| COPYRIGHTED | Made by private teachers, blogs, publishers or NGOs. | No — shown as an online link to the owner's page; see `_lists/permission_needed.csv` and `_lists/copyright_owners.csv` |
+| PERMITTED | Copyrighted, but the owner has given permission (`lists/permissions_granted.csv`). | Yes |
 | LINK_ONLY | Portals, apps, video channels (Samagra, First Bell, PSC question search). | No — see `_lists/links_portals_videos.csv` |
 
 ## Editions
