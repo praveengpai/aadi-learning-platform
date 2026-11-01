@@ -181,7 +181,7 @@ module.exports = function coreApi(brain, host) {
     if (req.user.role !== 'platform_admin' && ['platform_admin', 'cpo'].includes(b.role)) return res.status(403).json({ error: 'forbidden' });
     const agency_id = req.user.role === 'platform_admin' ? b.agency_id : req.user.agency_id;
     // Safeguarding gate: staff who work with children cannot be activated without training.
-    const childFacing = ['facilitator', 'teacher', 'mentor', 'counsellor'].includes(b.role);
+    const childFacing = ['facilitator', 'teacher', 'mentor', 'counsellor', 'health_worker', 'doctor', 'field_officer'].includes(b.role);
     const u = brain.createUser({ ...b, agency_id, active: childFacing && !b.safeguarding_trained ? 0 : 1 }, req.user);
     res.json({ ...brain.publicUser(u), note: u.active ? undefined : 'Account created but inactive until safeguarding training is completed.' });
   }));

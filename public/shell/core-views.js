@@ -1,7 +1,7 @@
 // Core (brain-owned) views: home, hamlets & service map, people, consent, passport, platform admin.
 import { state, http, t, h, toast, ui, speak, outboxCount } from './kit.js';
 
-const STAFF = ['platform_admin', 'cpo', 'agency_admin', 'coordinator', 'facilitator', 'teacher', 'counsellor', 'mentor'];
+const STAFF = ['platform_admin', 'cpo', 'agency_admin', 'coordinator', 'facilitator', 'teacher', 'counsellor', 'mentor', 'health_worker', 'doctor', 'field_officer'];
 const TRACK = { tuition: ['School tuition', 'ട്യൂഷൻ', '📘'], literacy: ['Literacy', 'സാക്ഷരത', '✍️'], exams: ['Exam coaching', 'പരീക്ഷാ പരിശീലനം', '🎯'], language: ['Languages', 'ഭാഷകൾ', '🗣️'], lifeskills: ['Life skills', 'ജീവിത നൈപുണ്യം', '🧭'], counselling: ['Counselling', 'കൗൺസിലിംഗ്', '🤝'], digital: ['Digital & money', 'ഡിജിറ്റൽ', '📱'] };
 const trackLabel = (k) => (TRACK[k] ? `${TRACK[k][2]} ${t(TRACK[k][0], TRACK[k][1])}` : k);
 const SCOPE_ML = { profile: 'പ്രൊഫൈൽ', progress: 'പഠന പുരോഗതി', wellbeing: 'ക്ഷേമം', contact: 'ഫോൺ / ബന്ധപ്പെടൽ', employment: 'ജോലി', research: 'ഗവേഷണം (പേരില്ലാതെ)' };
@@ -10,9 +10,9 @@ export const coreNav = [
   { view: 'home', label: 'Home', label_ml: 'ഹോം', icon: '🏠', section: 'home' },
   { view: 'passport', label: 'My Learning Passport', label_ml: 'എന്റെ പഠന പാസ്‌പോർട്ട്', icon: '🎓', section: 'learn', roles: ['learner'] },
   { view: 'mydata', label: 'My data & consent', label_ml: 'എന്റെ വിവരം, സമ്മതം', icon: '🔐', section: 'learn', roles: ['learner'] },
-  { view: 'hamlets', label: 'Hamlets', label_ml: 'ഊരുകൾ', icon: '🏡', section: 'community', roles: ['platform_admin', 'cpo', 'agency_admin', 'coordinator', 'facilitator', 'teacher', 'counsellor', 'govt_viewer', 'donor'] },
-  { view: 'people', label: 'Learners & families', label_ml: 'പഠിതാക്കൾ', icon: '👥', section: 'teach', roles: ['platform_admin', 'cpo', 'agency_admin', 'coordinator', 'facilitator', 'teacher', 'counsellor', 'mentor'] },
-  { view: 'register', label: 'Register a learner', label_ml: 'പഠിതാവിനെ ചേർക്കുക', icon: '➕', section: 'teach', roles: ['platform_admin', 'agency_admin', 'coordinator', 'facilitator'] },
+  { view: 'hamlets', label: 'Hamlets', label_ml: 'ഊരുകൾ', icon: '🏡', section: 'community', roles: ['platform_admin', 'cpo', 'agency_admin', 'coordinator', 'facilitator', 'teacher', 'counsellor', 'govt_viewer', 'donor', 'health_worker', 'doctor', 'field_officer'] },
+  { view: 'people', label: 'People & families', label_ml: 'ആളുകളും കുടുംബങ്ങളും', icon: '👥', section: 'teach', roles: ['platform_admin', 'cpo', 'agency_admin', 'coordinator', 'facilitator', 'teacher', 'counsellor', 'mentor', 'health_worker', 'doctor', 'field_officer'] },
+  { view: 'register', label: 'Register a person', label_ml: 'ആളെ ചേർക്കുക', icon: '➕', section: 'teach', roles: ['platform_admin', 'agency_admin', 'coordinator', 'facilitator', 'health_worker', 'field_officer'] },
   { view: 'agencies', label: 'Agencies', label_ml: 'ഏജൻസികൾ', icon: '🏛️', section: 'admin', roles: ['platform_admin', 'agency_admin', 'coordinator', 'govt_viewer'] },
   { view: 'staff', label: 'Staff & accounts', label_ml: 'ജീവനക്കാർ', icon: '🪪', section: 'admin', roles: ['platform_admin', 'agency_admin'] },
   { view: 'platform', label: 'Services (modules)', label_ml: 'സേവനങ്ങൾ', icon: '🧩', section: 'admin', roles: ['platform_admin'] },
@@ -252,7 +252,7 @@ export const coreViews = {
   async staff(el, k) {
     const [users, ags] = await Promise.all([k.core.get('/users'), k.core.get('/agencies')]);
     el.append(h('div', { class: 'row' }, h('h1', { style: { flex: 1 } }, t('Staff & accounts', 'ജീവനക്കാർ')), ui.button('➕ ' + t('Add staff', 'ചേർക്കുക'), () => {
-      const roles = ['agency_admin', 'coordinator', 'facilitator', 'teacher', 'counsellor', 'mentor', ...(state.user.role === 'platform_admin' ? ['cpo', 'platform_admin', 'donor', 'employer', 'govt_viewer'] : [])];
+      const roles = ['agency_admin', 'coordinator', 'facilitator', 'teacher', 'counsellor', 'mentor', 'health_worker', 'doctor', 'field_officer', ...(state.user.role === 'platform_admin' ? ['cpo', 'platform_admin', 'donor', 'employer', 'govt_viewer'] : [])];
       const m = ui.modal(t('Add staff account', 'അക്കൗണ്ട് ചേർക്കുക'), ui.form([
         { name: 'display_name', label: t('Full name', 'പേര്'), required: true }, { name: 'username', label: t('Username', 'ഉപയോക്തൃനാമം'), required: true }, { name: 'password', label: t('Temporary password', 'താൽക്കാലിക പാസ്‌വേഡ്'), type: 'password', required: true },
         { name: 'role', label: t('Role', 'പദവി'), type: 'select', required: true, options: roles },
