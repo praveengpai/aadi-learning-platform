@@ -1,0 +1,33 @@
+{
+  "_status": "DRAFT — PENDING HUMAN REVIEW (consent wording, licence explanations and Malayalam). Read aloud to speakers at the hub; ask a Muthuvan / Mannan / Irula speaker to voice it in the community's own language.",
+  "consent_featured": {
+    "en": "This recording says the name of, or features, a person. Before it can be shared, that person (or the parent / guardian of a child) must have agreed at the centre to share their profile with our agency. They can take the recording back at any time.",
+    "ml": "ഈ റെക്കോർഡിംഗിൽ ഒരാളുടെ പേരോ ശബ്ദമോ ഉണ്ട്. ഇത് പങ്കുവയ്ക്കുന്നതിന് മുമ്പ് ആ വ്യക്തി (കുട്ടിയാണെങ്കിൽ രക്ഷിതാവ്) സെന്ററിൽ വന്ന് സമ്മതം നൽകിയിരിക്കണം. എപ്പോൾ വേണമെങ്കിലും അവർക്ക് ഇത് തിരിച്ചെടുക്കാം."
+  },
+  "no_identifiable": {
+    "en": "No one can be identified in this recording — no names, no voices of other people, nothing that points to a family.",
+    "ml": "ഈ റെക്കോർഡിംഗിൽ ആരെയും തിരിച്ചറിയാനാവില്ല — പേരുകളില്ല, മറ്റുള്ളവരുടെ ശബ്ദമില്ല, ഒരു കുടുംബത്തെയും സൂചിപ്പിക്കുന്നില്ല."
+  },
+  "licence": {
+    "community": {
+      "en": "Our hamlet only — only people of this hamlet and the agencies that serve it can listen. (Default)",
+      "ml": "നമ്മുടെ ഊരിന് മാത്രം — ഈ ഊരിലുള്ളവർക്കും ഊരിനെ സേവിക്കുന്ന സംഘടനകൾക്കും മാത്രം കേൾക്കാം. (സ്ഥിരം)"
+    },
+    "cc_by_nc": {
+      "en": "Share with other hamlets, with my name, not for selling or advertising (CC BY-NC).",
+      "ml": "എന്റെ പേരോടെ മറ്റ് ഊരുകളുമായി പങ്കുവയ്ക്കാം, വിൽക്കാനോ പരസ്യത്തിനോ പാടില്ല (CC BY-NC)."
+    },
+    "public": {
+      "en": "Anyone on the platform may listen.",
+      "ml": "പ്ലാറ്റ്ഫോമിലെ ആർക്കും കേൾക്കാം."
+    }
+  },
+  "withdraw": {
+    "en": "The speaker, or a child's guardian, can take this recording back at any time. It disappears from every phone and hub at the next sync.",
+    "ml": "പറഞ്ഞയാൾക്കോ കുട്ടിയുടെ രക്ഷിതാവിനോ എപ്പോൾ വേണമെങ്കിലും ഇത് തിരിച്ചെടുക്കാം. അടുത്ത സിങ്കിൽ എല്ലാ ഫോണുകളിൽ നിന്നും ഹബ്ബുകളിൽ നിന്നും ഇത് മാറും."
+  },
+  "screening_licence": {
+    "en": "Only show what the centre is allowed to show: our own recordings, films with a free community-screening licence, or with written permission. Write down which.",
+    "ml": "സെന്ററിന് കാണിക്കാൻ അനുവാദമുള്ളത് മാത്രം കാണിക്കുക: നമ്മുടെ സ്വന്തം റെക്കോർഡിംഗുകൾ, സൗജന്യ പ്രദർശന ലൈസൻസുള്ള സിനിമകൾ, അല്ലെങ്കിൽ എഴുതി കിട്ടിയ അനുമതി. ഏതാണെന്ന് എഴുതുക."
+  }
+}
