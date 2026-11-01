@@ -1,0 +1,139 @@
+{
+  "id": "disaster",
+  "version": "1.0.0",
+  "name": "Disaster Preparedness",
+  "name_ml": "ദുരന്ത തയ്യാറെടുപ്പ്",
+  "icon": "⛑️",
+  "description": "Monsoon readiness that travels with the weekly visit: hamlet risk profiles, assembly points and official helplines, family emergency plans, a consent-based list of people who need help to evacuate, a pre-monsoon checklist, incident reports answered by the district disaster cell, and warnings delivered to the hub with read-aloud.",
+  "consent_scopes": {
+    "emergency": {
+      "label": "Share that I may need help in an emergency (with disaster responders)",
+      "restrict_to": ["field_officer", "coordinator", "agency_admin"]
+    }
+  },
+  "tables": {
+    "disaster_risk_profiles": [
+      "hamlet_id",
+      "agency_id",
+      "hazards",
+      "points",
+      "nearest_phc",
+      "road_head",
+      "contacts",
+      "last_drill",
+      "note",
+      "is_demo",
+      "updated_by",
+      "updated_by_name"
+    ],
+    "disaster_checklist": [
+      "hamlet_id",
+      "agency_id",
+      "season",
+      "item",
+      "done",
+      "done_at",
+      "done_by",
+      "done_by_name",
+      "note"
+    ],
+    "disaster_warnings": [
+      "hamlet_ids",
+      "level",
+      "title",
+      "title_ml",
+      "body",
+      "body_ml",
+      "valid_from",
+      "valid_to",
+      "source",
+      "status",
+      "is_demo",
+      "agency_id",
+      "issued_by",
+      "issued_by_name",
+      "cancelled_by",
+      "cancelled_at"
+    ],
+    "disaster_help_needed": [
+      "person_id",
+      "hamlet_id",
+      "household_id",
+      "agency_id",
+      "needs",
+      "note",
+      "recorded_by",
+      "recorded_by_name",
+      "recorded_at"
+    ]
+  },
+  "types": {
+    "done": "INTEGER",
+    "is_demo": "INTEGER"
+  },
+  "budget": {
+    "storage_mb": 10,
+    "sync_priority": 1,
+    "power": "low"
+  },
+  "emits": [
+    "disaster.warning_issued",
+    "disaster.warning_cancelled",
+    "disaster.profile_updated",
+    "disaster.help_updated"
+  ],
+  "subscribes": [
+    "core.consent_revoked"
+  ],
+  "nav": [
+    {
+      "view": "board",
+      "label": "Disaster readiness",
+      "label_ml": "ദുരന്ത തയ്യാറെടുപ്പ്",
+      "icon": "⛑️",
+      "roles": ["learner", "guardian", "facilitator", "coordinator", "field_officer", "agency_admin", "platform_admin", "health_worker", "teacher", "mentor", "counsellor"],
+      "section": "care"
+    },
+    {
+      "view": "plans",
+      "label": "Family emergency plans",
+      "label_ml": "കുടുംബ അടിയന്തര പദ്ധതികൾ",
+      "icon": "🏠",
+      "roles": ["field_officer", "coordinator", "agency_admin", "platform_admin"],
+      "section": "care"
+    },
+    {
+      "view": "help",
+      "label": "People needing help to evacuate",
+      "label_ml": "ഒഴിപ്പിക്കാൻ സഹായം വേണ്ടവർ",
+      "icon": "🤝",
+      "roles": ["field_officer", "coordinator", "agency_admin", "platform_admin"],
+      "section": "care"
+    },
+    {
+      "view": "incidents",
+      "label": "Incident reports",
+      "label_ml": "സംഭവ റിപ്പോർട്ടുകൾ",
+      "icon": "🚨",
+      "roles": ["facilitator", "coordinator", "field_officer", "agency_admin", "platform_admin", "health_worker"],
+      "section": "care"
+    },
+    {
+      "view": "warnings",
+      "label": "Issue warnings",
+      "label_ml": "മുന്നറിയിപ്പ് നൽകുക",
+      "icon": "📢",
+      "roles": ["agency_admin", "platform_admin"],
+      "section": "ops"
+    },
+    {
+      "view": "aggregate",
+      "label": "Preparedness (numbers)",
+      "label_ml": "തയ്യാറെടുപ്പ് (എണ്ണം)",
+      "icon": "📊",
+      "roles": ["donor", "govt_viewer", "agency_admin", "platform_admin", "coordinator", "cpo"],
+      "section": "insight"
+    }
+  ],
+  "sealed": true
+}
