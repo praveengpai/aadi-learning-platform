@@ -1,0 +1,27 @@
+{
+  "id": "voice",
+  "version": "1.0.0",
+  "name": "Community Voice & Gatherings",
+  "name_ml": "ഊരിന്റെ ശബ്ദം, കൂട്ടായ്മകൾ",
+  "icon": "📻",
+  "description": "A small community radio on the hub: short audio bulletins by youth reporters and staff, oral histories recorded with elders (owned by the community, withdrawable at any time), visit-day playlists for the hub speaker and phones, and gatherings — films, shows, sports — with attendance and listening reach for donors.",
+  "tables": {
+    "voice_clips": ["hamlet_id", "hamlet_ids", "agency_id", "kind", "language", "title", "title_ml", "transcript", "transcript_ml", "audio", "mime", "bytes", "duration_s", "duration_source", "status", "licence", "licence_chosen_by", "speaker_person_id", "credit_as", "featured_person_ids", "no_identifiable", "community_content_id", "recorded_by", "recorded_by_name", "recorded_at", "review_note", "reviewed_by", "reviewed_by_name", "reviewed_at", "published_at", "withdrawn_at", "withdrawn_reason", "withdrawn_via", "is_demo"],
+    "voice_playlists": ["hamlet_id", "agency_id", "date", "title", "title_ml", "items", "status", "notes", "built_by", "built_by_name"],
+    "voice_plays": ["clip_id", "hamlet_id", "day", "channel", "plays"],
+    "voice_gatherings": ["hamlet_id", "agency_id", "date", "time", "kind", "title", "title_ml", "showing", "licence_note", "venue", "status", "children", "youth", "adults", "elders", "women", "feedback", "feedback_ml", "meeting_id", "organised_by", "organised_by_name", "is_demo"]
+  },
+  "types": { "bytes": "INTEGER", "duration_s": "REAL", "no_identifiable": "INTEGER", "is_demo": "INTEGER", "plays": "INTEGER", "children": "INTEGER", "youth": "INTEGER", "adults": "INTEGER", "elders": "INTEGER", "women": "INTEGER" },
+  "budget": { "storage_mb": 80, "sync_priority": 4, "power": "low" },
+  "sealed": true,
+  "emits": ["voice.clip_recorded", "voice.clip_published", "voice.clip_withdrawn", "voice.gathering_held"],
+  "subscribes": [],
+  "nav": [
+    { "view": "home", "label": "Hamlet Radio", "label_ml": "ഊര് റേഡിയോ", "icon": "📻", "roles": ["guardian", "learner", "facilitator", "coordinator", "agency_admin", "platform_admin", "teacher", "mentor", "counsellor", "cpo"], "section": "community" },
+    { "view": "record", "label": "Record a clip", "label_ml": "ശബ്ദം റെക്കോർഡ് ചെയ്യുക", "icon": "🎙️", "roles": ["facilitator", "coordinator", "agency_admin", "platform_admin", "teacher", "mentor"], "section": "community" },
+    { "view": "review", "label": "Clips to review", "label_ml": "പരിശോധിക്കാനുള്ള ശബ്ദങ്ങൾ", "icon": "✅", "roles": ["coordinator", "agency_admin", "platform_admin", "teacher"], "section": "community" },
+    { "view": "playlist", "label": "Visit-day playlist", "label_ml": "സന്ദർശന ദിവസത്തെ പ്ലേലിസ്റ്റ്", "icon": "🎶", "roles": ["facilitator", "coordinator", "agency_admin", "platform_admin"], "section": "community" },
+    { "view": "gatherings", "label": "Gatherings", "label_ml": "കൂട്ടായ്മകൾ", "icon": "🎬", "roles": ["guardian", "learner", "facilitator", "coordinator", "agency_admin", "platform_admin", "teacher", "mentor", "cpo"], "section": "community" },
+    { "view": "impact", "label": "Radio & gatherings reach", "label_ml": "റേഡിയോ, കൂട്ടായ്മ കണക്കുകൾ", "icon": "📊", "roles": ["donor", "govt_viewer", "agency_admin", "platform_admin", "coordinator", "cpo"], "section": "insight" }
+  ]
+}
