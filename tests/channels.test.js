@@ -14,9 +14,12 @@ test('core notifications are captured into the outbox and delivered by the simul
   await new Promise((r) => setTimeout(r, 30)); // event handlers run on setImmediate
   const ob = brain.store.one('SELECT * FROM channels_outbox WHERE notification_id=?', n.id);
   assert.ok(ob, 'mirrored into outbox');
-  assert.equal(ob.status, 'queued');
-  const out = await ch.processOutbox();
-  assert.ok(out.sent + out.retry + out.failed >= 1);
+  // The background worker may already have delivered it under load; either way it must move on.
+  assert.ok(['queued', 'sent', 'retry', 'failed'].includes(ob.status));
+  if (ob.status === 'queued') {
+    const out = await ch.processOutbox();
+    assert.ok(out.sent + out.retry + out.failed >= 1 || brain.store.get('channels_outbox', ob.id).status !== 'queued');
+  }
   const after = brain.store.get('channels_outbox', ob.id);
   assert.ok(['sent', 'retry', 'failed'].includes(after.status));
   const d = brain.store.find('channels_deliveries', { outbox_id: ob.id });
