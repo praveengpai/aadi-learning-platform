@@ -125,6 +125,8 @@ async function board(el, k) {
   if (b.warnings.length) for (const w of b.warnings) el.append(warningBanner(k, w));
   else el.append(warningBanner(k, { level: 'green', icon: '🟢', level_label: 'Green', level_label_ml: 'പച്ച', title: 'No warning for this hamlet now', title_ml: 'ഇപ്പോൾ ഈ ഊരിന് മുന്നറിയിപ്പില്ല', body: 'Keep your family plan ready.', body_ml: 'കുടുംബ പദ്ധതി തയ്യാറാക്കി വെക്കുക.', advice: '', advice_ml: '', valid_to: null, source: '—' }));
 
+  for (const w of (b.pending_warnings || [])) el.append(h('div', { class: 'card dis-noprint', style: { background: '#fde2e1' } }, h('b', null, '⏳ ' + t('Red warning waiting for confirmation: ', 'സ്ഥിരീകരണം കാത്തിരിക്കുന്ന ചുവപ്പ് മുന്നറിയിപ്പ്: ') + t(w.title, w.title_ml || w.title)), ' ',
+    ui.button(t('Confirm', 'സ്ഥിരീകരിക്കുക'), async () => { if (await ui.confirm(t('Have you checked this against the official bulletin? It will be shown on every hub.', 'ഔദ്യോഗിക അറിയിപ്പുമായി ഒത്തുനോക്കിയോ? എല്ലാ ഹബ്ബിലും കാണിക്കും.'))) { await k.api.post('/warnings/' + w.id + '/confirm'); k.refresh(); } }, { small: true, tone: 'primary' })));
   const acts = [];
   const act = (icon, en, ml, href) => h('a', { class: 'dis-act', href }, h('span', { class: 'e', 'aria-hidden': 'true' }, icon), t(en, ml));
   if (b.can.plans) acts.push(act('🏠', 'Family plans', 'കുടുംബ പദ്ധതികൾ', '#/m/disaster/plans?hamlet=' + hm.id));
@@ -139,7 +141,7 @@ async function board(el, k) {
     ui.kv([[t('Nearest health centre', 'അടുത്ത ആരോഗ്യ കേന്ദ്രം'), p.nearest_phc || '—'], [t('Road head', 'റോഡ് എത്തുന്ന സ്ഥലം'), p.road_head || '—'], [t('Last drill', 'അവസാന പരിശീലനം'), p.last_drill || t('not yet', 'ഇതുവരെ ഇല്ല')]]),
     p.is_demo ? h('p', { class: 'small' }, h('span', { class: 'dis-demo' }, 'DEMO'), ' ', t('Fictional places for the demo.', 'ഡെമോയ്ക്കുള്ള സാങ്കൽപ്പിക സ്ഥലങ്ങൾ.')) : null,
     p.updated_by_name ? h('p', { class: 'small muted' }, t('Updated by ', 'പുതുക്കിയത് ') + p.updated_by_name + ' · ' + fmtDate(p.updated_at)) : null],
-  actions: b.can.edit_profile ? [ui.button('✏️ ' + t('Edit risk profile', 'വിവരങ്ങൾ മാറ്റുക'), () => editProfile(k, hm, p, c), { small: true })] : null }));
+  actions: [b.can.edit_profile ? ui.button('✏️ ' + t('Edit risk profile', 'വിവരങ്ങൾ മാറ്റുക'), () => editProfile(k, hm, p, c), { small: true }) : null, b.can.history ? ui.button('🕘 ' + t('Edit history', 'മാറ്റങ്ങളുടെ ചരിത്രം'), () => profileHistory(k, hm), { small: true }) : null].filter(Boolean) }));
 
   if (b.checklist) {
     const done = b.checklist.filter((x) => x.done).length;
@@ -155,6 +157,15 @@ async function board(el, k) {
   }
   if (typeof b.plans_recorded === 'number') el.append(h('p', { class: 'small muted' }, t('Family plans recorded by your agency here: ', 'നിങ്ങളുടെ ഏജൻസി ഇവിടെ രേഖപ്പെടുത്തിയ കുടുംബ പദ്ധതികൾ: ') + b.plans_recorded));
   el.append(h('p', { class: 'small muted' }, t(b.status, b.status_ml)));
+}
+
+async function profileHistory(k, hm) {
+  const { h, t, ui } = k;
+  const list = await k.api.get('/profile/' + hm.id + '/history');
+  const show = (v) => (v === null || v === undefined ? '—' : typeof v === 'object' ? JSON.stringify(v) : String(v));
+  ui.modal(t('Edit history — ', 'മാറ്റങ്ങളുടെ ചരിത്രം — ') + t(hm.name, hm.name_ml), list.length ? h('div', null, list.map((e) => h('div', { class: 'dis-point' }, h('div', { class: 'm' },
+    h('b', null, (e.changed_by_name || '?') + (e.agency ? ' (' + e.agency + ')' : '') + ' · ' + fmtWhen(e.changed_at)),
+    ...(e.changes || []).map((c) => h('div', { class: 'small' }, h('b', null, c.field + ': '), h('span', { class: 'muted' }, show(c.before)), ' → ', show(c.after))))))) : ui.empty(t('No edits yet.', 'മാറ്റങ്ങളില്ല.')));
 }
 
 function editProfile(k, hm, p, c) {
@@ -331,16 +342,17 @@ async function warnings(el, k) {
     { name: 'title_ml', type: 'text', label: t('Title (Malayalam)', 'തലക്കെട്ട് (മലയാളം)') },
     { name: 'body', type: 'textarea', label: t('What should people do? (English)', 'ആളുകൾ എന്ത് ചെയ്യണം? (ഇംഗ്ലീഷ്)'), required: true },
     { name: 'body_ml', type: 'textarea', label: t('What should people do? (Malayalam)', 'ആളുകൾ എന്ത് ചെയ്യണം? (മലയാളം)') },
-    { name: 'source', type: 'text', label: t('Official source', 'ഔദ്യോഗിക ഉറവിടം'), required: true, placeholder: 'IMD bulletin / District Collector / KSDMA' },
+    { name: 'source', type: 'select', label: t('Official source', 'ഔദ്യോഗിക ഉറവിടം'), required: true, options: (c.warning_sources || []).map((x) => ({ value: x.key, label: L(k, x) })) },
     { name: 'valid_to', type: 'datetime-local', label: t('Valid until', 'വരെ സാധുവാണ്') },
   ], async (v) => {
     const r = await k.api.post('/warnings', { ...v, valid_to: v.valid_to ? new Date(v.valid_to).toISOString() : undefined });
-    k.toast(r && r.queued ? t('Saved on this device — will send later', 'ഈ ഉപകരണത്തിൽ സൂക്ഷിച്ചു') : t('Warning issued', 'മുന്നറിയിപ്പ് നൽകി'), r && r.queued ? 'warn' : 'good'); k.refresh();
+    k.toast(r && r.queued ? t('Saved on this device — will send later', 'ഈ ഉപകരണത്തിൽ സൂക്ഷിച്ചു') : r && r.status === 'pending_confirmation' ? t('Red warning saved — a second person of your agency must confirm it before it is shown', 'ചുവപ്പ് മുന്നറിയിപ്പ് — നിങ്ങളുടെ ഏജൻസിയിലെ മറ്റൊരാൾ സ്ഥിരീകരിച്ചാലേ കാണിക്കൂ') : t('Warning issued', 'മുന്നറിയിപ്പ് നൽകി'), r && r.queued ? 'warn' : 'good'); k.refresh();
   }, { submitLabel: t('Issue warning', 'മുന്നറിയിപ്പ് നൽകുക') }) }));
   const names = Object.fromEntries(hs.map((x) => [x.id, t(x.name, x.name_ml)]));
   el.append(ui.section(t('Issued warnings', 'നൽകിയ മുന്നറിയിപ്പുകൾ'), list.length ? list.map((w) => h('div', null, warningBanner(k, w),
-    h('div', { class: 'row small dis-noprint', style: { margin: '-6px 0 12px' } }, h('span', { class: 'muted' }, w.hamlet_ids.map((x) => names[x] || '').filter(Boolean).join(', ') + ' · ' + (w.status === 'cancelled' ? t('cancelled', 'റദ്ദാക്കി') : w.active ? t('active', 'സജീവം') : t('not active', 'സജീവമല്ല'))),
-      w.status === 'active' ? ui.button(t('Cancel warning', 'റദ്ദാക്കുക'), async () => { if (await ui.confirm(t('Cancel this warning on every hub?', 'എല്ലാ ഹബ്ബിലും ഈ മുന്നറിയിപ്പ് റദ്ദാക്കണോ?'))) { await k.api.post('/warnings/' + w.id + '/cancel'); k.refresh(); } }, { small: true, tone: 'danger' }) : null))) : ui.empty(t('No warnings yet.', 'മുന്നറിയിപ്പുകളില്ല.'))));
+    h('div', { class: 'row small dis-noprint', style: { margin: '-6px 0 12px' } }, h('span', { class: 'muted' }, w.hamlet_ids.map((x) => names[x] || '').filter(Boolean).join(', ') + ' · ' + (w.status === 'cancelled' ? t('cancelled', 'റദ്ദാക്കി') : w.status === 'pending_confirmation' ? t('waiting for a second person to confirm', 'രണ്ടാമതൊരാൾ സ്ഥിരീകരിക്കണം') : w.active ? t('active', 'സജീവം') : t('not active', 'സജീവമല്ല'))),
+      w.status === 'pending_confirmation' && k.user && w.issued_by_name !== k.user.display_name ? ui.button(t('Confirm red warning', 'സ്ഥിരീകരിക്കുക'), async () => { if (await ui.confirm(t('Have you checked this against the official bulletin? It will be shown on every hub.', 'ഔദ്യോഗിക അറിയിപ്പുമായി ഒത്തുനോക്കിയോ? എല്ലാ ഹബ്ബിലും കാണിക്കും.'))) { await k.api.post('/warnings/' + w.id + '/confirm'); k.refresh(); } }, { small: true, tone: 'primary' }) : null,
+      w.status === 'active' || w.status === 'pending_confirmation' ? ui.button(t('Cancel warning', 'റദ്ദാക്കുക'), async () => { if (await ui.confirm(t('Cancel this warning on every hub?', 'എല്ലാ ഹബ്ബിലും ഈ മുന്നറിയിപ്പ് റദ്ദാക്കണോ?'))) { await k.api.post('/warnings/' + w.id + '/cancel'); k.refresh(); } }, { small: true, tone: 'danger' }) : null))) : ui.empty(t('No warnings yet.', 'മുന്നറിയിപ്പുകളില്ല.'))));
 }
 
 // ---------------------------------------------------------------- aggregate

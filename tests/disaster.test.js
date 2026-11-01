@@ -115,12 +115,12 @@ test('people-needing-help list: the cell\'s field officer sees it; others do not
     assert.ok([403, 503].includes(x.status), who + ' → ' + x.status);
     assert.ok(!JSON.stringify(x.body).includes(p.name), who + ' sees no names');
   }
-  // Another agency's responders (CIF coordinator, Krishi Bhavan officer, Vanajyothi admin) see an empty list.
+  // Another agency's responders (CIF coordinator, Krishi Bhavan officer, Vanajyothi admin) run no disaster
+  // programme here: refused outright, and no names leak.
   for (const who of ['demo.coordinator', 'demo.agri', 'demo.vjt.admin']) {
     const x = await N.as(who).get(`${M}/help?hamlet_id=${h1}`);
-    assert.equal(x.status, 200, who);
-    assert.equal(x.body.people.length, 0, who + ' sees no one without consent to their agency');
-    assert.equal(x.body.households.length, 0, who);
+    assert.equal(x.status, 403, who);
+    assert.ok(!JSON.stringify(x.body).includes(p.name), who + ' sees no names');
   }
   // The cell's admin sees it; the steward sees it (audited).
   assert.ok((await N.as('demo.ddma.admin').get(`${M}/help?hamlet_id=${h1}`)).body.people.length >= 1);
@@ -179,12 +179,15 @@ test('incident: road blocked → urgent in the cell\'s queue → reply reaches t
 });
 
 test('warnings: only agency admins / stewards issue; families see them; demo label cannot be faked', async () => {
-  const body = { hamlet_ids: [H().h1.id], level: 'red', title: 'Landslide risk — move to the assembly point', title_ml: 'ഉരുൾപൊട്ടൽ സാധ്യത — ഒത്തുചേരൽ സ്ഥലത്തേക്ക് മാറുക', body: 'Move now to the community hall ground. Help those who cannot walk far.', source: 'District Collector order' };
+  const body = { hamlet_ids: [H().h1.id], level: 'red', title: 'Landslide risk — move to the assembly point', title_ml: 'ഉരുൾപൊട്ടൽ സാധ്യത — ഒത്തുചേരൽ സ്ഥലത്തേക്ക് മാറുക', body: 'Move now to the community hall ground. Help those who cannot walk far.', source: 'ddma' };
   for (const who of ['demo.ddma', 'demo.facilitator', 'demo.coordinator', 'demo.donor', 'demo.guardian', 'demo.asha']) assert.equal((await N.as(who).post(`${M}/warnings`, body)).status, 403, who);
   assert.equal((await N.as('demo.vjt.admin').post(`${M}/warnings`, { ...body, hamlet_ids: [H().h2.id] })).status, 403, 'agency not present in that hamlet');
   assert.equal((await N.as('demo.ddma.admin').post(`${M}/warnings`, { ...body, source: 'demo' })).status, 400);
   assert.equal((await N.as('demo.ddma.admin').post(`${M}/warnings`, { ...body, level: 'purple' })).status, 400);
-  const ok = await N.as('demo.ddma.admin').post(`${M}/warnings`, body);
+  const issued = await N.as('demo.ddma.admin').post(`${M}/warnings`, body);
+  assert.equal(issued.status, 200, JSON.stringify(issued.body));
+  assert.equal(issued.body.status, 'pending_confirmation', 'red needs a second person');
+  const ok = await N.as('demo.ddma').post(`${M}/warnings/${issued.body.id}/confirm`);
   assert.equal(ok.status, 200, JSON.stringify(ok.body));
   assert.equal(ok.body.is_demo, false);
   assert.equal(ok.body.active, true);
@@ -214,7 +217,7 @@ test('mass assignment: ids, agency, hamlet, issuer and demo flags from the clien
   // Someone else's person id (no emergency consent with the cell) is refused.
   assert.equal((await ddma.put(`${M}/help/${D.demoLearner.id}`, { needs: ['young_children'] })).status, 403);
   // Warnings: client cannot set id, agency, issuer, demo flag or status.
-  const w = await N.as('demo.ddma.admin').post(`${M}/warnings`, { id: 'dis_evil', agency_id: D.agencyByKey.cif.id, issued_by: user('demo.steward').id, is_demo: 1, status: 'cancelled', hamlet_ids: [H().h11.id], level: 'yellow', title: 'Heavy rain tonight', body: 'Keep torches and medicines ready.', source: 'IMD bulletin' });
+  const w = await N.as('demo.ddma.admin').post(`${M}/warnings`, { id: 'dis_evil', agency_id: D.agencyByKey.cif.id, issued_by: user('demo.steward').id, is_demo: 1, status: 'cancelled', hamlet_ids: [H().h11.id], level: 'yellow', title: 'Heavy rain tonight', body: 'Keep torches and medicines ready.', source: 'imd' });
   assert.equal(w.status, 200);
   const wr = B.store.get('disaster_warnings', w.body.id);
   assert.notEqual(w.body.id, 'dis_evil');
@@ -309,4 +312,214 @@ test('manifest: sealed, emergency scope, budget; module healthy', async () => {
   assert.equal(b.sync_priority, 1);
   const scopes = (await N.as('demo.steward').get('/api/core/roles')).body;
   assert.deepEqual(scopes.restricted.emergency, ['field_officer', 'coordinator', 'agency_admin']);
+});
+
+// ============================================================ Wave 2 security review — regressions
+const helpRows = (pid) => B.store.all('SELECT * FROM disaster_help_needed WHERE person_id=? AND deleted=0', pid);
+
+test('REVIEW-1: another agency cannot take over, read or delete the cell\'s help entries', async () => {
+  const h1 = H().h1.id;
+  const ddma = N.as('demo.ddma');
+  const before = (await ddma.get(`${M}/help?hamlet_id=${h1}`)).body.people;
+  const p = before.find((x) => x.note) || before[0];
+  assert.ok(p, 'a listed person in Pachakkudi');
+  const cellRow = helpRows(p.person_id).find((r) => r.agency_id === CELL_ID);
+  // Worst case: Krishi Bhavan works with this person (enrolment + profile consent) — still no access.
+  const agriAgency = user('demo.agri').agency_id;
+  const agriProg = B.store.one("SELECT * FROM programmes WHERE agency_id=? AND hamlet_id=? AND deleted=0", agriAgency, h1);
+  const consentTo = (agency, scopes) => { const cur = B.store.find('consents', { person_id: p.person_id, agency_id: agency, status: 'active' })[0]; B.grantConsent({ person_id: p.person_id, agency_id: agency, scopes: [...new Set([...(cur ? cur.scopes : []), ...scopes])], granted_by: p.person_id, relation: 'self', method: 'in_person' }, null); };
+  consentTo(agriAgency, ['profile']);
+  if (agriProg) B.enrol(p.person_id, agriProg.id, null);
+  const agri = N.as('demo.agri');
+  // The reviewer's exact request.
+  const c = await agri.post(`${M}/consent`, { person_id: p.person_id, read_aloud: true });
+  assert.equal(c.status, 403, JSON.stringify(c.body));
+  assert.ok(!B.policy.activeConsent(p.person_id, agriAgency, 'emergency'), 'no emergency consent recorded for Krishi Bhavan');
+  // Even if the person had consented to Krishi Bhavan through some other path, it runs no disaster programme here.
+  consentTo(agriAgency, ['emergency']);
+  const g = await agri.get(`${M}/help?hamlet_id=${h1}`);
+  assert.equal(g.status, 403);
+  assert.ok(!JSON.stringify(g.body).includes(p.name), 'no names');
+  if (p.note) assert.ok(!JSON.stringify(g.body).includes(p.note), 'no cell note');
+  assert.equal((await agri.get(`${M}/help/candidates?hamlet_id=${h1}`)).status, 403);
+  assert.equal((await agri.put(`${M}/help/${p.person_id}`, { needs: ['young_children'], note: 'taken over' })).status, 403);
+  assert.equal((await agri.del(`${M}/help/${p.person_id}`)).status, 403);
+  for (const who of ['demo.agri.admin', 'demo.vjt.admin', 'demo.cds.admin', 'demo.coordinator']) {
+    assert.equal((await N.as(who).put(`${M}/help/${p.person_id}`, { needs: ['young_children'] })).status, 403, who);
+    assert.equal((await N.as(who).del(`${M}/help/${p.person_id}`)).status, 403, who);
+  }
+  const after = helpRows(p.person_id).find((r) => r.agency_id === CELL_ID);
+  assert.ok(after, 'still on the cell\'s list');
+  assert.equal(after.id, cellRow.id);
+  assert.deepEqual(after.needs, cellRow.needs);
+  assert.equal(after.note, cellRow.note);
+  assert.ok((await ddma.get(`${M}/help?hamlet_id=${h1}`)).body.people.some((x) => x.person_id === p.person_id), 'the cell still sees them');
+  // The cell itself still works.
+  assert.equal((await ddma.put(`${M}/help/${p.person_id}`, { needs: p.needs, note: 'checked again' })).status, 200);
+  assert.equal(helpRows(p.person_id).filter((r) => r.agency_id === CELL_ID).length, 1);
+});
+
+test('REVIEW-1: help entries are per agency — a second disaster agency keeps its own, cannot touch the cell\'s', async () => {
+  const h1 = H().h1.id;
+  const vjt = D.agencyByKey.vjt.id;
+  const ddma = N.as('demo.ddma');
+  const p = (await ddma.get(`${M}/help?hamlet_id=${h1}`)).body.people[0];
+  const cellRow = helpRows(p.person_id).find((r) => r.agency_id === CELL_ID);
+  // Vanajyothi starts a disaster programme in Pachakkudi; the person consents to it too.
+  const prog = B.store.put('programmes', { agency_id: vjt, hamlet_id: h1, module: 'disaster', track: 'disaster', title: 'VJT preparedness (test)', status: 'active' });
+  try {
+    const admin = N.as('demo.vjt.admin');
+    // Before consent: Vanajyothi sees nobody (the cell's entry is not theirs).
+    const empty = await admin.get(`${M}/help?hamlet_id=${h1}`);
+    assert.equal(empty.status, 200, JSON.stringify(empty.body));
+    assert.ok(!empty.body.people.some((x) => x.person_id === p.person_id));
+    assert.equal((await admin.put(`${M}/help/${p.person_id}`, { needs: ['young_children'] })).status, 403, 'no consent to Vanajyothi yet');
+    const cur = B.store.find('consents', { person_id: p.person_id, agency_id: vjt, status: 'active' })[0];
+    B.grantConsent({ person_id: p.person_id, agency_id: vjt, scopes: [...new Set([...(cur ? cur.scopes : []), 'profile', 'emergency'])], granted_by: p.person_id, relation: 'self', method: 'in_person' }, null);
+    B.enrol(p.person_id, prog.id, null);
+    // Still does not see the cell's needs or note.
+    const v = await admin.get(`${M}/help?hamlet_id=${h1}`);
+    assert.ok(!v.body.people.some((x) => x.person_id === p.person_id), 'the cell\'s entry stays with the cell');
+    // Writing creates Vanajyothi's own entry; the cell's is untouched.
+    assert.equal((await admin.put(`${M}/help/${p.person_id}`, { needs: ['elderly_alone'], note: 'VJT note' })).status, 200);
+    const rows = helpRows(p.person_id);
+    assert.equal(rows.length, 2);
+    const mine = rows.find((r) => r.agency_id === vjt);
+    const cells = rows.find((r) => r.agency_id === CELL_ID);
+    assert.deepEqual(mine.needs, ['elderly_alone']);
+    assert.deepEqual(cells.needs, cellRow.needs);
+    assert.equal(cells.note, cellRow.note);
+    const seen = (await admin.get(`${M}/help?hamlet_id=${h1}`)).body.people.filter((x) => x.person_id === p.person_id);
+    assert.equal(seen.length, 1);
+    assert.equal(seen[0].note, 'VJT note');
+    // Deleting removes only Vanajyothi's own entry.
+    assert.equal((await admin.del(`${M}/help/${p.person_id}`)).body.removed, true);
+    assert.ok(helpRows(p.person_id).some((r) => r.agency_id === CELL_ID && r.id === cellRow.id), 'cell entry survives');
+    assert.ok((await ddma.get(`${M}/help?hamlet_id=${h1}`)).body.people.some((x) => x.person_id === p.person_id && x.note === cellRow.note));
+    // Steward: must name the agency whose entry to change.
+    assert.equal((await N.as('demo.steward').put(`${M}/help/${p.person_id}`, { needs: ['young_children'] })).status, 400);
+  } finally {
+    B.store.put('programmes', { ...B.store.get('programmes', prog.id), status: 'closed', deleted: 1 });
+  }
+});
+
+test('REVIEW-2: only agencies running a disaster programme issue warnings; source from a fixed list', async () => {
+  const hs = [H().h1.id, H().h2.id, H().h11.id];
+  const fake = { hamlet_ids: hs, level: 'red', title: 'Dam opening tonight — leave immediately', body: 'The dam opens tonight. Leave your homes immediately and go downhill.', source: 'District Collector' };
+  for (const who of ['demo.agri.admin', 'demo.vjt.admin', 'demo.cds.admin', 'demo.cif.admin']) {
+    for (const body of [fake, { ...fake, source: 'ddma' }, { ...fake, hamlet_ids: [H().h1.id], source: 'imd', level: 'yellow' }]) {
+      const r = await N.as(who).post(`${M}/warnings`, body);
+      assert.equal(r.status, 403, `${who} ${body.source} → ${r.status}`);
+    }
+  }
+  assert.ok(!B.store.all('SELECT * FROM disaster_warnings WHERE deleted=0').some((w) => /Dam opening/.test(w.title)), 'nothing stored');
+  // Even the cell: free-text sources are refused.
+  for (const source of ['District Collector', 'District Collector order', 'WhatsApp forward', 'demo', 'platform_demo', '']) {
+    assert.equal((await N.as('demo.ddma.admin').post(`${M}/warnings`, { ...fake, source })).status, 400, source);
+  }
+  const cat = (await N.as('demo.ddma.admin').get(`${M}/catalogue`)).body;
+  assert.deepEqual(cat.warning_sources.map((x) => x.key), ['imd', 'ksdma', 'ddma', 'panchayat']);
+  const ok = await N.as('demo.ddma.admin').post(`${M}/warnings`, { ...fake, level: 'yellow', title: 'Heavy rain tomorrow', body: 'Keep documents and medicines in a bag.', source: 'KSDMA' });
+  assert.equal(ok.status, 200, JSON.stringify(ok.body));
+  assert.match(ok.body.source, /KSDMA/);
+  assert.equal(ok.body.status, 'active', 'non-red warnings show at once');
+  // Cancel: another agency cannot.
+  for (const who of ['demo.agri.admin', 'demo.vjt.admin', 'demo.cds.admin']) assert.equal((await N.as(who).post(`${M}/warnings/${ok.body.id}/cancel`)).status, 403, who);
+  assert.equal((await N.as('demo.ddma.admin').post(`${M}/warnings/${ok.body.id}/cancel`)).status, 200);
+});
+
+test('REVIEW-2: a red warning needs a second person of the same agency before families see it', async () => {
+  const h1 = H().h1.id;
+  const red = { hamlet_ids: [h1], level: 'red', title: 'Landslide — move to the assembly point now', body: 'Move now to the community hall ground. Help those who cannot walk far.', source: 'ddma' };
+  const r = await N.as('demo.ddma.admin').post(`${M}/warnings`, red);
+  assert.equal(r.status, 200, JSON.stringify(r.body));
+  assert.equal(r.body.status, 'pending_confirmation');
+  assert.equal(r.body.active, false);
+  const fam = await N.as('demo.guardian').get(`${M}/board`);
+  assert.ok(!fam.body.warnings.some((w) => w.id === r.body.id), 'families do not see an unconfirmed red warning');
+  assert.ok(!(await N.as('demo.guardian').get(`${M}/warnings?all=1`)).body.some((w) => w.id === r.body.id));
+  assert.ok(!(await N.as('demo.agri.admin').get(`${M}/warnings?all=1`)).body.some((w) => w.id === r.body.id), 'other agencies do not see it');
+  // The cell's officer sees it waiting on the board.
+  assert.ok((await N.as('demo.ddma').get(`${M}/board?hamlet_id=${h1}`)).body.pending_warnings.some((w) => w.id === r.body.id));
+  assert.equal((await N.as('demo.ddma.admin').post(`${M}/warnings/${r.body.id}/confirm`)).status, 403, 'not the issuer');
+  for (const who of ['demo.agri', 'demo.agri.admin', 'demo.cif.admin', 'demo.facilitator', 'demo.guardian']) assert.equal((await N.as(who).post(`${M}/warnings/${r.body.id}/confirm`)).status, 403, who);
+  const c = await N.as('demo.ddma').post(`${M}/warnings/${r.body.id}/confirm`);
+  assert.equal(c.status, 200, JSON.stringify(c.body));
+  assert.equal(c.body.status, 'active');
+  assert.equal(c.body.active, true);
+  assert.equal((await N.as('demo.ddma').post(`${M}/warnings/${r.body.id}/confirm`)).status, 409);
+  const w = B.store.get('disaster_warnings', r.body.id);
+  assert.equal(w.confirmed_by, user('demo.ddma').id);
+  assert.equal((await N.as('demo.guardian').get(`${M}/board`)).body.warnings[0].id, r.body.id, 'shown after confirmation');
+  // The steward issues red directly.
+  const st = await N.as('demo.steward').post(`${M}/warnings`, { ...red, title: 'Flood — go to higher ground' });
+  assert.equal(st.body.status, 'active');
+  for (const id of [r.body.id, st.body.id]) assert.equal((await N.as('demo.steward').post(`${M}/warnings/${id}/cancel`)).status, 200);
+});
+
+test('REVIEW-2: risk profile / helplines / checklist only by the disaster agency; edits kept in a history the cell sees', async () => {
+  const h1 = H().h1.id;
+  const before = B.store.get('disaster_risk_profiles', 'dsr_' + h1);
+  for (const who of ['demo.vjt.admin', 'demo.agri.admin', 'demo.cds.admin', 'demo.cif.admin', 'demo.coordinator']) {
+    const r = await N.as(who).put(`${M}/profile/${h1}`, { points: [{ kind: 'assembly', name: 'Riverbank (fake)' }], contacts: [{ label: 'Fake control room', number: '04862-999999' }] });
+    assert.equal(r.status, 403, who);
+  }
+  for (const who of ['demo.agri', 'demo.facilitator']) assert.equal((await N.as(who).post(`${M}/checklist/${h1}`, { item: 'drain_cleared', done: true })).status, 403, who);
+  const after = B.store.get('disaster_risk_profiles', 'dsr_' + h1);
+  assert.deepEqual(after.points, before.points);
+  assert.deepEqual(after.contacts, before.contacts);
+  // The cell's admin edits helplines and an assembly point → history entry with who/when/what.
+  const n0 = (await N.as('demo.ddma').get(`${M}/profile/${h1}/history`)).body.length;
+  const r = await N.as('demo.ddma.admin').put(`${M}/profile/${h1}`, { contacts: [...before.contacts.map(({ label, number }) => ({ label, number })), { label: 'Taluk control room', number: '04864-222222' }] });
+  assert.equal(r.status, 200, JSON.stringify(r.body));
+  const hist = await N.as('demo.ddma').get(`${M}/profile/${h1}/history`);
+  assert.equal(hist.status, 200);
+  const e = hist.body[0];
+  assert.equal(e.changed_by_name, user('demo.ddma.admin').display_name);
+  assert.ok(e.changed_at);
+  assert.deepEqual(e.fields, ['contacts']);
+  assert.ok(JSON.stringify(e.changes[0].after).includes('04864-222222'));
+  assert.ok(!JSON.stringify(e.changes[0].before).includes('04864-222222'));
+  assert.equal((await N.as('demo.ddma').get(`${M}/board?hamlet_id=${h1}`)).body.can.history, true);
+  for (const who of ['demo.agri', 'demo.guardian', 'demo.facilitator', 'demo.vjt.admin']) assert.equal((await N.as(who).get(`${M}/profile/${h1}/history`)).status, 403, who);
+  // Restore.
+  assert.equal((await N.as('demo.ddma.admin').put(`${M}/profile/${h1}`, { contacts: before.contacts.map(({ label, number }) => ({ label, number })) })).status, 200);
+  assert.equal((await N.as('demo.ddma').get(`${M}/profile/${h1}/history`)).body.length, n0 + 2);
+});
+
+test('REVIEW-3: only the district cell answers or closes incidents — module route and core routes', async () => {
+  const h1 = H().h1.id;
+  const fac = N.as('demo.facilitator');
+  const s = await fac.post('/api/core/forms/submissions', { form_key: 'disaster.incident_report', hamlet_id: h1, answers: { ...INCIDENT, details: 'Tree across the path' }, client_ref: 'inc-review3' });
+  assert.equal(s.status, 200, JSON.stringify(s.body));
+  const id = s.body.id;
+  // The reviewer's exact request: CIF admin posting a fake all clear.
+  assert.equal((await N.as('demo.cif.admin').post(`${M}/incidents/${id}/reply`, { reply: 'fake all clear', close: true })).status, 403);
+  for (const who of ['demo.cif.admin', 'demo.agri', 'demo.agri.admin', 'demo.vjt.admin', 'demo.cds.admin']) {
+    assert.equal((await N.as(who).post(`${M}/incidents/${id}/reply`, { reply: 'fake all clear' })).status, 403, who);
+    assert.equal((await N.as(who).post(`/api/core/forms/submissions/${id}/reply`, { reply: 'fake all clear' })).status, 403, who + ' core reply');
+    assert.equal((await N.as(who).post(`/api/core/forms/submissions/${id}/close`, { outcome: 'no_action' })).status, 403, who + ' core close');
+    assert.equal((await N.as(who).post(`/api/core/forms/submissions/${id}/claim`)).status, 403, who + ' core claim');
+  }
+  // The capturing facilitator cannot close (or answer) before the cell has.
+  assert.equal((await fac.post(`/api/core/forms/submissions/${id}/close`, { outcome: 'no_action' })).status, 403);
+  assert.equal((await fac.post(`/api/core/forms/submissions/${id}/reply`, { reply: 'all fine' })).status, 403);
+  let row = B.store.get('form_submissions', id);
+  assert.equal(row.status, 'submitted');
+  assert.ok(!row.reply);
+  // A cell officer cannot answer their own report (four eyes); the cell's admin can.
+  const own = await N.as('demo.ddma').post('/api/core/forms/submissions', { form_key: 'disaster.incident_report', hamlet_id: h1, answers: INCIDENT, client_ref: 'inc-review3-own' });
+  assert.equal((await N.as('demo.ddma').post(`${M}/incidents/${own.body.id}/reply`, { reply: 'self answer' })).status, 403);
+  assert.equal((await N.as('demo.ddma').post(`/api/core/forms/submissions/${own.body.id}/close`, { outcome: 'no_action' })).status, 403);
+  assert.equal((await N.as('demo.ddma.admin').post(`${M}/incidents/${own.body.id}/reply`, { reply: 'Checked; no action needed.', outcome: 'no_action', close: true })).status, 200);
+  // Legitimate: the cell's officer replies, then closes through the core route.
+  assert.equal((await N.as('demo.ddma').get(`${M}/incidents/${id}`)).body.can_reply, true);
+  assert.equal((await N.as('demo.cif.admin').get(`/api/core/forms/submissions/${id}`)).body.can_reply || false, false);
+  const ok = await N.as('demo.ddma').post(`${M}/incidents/${id}/reply`, { reply: 'Panchayat will clear the tree tomorrow.', outcome: 'relief_planned' });
+  assert.equal(ok.status, 200, JSON.stringify(ok.body));
+  assert.equal((await N.as('demo.ddma').post(`/api/core/forms/submissions/${id}/close`, { outcome: 'relief_planned' })).status, 200);
+  row = B.store.get('form_submissions', id);
+  assert.equal(row.status, 'closed');
+  assert.match(row.reply, /Panchayat/);
+  assert.equal(row.replied_by, user('demo.ddma').id);
 });
