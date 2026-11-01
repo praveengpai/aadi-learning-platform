@@ -30,6 +30,8 @@ else
   grep -q '^AADI_HUB_PORT=' .env || echo 'AADI_HUB_PORT=8182' >> .env
 fi
 set -a; . ./.env; set +a
+# Content library folder (filled by the content-library tools). Mounted read-only; created empty if absent.
+mkdir -p "${AADI_LIBRARY_HOST_DIR:-/opt/aadi-content}"
 
 # Optional: start the demo over with fresh demo data (DEMO ONLY — deletes AADI's demo databases, nothing else):
 #   AADI_RESET_DEMO=1 bash deploy/install.sh <cloud-domain> <hub-domain>

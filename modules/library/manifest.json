@@ -1,0 +1,23 @@
+{
+  "id": "library",
+  "version": "1.0.0",
+  "name": "Library",
+  "name_ml": "വായനശാല",
+  "icon": "📚",
+  "description": "Open and government learning materials (SCERT textbooks Class 1–12, PSC papers, NCERT, NIOS, StoryWeaver, digital literacy, teacher handbooks): offline files from the centre server, links to the owner's page for the rest, personalised shelves, reading log, assignments and curation.",
+  "tables": {
+    "library_assignments": ["item_id", "title", "section", "programme_id", "person_id", "hamlet_id", "agency_id", "assigned_by", "assigned_by_name", "note", "due", "created_at"],
+    "library_reads": ["person_id", "hamlet_id", "item_id", "title", "section", "cls", "subject", "opened_at", "last_opened_at", "opens", "finished", "finished_at", "bookmark", "rating"],
+    "library_curation": ["item_id", "status", "note", "by_name", "at"]
+  },
+  "types": { "opens": "INTEGER", "finished": "INTEGER", "rating": "INTEGER" },
+  "emits": ["library.opened", "library.finished", "library.assigned"],
+  "subscribes": [],
+  "nav": [
+    { "view": "home", "label": "Library", "label_ml": "വായനശാല", "icon": "📚", "roles": ["learner"], "section": "learn" },
+    { "view": "child", "label": "Child's books", "label_ml": "കുട്ടിയുടെ പുസ്തകങ്ങൾ", "icon": "📗", "roles": ["guardian"], "section": "learn" },
+    { "view": "browse", "label": "Library", "label_ml": "വായനശാല", "icon": "📚", "roles": ["platform_admin", "cpo", "agency_admin", "coordinator", "facilitator", "teacher", "counsellor", "mentor"], "section": "teach" },
+    { "view": "assignments", "label": "Reading assignments", "label_ml": "വായനാ നിയോഗങ്ങൾ", "icon": "📌", "roles": ["platform_admin", "agency_admin", "coordinator", "facilitator", "teacher"], "section": "teach" },
+    { "view": "status", "label": "Library status", "label_ml": "വായനശാല നില", "icon": "🗂️", "roles": ["platform_admin", "agency_admin", "teacher"], "section": "admin" }
+  ]
+}

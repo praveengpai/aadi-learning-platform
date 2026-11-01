@@ -50,7 +50,7 @@ const HIDE = {
   learner: ['channels/phone'],
   minor: ['exams/home', 'marketplace/jobs', 'channels/phone'],
 };
-const PRIORITY = ['learning/home', 'learning/homework', 'language/home', 'lifeskills/home', 'exams/home', 'counselling/home', 'counselling/pathways', 'marketplace/jobs', 'safeguarding/help', 'learning/child', 'community/family'];
+const PRIORITY = ['learning/home', 'shelf/home', 'learning/homework', 'library/home', 'language/home', 'lifeskills/home', 'exams/home', 'counselling/home', 'counselling/pathways', 'marketplace/jobs', 'safeguarding/help', 'learning/child', 'shelf/family', 'library/child', 'community/family'];
 function visibleFor(user, key) {
   if (user.role === 'learner' && HIDE.learner.includes(key)) return false;
   if (user.role === 'learner' && user.minor && HIDE.minor.includes(key)) return false;

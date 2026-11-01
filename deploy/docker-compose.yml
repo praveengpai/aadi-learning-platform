@@ -10,6 +10,7 @@ services:
     restart: unless-stopped
     environment:
       AADI_NODE: cloud-1
+      AADI_LIBRARY_DIR: /library
       PLATFORM_NAME: ${PLATFORM_NAME:-CIF Learning Platform}
       PLATFORM_NAME_ML: ${PLATFORM_NAME_ML:-സി.ഐ.എഫ് പഠന വേദി}
       PLATFORM_SHORT: ${PLATFORM_SHORT:-CIF Learning}
@@ -21,7 +22,9 @@ services:
       AADI_SYNC_KEY: ${AADI_SYNC_KEY}
       PORT: 8080
     ports: ["127.0.0.1:${AADI_CLOUD_PORT:-8181}:8080"]
-    volumes: [cloud-data:/app/data]
+    volumes:
+      - cloud-data:/app/data
+      - ${AADI_LIBRARY_HOST_DIR:-/opt/aadi-content}:/library:ro
     command: sh -c "[ -f /app/data/cloud-1.db ] || node --disable-warning=ExperimentalWarning scripts/seed.js; exec node --disable-warning=ExperimentalWarning server.js"
   aadi-hub:
     build: ..
@@ -29,6 +32,7 @@ services:
     depends_on: [aadi-cloud]
     environment:
       AADI_NODE: hub-pachakkudi
+      AADI_LIBRARY_DIR: /library
       PLATFORM_NAME: ${PLATFORM_NAME:-CIF Learning Platform}
       PLATFORM_NAME_ML: ${PLATFORM_NAME_ML:-സി.ഐ.എഫ് പഠന വേദി}
       PLATFORM_SHORT: ${PLATFORM_SHORT:-CIF Learning}
@@ -42,7 +46,9 @@ services:
       AADI_HUB_HAMLETS: ${AADI_HUB_HAMLETS:-}
       PORT: 8080
     ports: ["127.0.0.1:${AADI_HUB_PORT:-8182}:8080"]
-    volumes: [hub-data:/app/data]
+    volumes:
+      - hub-data:/app/data
+      - ${AADI_LIBRARY_HOST_DIR:-/opt/aadi-content}:/library:ro
   caddy:
     image: caddy:2-alpine
     profiles: [caddy]

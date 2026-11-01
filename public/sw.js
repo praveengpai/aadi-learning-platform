@@ -1,6 +1,6 @@
 // Platform service worker: keeps the app shell and module screens available offline.
 // API data is cached by the shell itself (per user); the SW never caches /api/.
-const CACHE = 'aadi-shell-v2';
+const CACHE = 'aadi-shell-v3';
 const SHELL = ['/', '/index.html', '/shell/styles.css', '/shell/app.js', '/shell/kit.js', '/shell/core-views.js', '/img/cif-mark.png', '/manifest.webmanifest'];
 self.addEventListener('install', (e) => { e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', (e) => { e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim())); });

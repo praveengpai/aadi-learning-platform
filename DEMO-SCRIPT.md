@@ -13,6 +13,8 @@ internet. The family owns the data. Many agencies, one hamlet, no duplication."
 - Home: big picture tiles, read-aloud button, switch to Malayalam (top right).
 - **My Learning** → today's goals, streak, badges, the hamlet's group goal → open a lesson → 🔊 read aloud → practice quiz.
 - **My Learning Passport** → skills earned from different agencies in one record; print / verify code.
+- **Library** → her own Class 8 textbooks in Malayalam medium, books the teacher assigned with a note and due date, "continue reading" with bookmark.
+- **My Learning Shelf** → everything she has finished, year by year and subject by subject; **Revise today** picks 3–5 items (low scores first); Open → then Easy / OK / Hard. Print / take home.
 - **Help — I need someone** → calm screen, Childline 1098 / 112 / 181; a report goes only to the Child Protection Officer.
 
 ## 3. A young person getting job-ready (3 min) — `demo.youth` (Mani, PSC aspirant, Thenmala)
@@ -23,6 +25,7 @@ internet. The family owns the data. Many agencies, one hamlet, no duplication."
 
 ## 4. The family decides (2 min) — `demo.guardian`
 - Sees each child's progress in plain Malayalam.
+- **Child's shelf** → this month in plain words (read aloud): lessons finished, revision streak, average score. **Child's books** → what the teacher assigned.
 - Opens a child → **Consent** → withdraws consent for an agency → that agency instantly loses access.
   (Show it: sign in as `demo.facilitator` before and after.)
 

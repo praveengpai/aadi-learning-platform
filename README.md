@@ -24,6 +24,7 @@ left out.
             ┌───────────── services (modules) ─────────────┐
  learning · exams · language · lifeskills · counselling · safeguarding
  community · marketplace · operations · analytics · channels (SMS/IVR) · translation
+ library (textbooks, PSC papers) · shelf (My Learning Shelf, daily revision)
             └───────────────────┬──────────────────────────┘
                                 │  narrow, policy-checked SDK
                         ┌───────▼────────┐
@@ -95,6 +96,7 @@ certificates automatically. Backups: `deploy/backup.sh` (cron, keeps 14 days).
 | `PORT` | HTTP port (default 8080) |
 | `SARVAM_API_KEY` | Sarvam AI key for English→Malayalam translation (Mayura, classic-colloquial style). Empty = memory only |
 | `AADI_TRANSLATE_MODE` | `classic-colloquial` (default — plain everyday Malayalam), `modern-colloquial` (more English words), `code-mixed`, `formal` |
+| `AADI_LIBRARY_DIR` | Folder holding downloaded learning materials and `catalogue.json` (Docker: `/library`, mounted read-only from `/opt/aadi-content`). Missing = demo catalogue of online links |
 | `AADI_TRANSLATE_MONTHLY_CAP` | Max characters sent to Sarvam per month (default 500000 ≈ ₹1,000) |
 
 ## From demo to production

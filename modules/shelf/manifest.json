@@ -1,0 +1,20 @@
+{
+  "id": "shelf",
+  "version": "1.0.0",
+  "name": "My Learning Shelf",
+  "name_ml": "എന്റെ പഠന അലമാര",
+  "icon": "🗄️",
+  "description": "Everything a learner has completed — lessons, quizzes, mock tests, language activities, life-skills modules, books and homework — gathered into year folders by subject, with a few spaced-revision items every day, a guardian summary and a take-home export.",
+  "tables": {
+    "shelf_reviews": ["person_id", "hamlet_id", "kind", "ref", "title", "module", "interval_days", "ease", "due", "last_result", "reviews", "last_reviewed_at"],
+    "shelf_log": ["person_id", "hamlet_id", "kind", "ref", "module", "result", "interval_days", "at"]
+  },
+  "types": { "interval_days": "INTEGER", "ease": "REAL", "reviews": "INTEGER" },
+  "emits": ["shelf.revised"],
+  "subscribes": [],
+  "nav": [
+    { "view": "home", "label": "My Shelf", "label_ml": "എന്റെ അലമാര", "icon": "🗄️", "roles": ["learner"], "section": "learn" },
+    { "view": "family", "label": "Child's shelf", "label_ml": "കുട്ടിയുടെ അലമാര", "icon": "🗄️", "roles": ["guardian"], "section": "learn" },
+    { "view": "class", "label": "Learner shelves", "label_ml": "പഠിതാക്കളുടെ അലമാര", "icon": "🗄️", "roles": ["facilitator", "teacher", "coordinator", "agency_admin", "platform_admin", "mentor", "counsellor"], "section": "teach" }
+  ]
+}
