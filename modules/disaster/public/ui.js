@@ -375,4 +375,15 @@ async function aggregate(el, k) {
   ], r.hamlets)));
 }
 
-export default { views: { home: board, board, plans, help, incidents, warnings, aggregate } };
+// Responder-only screens: an agency that does not run disaster preparedness here gets a calm explanation.
+const responderOnly = (fn) => async (el, k) => {
+  try { await fn(el, k); } catch (e) {
+    if (e && e.status === 403) {
+      forgetHelpCache(k);
+      el.replaceChildren(k.ui.card({ title: k.t('For the disaster cell only', 'ദുരന്ത സെല്ലിന് മാത്രം'), body: k.t('Only an agency that runs disaster preparedness in this hamlet can see family plans and the list of people needing help. Your agency can still see the hamlet board and warnings.', 'ഈ ഊരിൽ ദുരന്ത തയ്യാറെടുപ്പ് നടത്തുന്ന ഏജൻസിക്ക് മാത്രമേ കുടുംബ പദ്ധതികളും സഹായം വേണ്ടവരുടെ പട്ടികയും കാണാനാകൂ. നിങ്ങളുടെ ഏജൻസിക്ക് ഊര് ബോർഡും മുന്നറിയിപ്പുകളും കാണാം.'), actions: [k.ui.button(k.t('Open the hamlet board', 'ഊര് ബോർഡ് തുറക്കുക'), () => k.go('#/m/disaster/board'))] }));
+      return;
+    }
+    throw e;
+  }
+};
+export default { views: { home: board, board, plans: responderOnly(plans), help: responderOnly(help), incidents, warnings, aggregate } };
