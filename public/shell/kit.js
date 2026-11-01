@@ -59,7 +59,7 @@ export async function http(method, url, body) {
 }
 
 // Records that must never sit in plain device storage (health, form answers, case queues).
-const NO_CACHE = [/\/api\/core\/forms\/(submissions|queue)/, /\/api\/m\/health\/(?!meta)/, /\/api\/m\/govtservices\/(documents|applications|person|my|family)/];
+const NO_CACHE = [/\/api\/core\/forms\/(submissions|queue)/, /\/api\/m\/health\/(?!meta)/, /\/api\/m\/govtservices\/(documents|applications|person|my|family)/, /\/api\/m\/disaster\/help/];
 const cacheable = (url) => !NO_CACHE.some((r) => r.test(url));
 const idemKey = () => (state.user ? state.user.id : 'x') + '-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
 
