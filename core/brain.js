@@ -214,6 +214,8 @@ class Brain {
         visible: (user, opts) => b.personsVisible(user, opts),
         visibleIds: (user) => b.policy.visiblePersonIds(user),
         get: (user, id, scope) => b.getPerson(user, id, scope),
+        // A guardian's own children (or [] for anyone else).
+        wards: (user) => (user && user.role === 'guardian' && user.person_id ? b.store.find('persons', { guardian_id: user.person_id }, { order: 'name' }).map((p) => b.redact(p, user)) : []),
         raw: (id) => b.store.get('persons', id), // for system jobs (no user) — never return to clients unredacted
         // minimal, display-safe fields (no phone/dob) for building rosters after a policy check
         basic: (id) => { const p = b.store.get('persons', id); if (!p) return null; const age = p.dob ? Math.floor((Date.now() - new Date(p.dob)) / 3.15576e10) : null; return { id: p.id, name: p.name, hamlet_id: p.hamlet_id, kind: p.kind, gender: p.gender, age, school_class: p.school_class, language: p.language, household_id: p.household_id || null, guardian_id: p.guardian_id || null }; },

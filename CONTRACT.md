@@ -218,7 +218,8 @@ Rules must be pure, fast and never throw (a throw is caught and logged as "pleas
 
 ### Core API (the generic screens and other modules use it too)
 `GET /api/core/forms?module=` · `GET /api/core/forms/defs/:key` · `POST /api/core/forms/submissions` · `GET /api/core/forms/submissions?module=&status=&mine=1&person_id=` · `GET /api/core/forms/queue?module=` · `GET /api/core/forms/submissions/:id` · `POST …/:id/claim|reply|seen|close` · `GET /api/core/forms/export/:key.csv`.
-A reply automatically queues a notification to the person: "a reply is ready, visit the centre" — **never put health or case details in notifications.**
+A reply automatically queues a neutral notification to the person ("you have a message waiting at the centre") — it never names the form or service. **Never put health or case details in notifications.** Notification statuses: `queued, sent, delivered, failed, withdrawn`.
+Staff with `hamlet_ids` see form records only from those hamlets. `brain.persons.wards(user)` lists a guardian's children.
 
 ### Browser kit additions
 `k.ui.formFill(def, { person_id | household_id | hamlet_id, answers, onDone(result), submitLabel })` renders any form, works offline (outbox + client_ref), read-aloud on every label, camera photos, location.

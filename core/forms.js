@@ -152,11 +152,15 @@ function makeForms(brain) {
   }
 
   // ---------------- visibility ----------------
+  // Staff limited to particular hamlets see only those hamlets' records.
+  const outsideArea = (user, sub) => Array.isArray(user.hamlet_ids) && user.hamlet_ids.length && !['platform_admin', 'cpo', 'learner', 'guardian'].includes(user.role) && !user.hamlet_ids.includes(sub.hamlet_id);
+
   function visible(user, sub, def = getDef(sub.form_key)) {
     if (!user || !sub || !def) return false;
     if (sub.person_id) {
       if (user.person_id && user.person_id === sub.person_id) return true;
       if (user.role === 'guardian') { const p = store.get('persons', sub.person_id); return !!(p && p.guardian_id === user.person_id); }
+      if (outsideArea(user, sub)) return false;
       const v = policy.canSee(user, sub.person_id, def.scope);
       if (v.ok && (v.reason === 'steward' || sub.agency_id === user.agency_id)) return canCapture(user, def) || canReview(user, def) || v.reason === 'steward';
       // Forwarded review: the person consented to share this scope with the reviewing agency.
@@ -296,7 +300,8 @@ function makeForms(brain) {
     const row = store.put('form_submissions', { ...s, reply: String(text).slice(0, 4000), reply_ml: reply_ml ? String(reply_ml).slice(0, 4000) : null, outcome: outcome || null, replied_by: user.id, replied_at: now, reply_seen_at: null, status: close ? 'closed' : 'replied', closed_at: close ? now : null }, { actor: user.id });
     store.emit('forms.replied', { id: s.id, form_key: s.form_key, module: s.module, outcome }, { actor: user.id, hamlet_id: s.hamlet_id });
     // Tell the family (outbox → SMS/IVR). Message carries no health details: only that advice is waiting.
-    if (notify && s.person_id) brain.notify(s.person_id, `${brain.brand.short}: a reply to "${def.title}" is ready. Please visit the centre on the next visit day.`, { module: s.module }, user);
+    // Never name the form or service: phones are shared, and the form title alone can reveal a condition.
+    if (notify && s.person_id) brain.notify(s.person_id, `${brain.brand.short}: you have a message waiting at the centre. Please come on the next visit day.`, { module: s.module }, user);
     return row;
   }
 
