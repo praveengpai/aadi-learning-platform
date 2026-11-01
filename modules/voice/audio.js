@@ -34,13 +34,27 @@ function wavDuration(buf) {
   }
   return null;
 }
+// Walk Ogg pages from the start; they must tile the buffer exactly (no bytes after the last page).
+function oggPages(buf) {
+  let off = 0, last = -1, guard = 0;
+  while (off < buf.length) {
+    if (guard++ > 100000 || off + 27 > buf.length || buf.toString('latin1', off, off + 4) !== 'OggS' || buf[off + 4] !== 0) return null;
+    const segs = buf[off + 26];
+    if (off + 27 + segs > buf.length) return null;
+    let body = 0;
+    for (let i = 0; i < segs; i++) body += buf[off + 27 + i];
+    const next = off + 27 + segs + body;
+    if (next > buf.length) return null;
+    last = off; off = next;
+  }
+  return last >= 0 ? { last } : null;
+}
 function oggDuration(buf) {
   // Opus in Ogg always counts granule positions at 48 kHz (RFC 7845); other codecs: unknown here.
   if (buf.indexOf('OpusHead', 0, 'latin1') < 0) return null;
-  let last = -1;
-  for (let i = buf.length - 27; i >= 0; i--) if (buf[i] === 0x4f && buf.toString('latin1', i, i + 4) === 'OggS') { last = i; break; }
-  if (last < 0) return null;
-  const g = Number(buf.readBigInt64LE(last + 6));
+  const pages = oggPages(buf);
+  if (!pages) return null;
+  const g = Number(buf.readBigInt64LE(pages.last + 6));
   let preSkip = 0;
   const head = buf.indexOf('OpusHead', 0, 'latin1');
   if (head >= 0 && head + 12 <= buf.length) preSkip = buf.readUInt16LE(head + 10);
@@ -55,20 +69,25 @@ function mp4Duration(buf) {
     const ts = buf.readUInt32BE(i + 16); const d = buf.readUInt32BE(i + 20); return ts ? d / ts : null;
   } catch (_) { return null; }
 }
-function aacDuration(buf) {
+function aacFrames(buf) {
   const RATES = [96000, 88200, 64000, 48000, 44100, 32000, 24000, 22050, 16000, 12000, 11025, 8000, 7350];
   let off = 0, frames = 0, rate = 0;
   while (off + 7 <= buf.length && buf[off] === 0xff && (buf[off + 1] & 0xf6) === 0xf0) {
     rate = RATES[(buf[off + 2] >> 2) & 0x0f] || rate;
     const len = ((buf[off + 3] & 0x03) << 11) | (buf[off + 4] << 3) | (buf[off + 5] >> 5);
-    if (len < 7) break;
+    if (len < 7 || off + len > buf.length) break;
     frames++; off += len;
   }
+  return { frames, rate, end: off };
+}
+function aacDuration(buf) {
+  const { frames, rate } = aacFrames(buf);
   return rate && frames ? (frames * 1024) / rate : null;
 }
 // WebM (Matroska): walk EBML elements; MediaRecorder writes unknown-size Segment/Cluster, so masters
 // we care about are entered in place. Duration = Info/Duration if present, else the last block's time.
-function webmDuration(buf) {
+// `exact` is true only when the elements tile the whole buffer and a sized Segment ends at its end.
+function webmParse(buf) {
   const vint = (o, keepMarker) => {
     const b = buf[o]; if (b === undefined) return null;
     let len = 1, mask = 0x80; while (len <= 8 && !(b & mask)) { mask >>= 1; len++; }
@@ -78,22 +97,75 @@ function webmDuration(buf) {
     return { val, len, unknown: !keepMarker && allOnes };
   };
   const MASTERS = new Set([0x18538067 /* Segment */, 0x1549a766 /* Info */, 0x1f43b675 /* Cluster */, 0xa0 /* BlockGroup */]);
-  let off = 0, scale = 1e6, infoDur = null, cluster = 0, maxT = 0, guard = 0;
-  while (off < buf.length && guard++ < 200000) {
-    const id = vint(off, true); if (!id) break;
-    const sz = vint(off + id.len, false); if (!sz) break;
+  let off = 0, scale = 1e6, infoDur = null, cluster = 0, maxT = 0, guard = 0, broke = false, segEnd = null;
+  while (off < buf.length) {
+    if (guard++ >= 200000) { broke = true; break; }
+    const id = vint(off, true); if (!id || id.len > 4) { broke = true; break; }
+    const sz = vint(off + id.len, false); if (!sz) { broke = true; break; }
     const data = off + id.len + sz.len;
-    if (MASTERS.has(id.val)) { off = data; continue; }
-    if (sz.unknown || data + sz.val > buf.length) break;
+    if (MASTERS.has(id.val)) {
+      if (id.val === 0x18538067 && !sz.unknown) segEnd = data + sz.val;
+      if (!sz.unknown && data + sz.val > buf.length) { broke = true; break; }
+      off = data; continue;
+    }
+    if (sz.unknown || data + sz.val > buf.length) { broke = true; break; }
     if (id.val === 0x2ad7b1) { let v = 0; for (let k = 0; k < sz.val; k++) v = v * 256 + buf[data + k]; scale = v || scale; }
     else if (id.val === 0x4489) infoDur = sz.val === 8 ? buf.readDoubleBE(data) : sz.val === 4 ? buf.readFloatBE(data) : null;
     else if (id.val === 0xe7) { let v = 0; for (let k = 0; k < sz.val; k++) v = v * 256 + buf[data + k]; cluster = v; maxT = Math.max(maxT, cluster); }
-    else if (id.val === 0xa3 || id.val === 0xa1) { const tn = vint(data, false); if (tn) maxT = Math.max(maxT, cluster + buf.readInt16BE(data + tn.len)); }
+    else if (id.val === 0xa3 || id.val === 0xa1) { const tn = vint(data, false); if (tn && data + tn.len + 2 <= buf.length) maxT = Math.max(maxT, cluster + buf.readInt16BE(data + tn.len)); }
     off = data + sz.val;
   }
-  if (infoDur && infoDur > 0) return (infoDur * scale) / 1e9;
-  return maxT > 0 ? (maxT * scale) / 1e9 + 0.02 : null;
+  let duration = null;
+  if (infoDur && infoDur > 0) duration = (infoDur * scale) / 1e9;
+  else if (maxT > 0) duration = (maxT * scale) / 1e9 + 0.02;
+  return { duration, exact: !broke && off === buf.length && (segEnd === null || segEnd === buf.length) };
 }
+const webmDuration = (buf) => webmParse(buf).duration;
+
+// ---- structure checks: the container must end where the audio ends (nothing hidden after it) ----
+// WAV: the RIFF size must cover exactly the file, and its chunks (only fmt/fact/data/small LIST) must
+// tile it — a missing final pad byte after an odd-sized last chunk is tolerated.
+function wavExact(buf) {
+  if (buf.length < 12) return false;
+  const end = 8 + buf.readUInt32LE(4);
+  if (end !== buf.length) return false;
+  let off = 12, fmt = 0, data = 0;
+  while (off < end) {
+    if (off + 8 > end) return false;
+    const id = buf.toString('latin1', off, off + 4); const size = buf.readUInt32LE(off + 4);
+    if (id === 'fmt ') fmt++; else if (id === 'data') data++;
+    else if (id === 'LIST') { if (size > 4096) return false; } else if (id !== 'fact') return false;
+    const next = off + 8 + size;
+    if (next > end) return false;
+    if (next === end) { off = next; break; }
+    off = next + (size % 2);
+  }
+  return off === end && fmt === 1 && data === 1;
+}
+// MP4: top-level boxes must tile the file exactly; free-form boxes are kept small.
+const MP4_TOP = new Set(['ftyp', 'styp', 'moov', 'mdat', 'moof', 'mfra', 'free', 'skip', 'wide', 'sidx', 'uuid', 'meta', 'pdin', 'emsg', 'prft']);
+function mp4Exact(buf) {
+  let off = 0, first = true;
+  while (off < buf.length) {
+    if (off + 8 > buf.length) return false;
+    let size = buf.readUInt32BE(off); let hdr = 8;
+    const type = buf.toString('latin1', off + 4, off + 8);
+    if (size === 1) { if (off + 16 > buf.length) return false; size = Number(buf.readBigUInt64BE(off + 8)); hdr = 16; } else if (size === 0) size = buf.length - off;
+    if (size < hdr || off + size > buf.length) return false;
+    if (first && type !== 'ftyp') return false;
+    if (!MP4_TOP.has(type)) return false;
+    if (['free', 'skip', 'wide', 'uuid'].includes(type) && size > 16384) return false;
+    first = false; off += size;
+  }
+  return !first;
+}
+const EXACT = {
+  wav: wavExact,
+  ogg: (buf) => !!oggPages(buf),
+  webm: (buf) => webmParse(buf).exact,
+  mp4: mp4Exact,
+  aac: (buf) => { const f = aacFrames(buf); return f.frames > 0 && f.end === buf.length; },
+};
 const READERS = { wav: wavDuration, ogg: oggDuration, mp4: mp4Duration, aac: aacDuration, webm: webmDuration };
 
 // Validate a data URL. Returns { mime, container, bytes, duration_s, duration_source, buffer }.
@@ -110,6 +182,9 @@ function validateAudio(dataUrl, reportedSeconds) {
   if (buffer.length > MAX_BYTES) throw fail('The clip is too large — keep it under 400 KB (about 90 seconds).');
   const real = sniff(buffer);
   if (real !== container) throw fail('The file is not the kind of audio it claims to be.');
+  let exact = false;
+  try { exact = EXACT[container](buffer); } catch (_) { exact = false; }
+  if (!exact) throw fail('The recording is damaged or has extra data after the audio — please record again.');
   let measured = null;
   try { measured = READERS[container](buffer); } catch (_) { measured = null; }
   const rep = Number(reportedSeconds);
