@@ -147,7 +147,7 @@ async function group(el, k) {
   el.append(ui.tabs([
     { id: 'members', label: '👩 ' + t('Members', 'അംഗങ്ങൾ'), render: (b) => membersTab(b, k, g, r, m) },
     { id: 'ledger', label: '📒 ' + t('Book', 'കണക്കുപുസ്തകം'), render: (b) => ledgerTab(b, k, r) },
-    { id: 'requests', label: '📝 ' + t('Requests', 'അപേക്ഷകൾ'), render: (b) => { b.append(r.requests.length ? r.requests.map((s) => requestCard(k, s, m)) : ui.empty(t('No loan requests yet.', 'വായ്പ അപേക്ഷകളില്ല.'))); } },
+    { id: 'requests', label: '📝 ' + t('Requests', 'അപേക്ഷകൾ'), render: (b) => { b.append(r.requests.length ? r.requests.map((s) => requestCard(k, s, m, { onGive: s.can_give ? (x) => ui.button(t('Give loan', 'വായ്പ നൽകുക'), () => giveLoan(k, g, x), { small: true }) : null })) : ui.empty(t('No loan requests yet.', 'വായ്പ അപേക്ഷകളില്ല.'))); } },
     { id: 'trend', label: '📈 ' + t('Months', 'മാസങ്ങൾ'), render: (b) => {
       b.append(ui.section(t('Savings by month', 'മാസം തിരിച്ചുള്ള സമ്പാദ്യം'), ui.bars(r.by_month.map((x) => ({ label: x.month, value: Math.round(x.savings / 100) })), { unit: ' ₹' })));
       b.append(ui.section(t('Loans given and repaid', 'നൽകിയതും തിരിച്ചടച്ചതുമായ വായ്പ'), ui.table([
@@ -193,7 +193,7 @@ async function memberCard(k, g, pid) {
 function ledgerRow(k, x) {
   const { h, t } = k;
   return h('div', { class: 'lvh-row' + (x.voided ? ' void' : '') }, h('span', { class: 'e', 'aria-hidden': 'true' }, KIND_ICON[x.kind] || '•'),
-    h('div', { class: 'm' }, h('b', null, kindLabel(k, x.kind)), ' ', x.person_name ? h('span', null, '· ' + x.person_name) : x.member_hidden ? h('span', { class: 'muted' }, '· ' + t('member (hidden)', 'അംഗം (മറച്ചത്)')) : null,
+    h('div', { class: 'm' }, h('b', null, kindLabel(k, x.kind)), ' ', x.person_name ? h('span', null, '· ' + x.person_name) : x.others ? h('span', { class: 'muted' }, '· ' + t('other members (total)', 'മറ്റ് അംഗങ്ങൾ (ആകെ)')) : null,
       h('div', { class: 'small muted' }, x.date + (x.months ? ' · ' + t(`${x.months} months`, `${x.months} മാസം`) : '') + (x.note ? ' · ' + x.note : '') + (x.voided ? ' · ' + t('cancelled: ', 'റദ്ദാക്കി: ') + (x.void_reason || '') : ''))),
     h('span', { class: 'v' }, (['loan_out', 'expense', 'bank_deposit'].includes(x.kind) ? '− ' : '+ ') + rs(x.amount)));
 }
@@ -204,7 +204,7 @@ function ledgerTab(b, k, r) {
   b.append(ui.kv([[t('Total savings', 'ആകെ സമ്പാദ്യം'), rs(r.summary.totals.savings)], [t('Interest received', 'ലഭിച്ച പലിശ'), rs(r.summary.totals.interest)], [t('Other income', 'മറ്റ് വരുമാനം'), rs(r.summary.totals.income)], [t('Expenses', 'ചെലവുകൾ'), rs(r.summary.totals.expense)], [t('Group fund', 'ഗ്രൂപ്പ് ഫണ്ട്'), rs(r.summary.fund)]]));
   b.append(h('div', null, r.ledger.map((x) => {
     const row = ledgerRow(k, x);
-    if (!x.voided) row.append(ui.button('✖', async () => {
+    if (!x.voided && !x.others) row.append(ui.button('✖', async () => {
       const reason = prompt(t('Why cancel this entry?', 'ഈ എൻട്രി എന്തിന് റദ്ദാക്കുന്നു?'));
       if (!reason) return;
       try { await k.api.post(`/txns/${x.id}/void`, { reason }); k.toast(t('Entry cancelled', 'എൻട്രി റദ്ദാക്കി'), 'good'); k.refresh(); } catch (e) { k.toast(e.message, 'bad'); }
@@ -216,7 +216,7 @@ async function entryForm(k, g, members, m) {
   const { t, ui } = k;
   kindsCache = m.kinds;
   const box = ui.modal(t('New entry', 'പുതിയ എൻട്രി'), ui.form([
-    { name: 'kind', label: t('What happened?', 'എന്ത് സംഭവിച്ചു?'), type: 'select', required: true, options: Object.entries(m.kinds).map(([v, x]) => ({ value: v, label: x.icon + ' ' + t(x.label, x.label_ml) })) },
+    { name: 'kind', label: t('What happened?', 'എന്ത് സംഭവിച്ചു?'), type: 'select', required: true, options: Object.entries(m.kinds).filter(([v]) => v !== 'loan_out').map(([v, x]) => ({ value: v, label: x.icon + ' ' + t(x.label, x.label_ml) })) },
     { name: 'person_id', label: t('Member (for savings, loans, repayments, interest)', 'അംഗം (സമ്പാദ്യം, വായ്പ, തിരിച്ചടവ്, പലിശ)'), type: 'select', options: [{ value: '', label: '—' }, ...members.filter((x) => x.status === 'active').map((x) => ({ value: x.person_id, label: x.name }))] },
     { name: 'amount', label: t('Amount (₹)', 'തുക (₹)'), type: 'number', required: true },
     { name: 'months', label: t('Loan months (only for a loan)', 'വായ്പ മാസങ്ങൾ (വായ്പയ്ക്ക് മാത്രം)'), type: 'number' },
@@ -227,6 +227,20 @@ async function entryForm(k, g, members, m) {
     box.close();
     if (!r.queued) { k.toast(t('Saved', 'സേവ് ചെയ്തു'), 'good'); k.refresh(); }
   }, { submitLabel: t('Save', 'സേവ് ചെയ്യുക') }));
+}
+// A loan is given only against a request the CDS / agency approved (the server checks again).
+async function giveLoan(k, g, s) {
+  const { t, ui } = k;
+  const a = s.answers || {};
+  const box = ui.modal(t('Give loan', 'വായ്പ നൽകുക'), ui.form([
+    { name: 'amount', label: t('Amount (₹) — at most the approved amount', 'തുക (₹) — അനുവദിച്ച തുക വരെ'), type: 'number', required: true, value: a.amount },
+    { name: 'months', label: t('Months', 'മാസങ്ങൾ'), type: 'number', required: true, value: a.months },
+    { name: 'date', label: t('Date', 'തീയതി'), type: 'date', value: today(), required: true },
+  ], async (v) => {
+    const r = await k.api.post(`/groups/${g.id}/txns`, { kind: 'loan_out', person_id: s.person && s.person.id, request_id: s.id, amount: toPaise(v.amount), months: Number(v.months), date: v.date, client_ref: ref(k, 'loan-out') });
+    box.close();
+    if (!r.queued) { k.toast(t('Loan given', 'വായ്പ നൽകി'), 'good'); k.refresh(); }
+  }, { submitLabel: t('Give loan', 'വായ്പ നൽകുക') }));
 }
 async function loanRequestForm(k, g, members, m) {
   const { t, ui } = k;

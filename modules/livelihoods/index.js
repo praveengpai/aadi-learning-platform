@@ -39,6 +39,13 @@ module.exports = function init(ctx) {
   };
   brain.forms.rule(F.LOAN_FORM.key, F.loanRule(snapshot));
   brain.forms.rule(F.IDEA_FORM.key, (a) => F.ideaRule(a));
+  // Who may decide a loan request (module routes AND core routes): never the person who entered it, and only
+  // a reviewer of the agency that holds the group's book (the engine already limits visibility to that agency).
+  brain.forms.decider(F.LOAN_FORM.key, (u, s) => {
+    if (s.captured_by && s.captured_by === u.id) return 'Someone else must review a request you entered.';
+    if (!u.agency_id || u.agency_id !== s.agency_id) return 'Only the group\'s own agency reviews its loan requests.';
+    return true;
+  });
 
   // ---------------- reads ----------------
   const txnsOf = (gid) => sql('SELECT * FROM livelihoods_txns WHERE deleted=0 AND group_id=? ORDER BY date, entered_at', gid);
@@ -96,7 +103,34 @@ module.exports = function init(ctx) {
     }
     return { members: rows, hidden };
   }
-  const txnOut = (user, t) => ({ id: t.id, date: t.date, kind: t.kind, amount: t.amount, months: t.months || null, person_id: sees(user, t.person_id) ? t.person_id : null, person_name: t.person_id ? (personName(user, t.person_id) || null) : null, member_hidden: !!(t.person_id && !sees(user, t.person_id)), note: t.note || null, meeting_id: t.meeting_id || null, request_id: t.request_id || null, voided: Number(t.voided) === 1, void_reason: t.void_reason || null, entered_at: t.entered_at });
+  const userName = (id) => { const x = id && brain.users.get(id); return x ? x.display_name || x.username : null; };
+  const isHidden = (user, t) => !!(t.person_id && !sees(user, t.person_id));
+  // Ledger lists go through ledgerOut; this never names a hidden member either way.
+  const txnOut = (user, t) => ({ id: t.id, date: t.date, kind: t.kind, amount: t.amount, months: t.months || null, person_id: isHidden(user, t) ? null : t.person_id || null, person_name: t.person_id ? (personName(user, t.person_id) || null) : null, note: t.note || null, meeting_id: t.meeting_id || null, request_id: t.request_id || null,
+    entered_by: t.entered_by || null, entered_by_name: userName(t.entered_by), voided: Number(t.voided) === 1, void_reason: t.void_reason || null, voided_by_name: Number(t.voided) === 1 ? userName(t.voided_by) : null, voided_at: t.voided_at || null, entered_at: t.entered_at });
+  // Ledger for staff: members who withdrew (or never gave) livelihood consent never appear one by one. Their
+  // entries at one meeting become a single "others" line per kind (date, kind, total) — and only when at least
+  // two hidden members are in it; otherwise they stay only inside the meeting / group totals. Cancelled hidden
+  // entries are dropped. Nothing else (id, meeting, note, months) is returned for them.
+  function ledgerOut(user, rows) {
+    const out = [];
+    const buckets = new Map();
+    for (const t of rows) {
+      if (!isHidden(user, t)) { out.push(txnOut(user, t)); continue; }
+      if (Number(t.voided) === 1) continue;
+      const key = (t.meeting_id || 'day:' + t.date) + '|' + t.kind;
+      if (!buckets.has(key)) buckets.set(key, { date: t.date, kind: t.kind, amount: 0, people: new Set(), at: t.entered_at });
+      const b = buckets.get(key);
+      b.amount += t.amount; b.people.add(t.person_id);
+      if (t.date > b.date) b.date = t.date;
+    }
+    let n = 0;
+    for (const b of buckets.values()) {
+      if (b.people.size < 2) continue;
+      out.push({ id: 'others-' + (++n), date: b.date, kind: b.kind, amount: b.amount, others: true, person_id: null, person_name: null, voided: false, entered_at: b.at });
+    }
+    return out.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : String(b.entered_at || '').localeCompare(String(a.entered_at || ''))));
+  }
   function groupCard(user, g) {
     const txns = txnsOf(g.id);
     const meetings = meetingsOf(g.id);
@@ -114,7 +148,8 @@ module.exports = function init(ctx) {
     return { id: s.id, form_key: s.form_key, status: s.status, priority: s.priority, flags: s.flags || [], answers: a, captured_at: s.captured_at, captured_by_name: s.captured_by_name,
       person: s.person ? { id: s.person.id, name: s.person.name } : null, hamlet: s.hamlet, hamlet_ml: s.hamlet_ml, hamlet_id: s.hamlet_id,
       group: okGroup ? { id: g.id, name: g.name, name_ml: g.name_ml } : null, group_mismatch: !!a.group_id && !okGroup,
-      reply: s.reply, reply_ml: s.reply_ml, outcome: s.outcome, replied_by_name: s.replied_by_name, replied_at: s.replied_at, reply_seen_at: s.reply_seen_at };
+      reply: s.reply, reply_ml: s.reply_ml, outcome: s.outcome, replied_by_name: s.replied_by_name, replied_at: s.replied_at, reply_seen_at: s.reply_seen_at,
+      can_give: s.form_key === F.LOAN_FORM.key && okGroup && s.outcome === 'approved' && approvedBy(s) && !paidOut(s.id) };
   };
 
   // ---------------- meta ----------------
@@ -186,7 +221,7 @@ module.exports = function init(ctx) {
     const { members, hidden } = memberRows(u, g, txns);
     const requests = brain.forms.list(u, { form_key: F.LOAN_FORM.key, hamlet_id: g.hamlet_id, limit: 300 }).filter((s) => s.answers && s.answers.group_id === g.id).map((s) => reqOut(u, s));
     res.json({ group: groupCard(u, g), summary: L.summarize(txns), members, hidden_members: hidden,
-      ledger: all.map((t) => txnOut(u, t)), meetings: meetingsOf(g.id).slice(0, 30).map((m) => ({ id: m.id, date: m.date, attendance: m.attendance, savings_collected: m.savings_collected, notes: m.notes })),
+      ledger: ledgerOut(u, all), meetings: meetingsOf(g.id).slice(0, 30).map((m) => ({ id: m.id, date: m.date, attendance: m.attendance, savings_collected: m.savings_collected, notes: m.notes })),
       requests, by_month: monthly(txns) });
   });
   function monthly(txns, n = 6) {
@@ -279,14 +314,25 @@ module.exports = function init(ctx) {
     } else t.person_id = null;
     return t;
   }
+  // A loan is given only against a request that a reviewer — someone other than whoever entered it, holding
+  // the review permission in the group's agency — answered "approved". Never more than approved, only once.
+  const paidOut = (rid) => sqlOne('SELECT 1 x FROM livelihoods_txns WHERE deleted=0 AND voided=0 AND request_id=?', rid);
+  function approvedBy(s) {
+    if (!s.replied_by || !s.replied_at || s.replied_by === s.captured_by) return false;
+    const r = brain.users.get(s.replied_by);
+    if (!r || r.active === 0) return false;
+    if (r.role === 'platform_admin') return true;
+    return P.can(r, 'forms.review') && !!r.agency_id && r.agency_id === s.agency_id;
+  }
   function checkLoanRequest(u, g, t) {
-    if (!t.request_id) return null;
+    if (t.kind !== 'loan_out') return null;
+    if (!t.request_id) throw httpError(400, 'A loan can only be given against an approved loan request. Choose the request.');
     let s;
     try { s = brain.forms.one(u, t.request_id); } catch (e) { throw httpError(400, 'Loan request not found.'); }
-    if (s.form_key !== F.LOAN_FORM.key || !s.answers || s.answers.group_id !== g.id || s.person_id !== t.person_id) throw httpError(400, 'That loan request is for another member or group.');
-    if (s.outcome !== 'approved') throw httpError(409, 'That loan request has not been approved.');
-    if (t.amount > Number(s.answers.amount) * 100) throw httpError(400, 'More than the approved amount.');
-    if (sqlOne('SELECT 1 x FROM livelihoods_txns WHERE deleted=0 AND voided=0 AND request_id=?', t.request_id)) throw httpError(409, 'This loan has already been given.');
+    if (s.form_key !== F.LOAN_FORM.key || !s.answers || s.answers.group_id !== g.id || s.person_id !== t.person_id || s.agency_id !== g.agency_id) throw httpError(400, 'That loan request is for another member or group.');
+    if (s.outcome !== 'approved' || !['replied', 'closed'].includes(s.status) || !approvedBy(s)) throw httpError(409, 'That loan request has not been approved by a reviewer.');
+    if (!Number.isInteger(t.amount) || t.amount > Number(s.answers.amount) * 100) throw httpError(400, 'More than the approved amount.');
+    if (paidOut(t.request_id)) throw httpError(409, 'This loan has already been given.');
     return s;
   }
   // Every write replays the whole book: cash, bank and each member's loan never go below zero.
@@ -303,7 +349,11 @@ module.exports = function init(ctx) {
     if (dup) return res.json({ ...txnOut(u, dup), duplicate: true });
     const t = buildTxn(u, g, b, { client_ref });
     const s = checkLoanRequest(u, g, t);
-    const row = tx(() => { commit(u, g, [t]); return data.put('livelihoods_txns', t, u); });
+    const row = tx(() => {
+      if (t.request_id && paidOut(t.request_id)) throw httpError(409, 'This loan has already been given.');
+      commit(u, g, [t]);
+      return data.put('livelihoods_txns', t, u);
+    });
     if (s && s.status !== 'closed') { try { brain.forms.close(u, s.id, { outcome: 'approved' }); } catch (_) { /* reviewer closes later */ } }
     if (t.kind === 'loan_out') emit('livelihoods.loan_given', { group_id: g.id }, u, g.hamlet_id);
     res.json({ ...txnOut(u, row), summary: L.summarize(txnsOf(g.id)) });
@@ -315,13 +365,19 @@ module.exports = function init(ctx) {
     const t = data.get('livelihoods_txns', S(req.params.id, 60));
     if (!t) throw httpError(404, 'Entry not found');
     const g = groupFor(u, t.group_id);
+    // a member who withdrew consent: her entries are not shown, so they cannot be cancelled one by one either
+    if (isHidden(u, t) && u.role !== 'platform_admin') throw err403('Not permitted: this member has not given livelihood consent to your agency.');
+    // money that moved to or from one member: only the agency admin or whoever entered it may cancel
+    if (['loan_out', 'repayment'].includes(t.kind) && !['platform_admin', 'agency_admin'].includes(u.role) && t.entered_by !== u.id) throw err403('Only the agency admin or the person who entered it can cancel a loan or a repayment.');
     if (Number(t.voided)) return res.json(txnOut(u, t));
     const reason = S((req.body || {}).reason, 300);
     if (reason.length < 3) throw httpError(400, 'Say why this entry is being cancelled.');
     const rest = txnsOf(g.id).filter((x) => x.id !== t.id);
     const r = L.replay(rest);
     if (!r.ok) throw Object.assign(httpError(409, 'Cannot cancel this entry: ' + r.error), { code: r.code });
-    res.json(txnOut(u, data.put('livelihoods_txns', { ...t, voided: 1, void_reason: reason, voided_by: u.id }, u)));
+    const row = data.put('livelihoods_txns', { ...t, voided: 1, void_reason: reason, voided_by: u.id, voided_at: new Date().toISOString() }, u);
+    brain.audit(u, 'txn.void', t.id, { group: g.id, kind: t.kind, reason });
+    res.json(txnOut(u, row));
   });
 
   // A meeting, recorded at the hub (often offline): attendance + everyone's savings and repayments in one go.
