@@ -162,3 +162,50 @@ test('L2: person lists are capped', async () => {
   const r = await N.as('demo.steward').get('/api/core/persons?limit=-1');
   assert.ok(r.body.length <= 500);
 });
+
+// ---- Wave 2 review (engine findings) ----
+test('W2-1: schema-qualified names, pragmas and ATTACH cannot bypass the SQL guard', () => {
+  const ctx = N.host._ctx(N.host.modules.get('learning'), express.Router(), 'learning_');
+  for (const q of ['SELECT * FROM main.form_submissions', 'SELECT * FROM "main"."persons"', 'SELECT * FROM main . disaster_help_needed', 'SELECT * FROM temp.x', "SELECT * FROM pragma_table_info('persons')", "ATTACH 'x.db' AS y"]) assert.throws(() => ctx.sql(q), /may not|read-only/, q);
+  assert.throws(() => ctx.data.find('main.persons', {}), /bad table name|may not/);
+  assert.ok(Array.isArray(ctx.sql("SELECT id FROM hamlets WHERE name='main.x'")), 'a string mentioning main. is fine');
+});
+
+test('W2-2: guardians never see an adult child\'s form records through core routes', async () => {
+  const adult = B().store.all('SELECT * FROM persons WHERE guardian_id=? AND deleted=0', D.demoGuardian.id).find((p) => !B().policy.isMinor(p));
+  if (!adult) return;
+  const def = B().forms.define('testsec', { key: 'testsec.note', title: 'Note', scope: 'profile', subject: 'person', review: null, fields: [{ name: 'x', type: 'text', label: 'X' }] });
+  const s = B().forms.submit(user('steward'), { form_key: def.key, person_id: adult.id, answers: { x: 'private note about adult' } }, {});
+  assert.equal((await N.as('demo.guardian').get('/api/core/forms/submissions/' + s.id)).status, 403);
+  const list = (await N.as('demo.guardian').get('/api/core/forms/submissions')).body;
+  assert.ok(!list.some((r) => r.id === s.id));
+});
+
+test('W2-3: the capturer cannot decide their own form through core routes; forwarded forms only by the receiving agency', async () => {
+  const P = B().policy;
+  const std = D.agencyByKey.std.id;
+  const def = B().forms.define('testsec', { key: 'testsec.fwd', title: 'Forwarded', scope: 'progress', subject: 'person', review: { perm: 'forms.review', agency_id: std }, fields: [{ name: 'x', type: 'text', label: 'X' }] });
+  const own = B().forms.define('testsec', { key: 'testsec.own', title: 'Own', scope: 'progress', subject: 'person', review: { perm: 'forms.review' }, fields: [{ name: 'x', type: 'text', label: 'X' }] });
+  const person = D.children.find((c) => c.hamlet_id === D.hamletByKey.h1.id && P.canSee(user('cif.admin'), c.id, 'progress').ok);
+  // capturer = CIF admin (has forms.review): cannot decide own capture
+  const a = await N.as('demo.cif.admin').post('/api/core/forms/submissions', { form_key: own.key, person_id: person.id, answers: { x: 'a' } });
+  assert.equal(a.status, 200, JSON.stringify(a.body));
+  assert.equal((await N.as('demo.cif.admin').post(`/api/core/forms/submissions/${a.body.id}/reply`, { reply: 'approve myself', outcome: 'approved' })).status, 403);
+  assert.equal((await N.as('demo.cif.admin').post(`/api/core/forms/submissions/${a.body.id}/close`, { outcome: 'approved' })).status, 403);
+  // forwarded: the capturing agency's admin cannot decide it
+  const b = await N.as('demo.facilitator').post('/api/core/forms/submissions', { form_key: def.key, person_id: person.id, answers: { x: 'b' } });
+  assert.equal(b.status, 200, JSON.stringify(b.body));
+  assert.equal((await N.as('demo.cif.admin').post(`/api/core/forms/submissions/${b.body.id}/reply`, { reply: 'all clear' })).status, 403);
+  assert.equal((await N.as('demo.facilitator').post(`/api/core/forms/submissions/${b.body.id}/close`, {})).status, 403, 'capturer cannot close an unanswered forwarded form');
+});
+
+test('W2-4: redaction removes withdrawn content from the whole log and the chain still verifies', () => {
+  const hh = B().store.one('SELECT * FROM households WHERE deleted=0');
+  B().store.put('households', { ...hh, notes: 'SECRET-NOTE-123' });
+  B().store.put('households', { ...B().store.get('households', hh.id), house_no: '7' });
+  const n = B().store.redactRow('households', hh.id, ['notes']);
+  assert.ok(n >= 2);
+  assert.equal(B().store.one("SELECT COUNT(*) n FROM events WHERE payload LIKE '%SECRET-NOTE-123%'").n, 0);
+  assert.equal(B().store.get('households', hh.id).notes, null);
+  assert.equal(B().store.verifyChain().ok, true);
+});
