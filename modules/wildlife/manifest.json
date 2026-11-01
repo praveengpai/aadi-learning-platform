@@ -1,0 +1,34 @@
+{
+  "id": "wildlife",
+  "version": "1.0.0",
+  "name": "Wildlife Conflict & Environment",
+  "name_ml": "വന്യജീവി സംഘർഷവും പരിസ്ഥിതിയും",
+  "icon": "🐘",
+  "description": "Record wild-animal damage with photos and location, prepare and track the Forest Department compensation claim in plain words, log sightings for early warning, and keep simple environment readings (rain, stream level, water strips, camera traps) per hamlet.",
+  "sealed": true,
+  "tables": {
+    "wildlife_claims": ["submission_id", "person_id", "hamlet_id", "agency_id", "review_agency_id", "status", "amount_claimed", "amount_sanctioned", "animal", "damage", "updated_by", "note", "note_ml"],
+    "wildlife_claim_log": ["claim_id", "submission_id", "person_id", "hamlet_id", "agency_id", "status", "amount", "note", "note_ml", "by_user", "by_role", "at"],
+    "wildlife_sightings": ["hamlet_id", "agency_id", "animal", "seen_at", "place", "place_ml", "lat", "lng", "group_size", "direction", "note", "reported_by", "reported_by_name", "reported_role"],
+    "wildlife_readings": ["hamlet_id", "agency_id", "kind", "value", "unit", "at", "device", "animal", "source", "entered_by"]
+  },
+  "types": {
+    "amount_claimed": "INTEGER",
+    "amount_sanctioned": "INTEGER",
+    "amount": "INTEGER",
+    "lat": "REAL",
+    "lng": "REAL",
+    "group_size": "INTEGER",
+    "value": "REAL"
+  },
+  "budget": { "storage_mb": 40, "sync_priority": 2, "power": "low" },
+  "emits": ["wildlife.claim_status", "wildlife.elephant_alert", "wildlife.readings_imported"],
+  "subscribes": ["forms.submitted"],
+  "nav": [
+    { "view": "home", "label": "Wild animals", "label_ml": "കാട്ടുമൃഗങ്ങൾ", "icon": "🐘", "roles": ["facilitator", "coordinator", "agency_admin", "platform_admin"], "section": "community" },
+    { "view": "board", "label": "Hamlet animal board", "label_ml": "ഊര് മൃഗ ബോർഡ്", "icon": "📋", "roles": ["facilitator", "coordinator", "field_officer", "agency_admin", "platform_admin", "learner", "guardian"], "section": "community" },
+    { "view": "dept", "label": "Forest office desk", "label_ml": "വനം ഓഫീസ് ഡെസ്ക്", "icon": "🌳", "roles": ["field_officer", "agency_admin", "platform_admin"], "section": "community" },
+    { "view": "family", "label": "My damage claims", "label_ml": "എന്റെ നഷ്ടപരിഹാര അപേക്ഷകൾ", "icon": "🐘", "roles": ["learner", "guardian"], "section": "community" },
+    { "view": "impact", "label": "Wildlife conflict", "label_ml": "വന്യജീവി സംഘർഷം — കണക്കുകൾ", "icon": "📊", "roles": ["donor", "govt_viewer", "agency_admin", "platform_admin", "coordinator"], "section": "insight" }
+  ]
+}
