@@ -1,0 +1,21 @@
+{
+  "_note": "Crop and forest-produce list for Idukki / Attappadi hamlets. PENDING REVIEW by Krishi Bhavan / KVK and the tribal cooperative (Malayalam names, units, which items each hamlet actually trades). demo_base is a DEMO starting price used ONLY to generate fictional demo prices — NOT REAL MARKET DATA.",
+  "items": [
+    { "value": "cardamom", "label": "Cardamom", "label_ml": "ഏലം", "icon": "🌿", "kind": "crop", "unit": "kg", "demo_base": 2200 },
+    { "value": "pepper", "label": "Black pepper", "label_ml": "കുരുമുളക്", "icon": "⚫", "kind": "crop", "unit": "kg", "demo_base": 620 },
+    { "value": "coffee", "label": "Coffee (dry cherry)", "label_ml": "കാപ്പി (ഉണക്കക്കുരു)", "icon": "☕", "kind": "crop", "unit": "kg", "demo_base": 180 },
+    { "value": "banana", "label": "Banana (nendran)", "label_ml": "ഏത്തക്കായ", "icon": "🍌", "kind": "crop", "unit": "kg", "demo_base": 42 },
+    { "value": "tapioca", "label": "Tapioca", "label_ml": "കപ്പ", "icon": "🥔", "kind": "crop", "unit": "kg", "demo_base": 28 },
+    { "value": "ginger", "label": "Ginger", "label_ml": "ഇഞ്ചി", "icon": "🫚", "kind": "crop", "unit": "kg", "demo_base": 65 },
+    { "value": "turmeric", "label": "Turmeric (dried)", "label_ml": "മഞ്ഞൾ (ഉണക്കിയത്)", "icon": "🟠", "kind": "crop", "unit": "kg", "demo_base": 140 },
+    { "value": "paddy", "label": "Paddy", "label_ml": "നെല്ല്", "icon": "🌾", "kind": "crop", "unit": "kg", "demo_base": 28 },
+    { "value": "vegetables", "label": "Vegetables (mixed)", "label_ml": "പച്ചക്കറി", "icon": "🥬", "kind": "crop", "unit": "kg", "demo_base": 38 },
+    { "value": "honey", "label": "Wild honey", "label_ml": "കാട്ടുതേൻ", "icon": "🍯", "kind": "forest", "unit": "kg", "demo_base": 360 },
+    { "value": "beeswax", "label": "Beeswax", "label_ml": "തേൻമെഴുക്", "icon": "🕯️", "kind": "forest", "unit": "kg", "demo_base": 420 },
+    { "value": "amla", "label": "Gooseberry (amla)", "label_ml": "നെല്ലിക്ക", "icon": "🟢", "kind": "forest", "unit": "kg", "demo_base": 45 },
+    { "value": "soapnut", "label": "Soapnut", "label_ml": "സോപ്പുകായ (ഉറുഞ്ചിക്കായ)", "icon": "🟤", "kind": "forest", "unit": "kg", "demo_base": 75 },
+    { "value": "wild_turmeric", "label": "Wild turmeric", "label_ml": "കസ്തൂരിമഞ്ഞൾ", "icon": "🟡", "kind": "forest", "unit": "kg", "demo_base": 160 },
+    { "value": "cinnamon", "label": "Cinnamon bark", "label_ml": "കറുവപ്പട്ട", "icon": "🪵", "kind": "forest", "unit": "kg", "demo_base": 300 },
+    { "value": "medicinal", "label": "Medicinal plants (mixed)", "label_ml": "ഔഷധസസ്യങ്ങൾ", "icon": "🌱", "kind": "forest", "unit": "kg", "demo_base": 90 }
+  ]
+}

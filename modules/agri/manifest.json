@@ -1,0 +1,19 @@
+{
+  "id": "agri", "version": "1.0.0",
+  "name": "Agriculture & Forest Produce", "name_ml": "കൃഷിയും വനവിഭവങ്ങളും", "icon": "🌾",
+  "description": "Crop advice approved by the Krishi Bhavan, weekly prices, pest and wild-animal damage reports with photos answered by an agriculture officer, and a record of produce sold with a fair-price check.",
+  "tables": {
+    "agri_prices": ["item", "market", "unit", "price", "week_of", "source", "is_demo", "entered_by", "entered_by_name", "note"],
+    "agri_advisories": ["key", "crop", "months", "title", "title_ml", "body", "body_ml", "status", "review_note", "approved_by", "approved_by_name", "approved_at", "created_by", "source"]
+  },
+  "types": { "price": "REAL", "is_demo": "INTEGER" },
+  "budget": { "storage_mb": 60, "sync_priority": 3, "power": "low" },
+  "emits": ["agri.price_entered", "agri.advisory_approved"],
+  "subscribes": [],
+  "nav": [
+    { "view": "home", "label": "Farm & Forest", "label_ml": "കൃഷി, വനവിഭവം", "icon": "🌾", "roles": ["facilitator", "coordinator", "field_officer", "agency_admin", "platform_admin"], "section": "community" },
+    { "view": "officer", "label": "Agri officer desk", "label_ml": "കൃഷി ഓഫീസർ", "icon": "🧑‍🌾", "roles": ["field_officer", "agency_admin", "platform_admin"], "section": "community" },
+    { "view": "family", "label": "My farm", "label_ml": "എന്റെ കൃഷി", "icon": "🌾", "roles": ["learner", "guardian"], "section": "community" },
+    { "view": "impact", "label": "Farm & forest produce", "label_ml": "കൃഷി, വനവിഭവ കണക്കുകൾ", "icon": "📊", "roles": ["donor", "govt_viewer", "agency_admin", "platform_admin", "coordinator"], "section": "insight" }
+  ]
+}
