@@ -289,7 +289,134 @@ export const ui = {
     return sel;
   },
   speakBtn(text, lang) { return h('button', { class: 'speak', type: 'button', title: t('Read aloud', 'വായിച്ചുകേൾക്കുക'), 'aria-label': t('Read aloud', 'വായിച്ചുകേൾക്കുക'), onclick: () => speak(text, lang) }, '🔊'); },
+
+  // v2 — render a round-trip form definition (from /api/core/forms/defs/:key).
+  // Works offline: if the server cannot be reached, the submission waits in the device outbox
+  // with a client_ref, so replaying it never creates a duplicate.
+  // opts: { person_id, household_id, hamlet_id, answers (prefill), onDone(result), submitLabel }
+  formFill(def, opts = {}) {
+    const L = (o, k = 'label') => t(o[k], o[k + '_ml']);
+    const wrap = h('form', { class: 'f formfill', novalidate: true });
+    const rows = new Map();
+    const read = () => {
+      const v = {};
+      for (const f of def.fields) {
+        const r = rows.get(f.name);
+        if (!r || f.type === 'note') continue;
+        if (f.type === 'select_multiple') v[f.name] = [...r.querySelectorAll('input:checked')].map((x) => x.value);
+        else if (f.type === 'select_one' || f.type === 'yes_no') { const c = r.querySelector('input:checked'); v[f.name] = c ? c.value : ''; }
+        else if (f.type === 'photo') v[f.name] = r.dataset.photo || '';
+        else if (f.type === 'geopoint') v[f.name] = r.dataset.geo || '';
+        else { const i = r.querySelector('input,textarea'); v[f.name] = i ? i.value : ''; }
+      }
+      return v;
+    };
+    const relevant = (f, v) => {
+      if (!f.relevant) return true;
+      const x = v[f.relevant.field];
+      if ('equals' in f.relevant) return Array.isArray(x) ? x.includes(f.relevant.equals) : x === f.relevant.equals;
+      if (Array.isArray(f.relevant.in)) return Array.isArray(x) ? x.some((y) => f.relevant.in.includes(y)) : f.relevant.in.includes(x);
+      if (f.relevant.present) return x !== undefined && x !== '' && !(Array.isArray(x) && !x.length);
+      return true;
+    };
+    const sync = () => { const v = read(); for (const f of def.fields) { const r = rows.get(f.name); if (r) r.style.display = relevant(f, v) ? '' : 'none'; } };
+    const pre = opts.answers || {};
+    for (const f of def.fields) {
+      const lab = L(f);
+      const head = h('div', { class: 'row', style: { justifyContent: 'space-between', alignItems: 'center' } }, h('b', null, lab, f.required ? ' *' : '', f.unit ? h('span', { class: 'muted small' }, ' (' + f.unit + ')') : null), ui.speakBtn(lab));
+      const hint = f.hint ? h('div', { class: 'small muted' }, t(f.hint, f.hint_ml)) : null;
+      let input;
+      const nm = 'ff_' + f.name;
+      switch (f.type) {
+        case 'note': input = h('div', { class: 'card', style: { padding: '8px 10px' } }, lab); break;
+        case 'textarea': input = h('textarea', { name: nm, rows: 3 }, pre[f.name] ?? ''); break;
+        case 'integer': case 'decimal': input = h('input', { type: 'number', name: nm, inputmode: f.type === 'integer' ? 'numeric' : 'decimal', step: f.type === 'integer' ? '1' : 'any', min: f.min, max: f.max, value: pre[f.name] ?? '' }); break;
+        case 'date': input = h('input', { type: 'date', name: nm, value: pre[f.name] ?? '' }); break;
+        case 'select_one': case 'yes_no': {
+          const ch = f.type === 'yes_no' ? [{ value: 'yes', label: 'Yes', label_ml: 'അതെ' }, { value: 'no', label: 'No', label_ml: 'ഇല്ല' }] : f.choices;
+          input = h('div', { class: 'multi', role: 'radiogroup' }, ch.map((c) => h('label', null, h('input', { type: 'radio', name: nm, value: c.value, checked: pre[f.name] === c.value, onchange: sync }), L(c))));
+          break;
+        }
+        case 'select_multiple': {
+          const have = new Set(pre[f.name] || []);
+          input = h('div', { class: 'multi' }, f.choices.map((c) => h('label', null, h('input', { type: 'checkbox', value: c.value, checked: have.has(c.value), onchange: sync }), L(c))));
+          break;
+        }
+        case 'photo': {
+          const prev = h('img', { alt: '', style: { maxWidth: '160px', display: 'none', borderRadius: '8px' } });
+          input = h('input', { type: 'file', accept: 'image/*', capture: 'environment', onchange: async (e) => {
+            const file = e.target.files[0]; if (!file) return;
+            const url = await shrinkImage(file, 960, 0.6);
+            row.dataset.photo = url; prev.src = url; prev.style.display = '';
+          } });
+          input = h('div', null, input, prev);
+          break;
+        }
+        case 'geopoint': {
+          const out = h('span', { class: 'small muted' }, '');
+          input = h('div', { class: 'row' }, ui.button(t('Record location', 'സ്ഥലം രേഖപ്പെടുത്തുക'), () => {
+            if (!navigator.geolocation) return toast(t('Location not available on this device.', 'ഈ ഉപകരണത്തിൽ ലൊക്കേഷൻ ലഭ്യമല്ല.'), 'warn');
+            navigator.geolocation.getCurrentPosition((p) => { row.dataset.geo = p.coords.latitude.toFixed(5) + ' ' + p.coords.longitude.toFixed(5); out.textContent = row.dataset.geo; }, () => toast(t('Could not get location.', 'ലൊക്കേഷൻ കിട്ടിയില്ല.'), 'warn'), { timeout: 15000 });
+          }, { small: true, tone: 'ghost' }), out);
+          break;
+        }
+        default: input = h('input', { type: 'text', name: nm, value: pre[f.name] ?? '', oninput: sync });
+      }
+      const row = h('div', { class: 'stack ff-row', style: { gap: '4px', marginBottom: '12px' } }, f.type === 'note' ? null : head, hint, input);
+      rows.set(f.name, row);
+      wrap.append(row);
+    }
+    wrap.addEventListener('input', sync);
+    const btn = h('button', { class: 'btn primary', type: 'submit' }, opts.submitLabel || t('Save and send', 'സേവ് ചെയ്ത് അയയ്ക്കുക'));
+    const errs = h('div', { class: 'small', style: { color: 'var(--bad, #b00020)' } });
+    wrap.append(errs, h('div', { class: 'row' }, btn));
+    const client_ref = (state.user ? state.user.id : 'x') + '-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+    wrap.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const answers = read();
+      for (const f of def.fields) if (!relevant(f, answers)) delete answers[f.name];
+      const missing = def.fields.filter((f) => f.required && f.type !== 'note' && relevant(f, answers) && (answers[f.name] === '' || answers[f.name] === undefined || (Array.isArray(answers[f.name]) && !answers[f.name].length)));
+      if (missing.length) { errs.textContent = t('Please answer: ', 'ദയവായി ഉത്തരം നൽകുക: ') + missing.map((f) => L(f)).join(', '); return; }
+      errs.textContent = '';
+      btn.disabled = true;
+      try {
+        const r = await http('POST', '/api/core/forms/submissions', { form_key: def.key, person_id: opts.person_id || null, household_id: opts.household_id || null, hamlet_id: opts.hamlet_id || null, answers, client_ref });
+        if (opts.onDone) await opts.onDone(r);
+      } catch (err) {
+        errs.textContent = err.message;
+      } finally { btn.disabled = false; }
+    });
+    sync();
+    return wrap;
+  },
+
+  // v2 — show a submission and its reply (or "waiting for reply") in plain words.
+  submissionCard(s, { onSeen } = {}) {
+    const tone = s.status === 'replied' ? 'good' : s.status === 'closed' ? 'info' : 'warn';
+    const statusLabel = { submitted: t('Waiting for reply', 'മറുപടി കാത്തിരിക്കുന്നു'), in_review: t('Being reviewed', 'പരിശോധനയിൽ'), replied: t('Reply ready', 'മറുപടി തയ്യാർ'), closed: t('Closed', 'അവസാനിച്ചു') }[s.status] || s.status;
+    const flags = (s.flags || []).map((f) => ui.badge(t(f.message, f.message_ml), f.level === 'urgent' ? 'bad' : f.level === 'warn' ? 'warn' : 'info'));
+    const reply = s.reply ? h('div', { class: 'card', style: { background: 'var(--soft, #eef6f2)' } }, h('div', { class: 'row', style: { justifyContent: 'space-between' } }, h('b', null, t('Reply', 'മറുപടി'), s.replied_by_name ? ' · ' + s.replied_by_name : ''), ui.speakBtn(t(s.reply, s.reply_ml || s.reply))), h('p', null, t(s.reply, s.reply_ml || s.reply))) : null;
+    return ui.card({
+      title: t(s.form_title, s.form_title_ml) + (s.person ? ' — ' + s.person.name : ''),
+      subtitle: [String(s.captured_at || '').slice(0, 10), s.hamlet ? t(s.hamlet, s.hamlet_ml) : null].filter(Boolean).join(' · '),
+      body: [h('div', { class: 'row' }, ui.badge(statusLabel, tone), flags), reply],
+      actions: s.reply && !s.reply_seen_at && onSeen ? [ui.button(t('Mark as told to the family', 'കുടുംബത്തെ അറിയിച്ചു'), onSeen, { small: true })] : null,
+    });
+  },
 };
+
+// Shrink a camera photo to a small JPEG data URL so it can travel offline.
+async function shrinkImage(file, maxSide, quality) {
+  const url = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(file); });
+  const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = url; });
+  const k = Math.min(1, maxSide / Math.max(img.width, img.height));
+  const c = document.createElement('canvas');
+  c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+  c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+  let q = quality, out = c.toDataURL('image/jpeg', q);
+  while (out.length > 270000 && q > 0.25) { q -= 0.1; out = c.toDataURL('image/jpeg', q); }
+  return out;
+}
 
 // Build the per-module kit
 export function makeKit(moduleId, { params = {}, go, refresh } = {}) {

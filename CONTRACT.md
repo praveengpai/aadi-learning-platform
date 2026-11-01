@@ -1,4 +1,6 @@
-# AADI Module Contract (v1)
+# Module Contract (v2)
+
+> v2 (Nov 2026) generalises the platform from learning to **community services**. Everything in v1 still holds; v2 adds the section "v2 — community services" at the end. New modules MUST read it.
 
 The platform = one **Brain** (`core/`) + many **modules** (`modules/<id>/`). A module plugs in by
 dropping a folder; the brain discovers it at boot. A broken module is isolated (circuit breaker,
@@ -141,3 +143,100 @@ Design for: low literacy (icons + read-aloud), Malayalam first-class (`k.t`), sm
 - Bilingual labels for everything a learner/guardian sees.
 - Tests in `tests/<id>.test.js` using `const { bootDemo } = require('./helpers')` — cover happy path, permission denials (e.g. another agency's facilitator, a donor), and consent (learner whose consent is revoked disappears).
 - `node --check` every JS file; run your tests until green.
+
+
+---
+
+# v2 — community services
+
+The platform is now a community-services engine; learning is one module. v2 adds roles, consent
+scopes, households, the **form round-trip engine**, per-hamlet switches, budgets and signed modules.
+
+## New roles and permissions
+Roles: `health_worker` (ASHA / nurse), `doctor` (remote reviewer), `field_officer` (department officer —
+Krishi Bhavan, ST promoter, Akshaya, panchayat). All are agency-level and see people only with enrolment + consent, like any agency staff.
+
+| Permission | Roles |
+| --- | --- |
+| `forms.capture` | platform_admin, agency_admin, coordinator, facilitator, health_worker, field_officer |
+| `forms.review` | platform_admin, agency_admin, doctor, field_officer |
+| `forms.design` | platform_admin, agency_admin |
+| `health.capture` | platform_admin, health_worker |
+| `health.review` | platform_admin, doctor |
+| `services.assist` | platform_admin, agency_admin, coordinator, facilitator, field_officer |
+| `agri.advise` | platform_admin, agency_admin, field_officer |
+
+Staff with `learner.write` **or** `forms.capture` may register people (`POST /api/core/persons`), record in-person consent and enrol people into their own agency's programmes.
+
+## New consent scopes
+`health`, `services` (government schemes and certificates), `livelihood` (farm, forest produce), `survey`.
+**Restricted scopes** can never be read by other roles, even with consent:
+- `wellbeing` → counsellor only (platform_admin and CPO as audited stewards).
+- `health` → health_worker and doctor only (platform_admin as audited steward; **the CPO does not read health data**).
+A module may add its own scope in `manifest.consent_scopes`: `{ "my_scope": { "label": "...", "restrict_to": ["role"] } }` — core scopes are never overridden.
+
+Programmes for new services use new `track` values, e.g. `health`, `elder_care`, `services`, `agriculture`. A person must be **enrolled** in one of the agency's programmes and have **active consent** for the scope before agency staff see their data. Seed these programmes, enrolments and consents in your module seed.
+
+## Households
+Core table `households` (`hamlet_id, name, head_person_id, house_no`); `persons.household_id`. Every demo family (guardian + children/youth) is one household; `demo.households` lists them.
+`brain.households.get(id) / list({hamlet_id}) / members(user, id) / create({hamlet_id, name, head_person_id, members}, user)`.
+API: `GET /api/core/households?hamlet_id=` (only households where the user can see a member), `POST /api/core/households`.
+
+## The form round-trip engine (use this — do not build your own capture/review tables)
+Most services follow one pattern: **capture offline at the hub → travels with the courier → reviewer in the city replies → reply returns next visit.** The engine lives in core (tables `form_defs`, `form_submissions`, replicated and hamlet-scoped for sync). A module brings: form definitions, a **rule** (its sub-engine) and screens.
+
+### Define forms at start-up (in `init`, not only in seed)
+```js
+brain.forms.define({
+  key: 'health.bp_check',              // must start with your module id + '.'
+  title: 'Blood pressure check', title_ml: '…',
+  subject: 'person',                   // 'person' | 'household' | 'hamlet'
+  scope: 'health',                     // consent scope required (person: of the person; household: of the head)
+  review: { perm: 'health.review' },   // null = no review step (closes at once); add agency_id to forward to another agency
+  capture_perm: 'health.capture',      // optional extra permission to fill it in (on top of forms.capture)
+  allow_self: false,                   // true lets the person themself (learner/youth) submit about themselves
+  fields: [ { name: 'sys', type: 'integer', label: 'Systolic', label_ml: '…', required: true, min: 60, max: 260, unit: 'mmHg' }, … ],
+}, null);
+```
+Field types: `text, textarea, integer, decimal, date, select_one, select_multiple, yes_no, photo, geopoint, note`.
+Field props: `name, label, label_ml, hint, hint_ml, required, min, max, unit, choices:[{value,label,label_ml}], relevant:{field, equals|in|present}` (relevant field must come earlier; irrelevant answers are dropped).
+Photos are JPEG/PNG data URLs ≤ 200 KB (the shell shrinks camera photos automatically).
+`define` is idempotent; form ids are deterministic (`frm_<key>`), so cloud and hubs converge; a node running **older** module code never overwrites a definition from newer code (it compares your manifest `version`) — **bump your manifest version when you change a form.**
+
+### Rules = your sub-engine (runs at capture, offline)
+```js
+brain.forms.rule('health.bp_check', (answers, { person, form }) => ({
+  flags: [{ code: 'bp_high', level: 'urgent' | 'warn' | 'info', message: 'Very high BP — refer today', message_ml: '…' }],
+  priority: 3,   // 0 normal, 1 soon, 2 high, 3 urgent — reviewers see urgent first
+}));
+```
+Rules must be pure, fast and never throw (a throw is caught and logged as "please review manually").
+**Clinical and agronomic rules are drafts until an expert approves them** — mark the thresholds in a `content/RULES.md` file with their source and "PENDING EXPERT REVIEW".
+
+### Module-scoped engine calls (`ctx.brain.forms`)
+`submit(user, {form_key, person_id|household_id|hamlet_id, answers, client_ref}) · list(user, {status, person_id, hamlet_id, mine, form_key}) · queue(user) · one(user, id) · reply(user, id, {reply, reply_ml, outcome, close}) · validate(key, answers) · canCapture(user, key) · canReview(user, key) · get(key)` — all restricted to your module's forms and fully policy-checked (consent, restricted scopes, agency, hamlet, per-hamlet switch). Submitting is idempotent per `client_ref`.
+
+### Core API (the generic screens and other modules use it too)
+`GET /api/core/forms?module=` · `GET /api/core/forms/defs/:key` · `POST /api/core/forms/submissions` · `GET /api/core/forms/submissions?module=&status=&mine=1&person_id=` · `GET /api/core/forms/queue?module=` · `GET /api/core/forms/submissions/:id` · `POST …/:id/claim|reply|seen|close` · `GET /api/core/forms/export/:key.csv`.
+A reply automatically queues a notification to the person: "a reply is ready, visit the centre" — **never put health or case details in notifications.**
+
+### Browser kit additions
+`k.ui.formFill(def, { person_id | household_id | hamlet_id, answers, onDone(result), submitLabel })` renders any form, works offline (outbox + client_ref), read-aloud on every label, camera photos, location.
+`k.ui.submissionCard(s, { onSeen })` shows a submission, its flags and the reply in plain words.
+Generic screens you can link to instead of building your own: `#/m/surveys/fill?key=<form_key>&person=<id>`, `#/m/surveys/item?id=<submission_id>`, `#/m/surveys/queue`.
+
+## Per-hamlet switches (the Oorukoottam decides)
+A module can be switched off in particular hamlets (`module_scopes`). Staff whose hamlets are all switched off get `503 module_off_here` from your routes automatically, and form submissions there are refused. Use `brain.modules.enabledIn(hamletId)` before showing hamlet-specific content. Critical modules (safeguarding) cannot be switched off.
+
+## Budgets (the suitcase has 512 Wh and limited storage)
+Declare in `manifest.json`: `"budget": { "storage_mb": 50, "sync_priority": 1-5 (1 = most urgent), "power": "low" | "medium" | "high" }`. `GET /api/core/modules/budgets` reports actual storage against it. Keep content packs small; prefer audio and text over video.
+
+## Hub installs and signed modules
+- `AADI_MODULES=learning,health,…` makes a node load only those modules (critical ones always load).
+- With `PLATFORM_MODULE_KEY` set, a module loads only if its `SIGNATURE` matches (`node scripts/sign-modules.js`). Never commit a SIGNATURE in a feature branch; release signs.
+
+## v2 quality bar (in addition to v1)
+- Use the form engine for every capture → review → reply flow; never store person data in a table without `person_id` and `hamlet_id`.
+- Tests must cover: restricted-scope denial (e.g. a facilitator or CPO cannot read health), another agency's staff denied, consent withdrawal removing access, a reviewer reply reaching the capturer, and the per-hamlet switch.
+- Notifications never contain sensitive details.
+- No real personal data in seeds — fictional people only. Seeds must finish in < 5 s and must not use the shared demo RNG in a way that changes other modules' data: draw from your own stream: `const R = demo.rng(<your unique number>)` (same API as `demo.R`). Never call the shared `demo.R` in a new module.

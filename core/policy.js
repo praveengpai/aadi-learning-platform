@@ -19,6 +19,10 @@ const ROLES = {
   donor: { label: 'Donor / CSR', level: 'external' },
   employer: { label: 'Employer', level: 'external' },
   govt_viewer: { label: 'Government Viewer', level: 'external' },
+  // v2 — community services beyond learning
+  health_worker: { label: 'Health Worker (ASHA / nurse)', level: 'agency' },
+  doctor: { label: 'Doctor (remote reviewer)', level: 'agency' },
+  field_officer: { label: 'Field / Department Officer', level: 'agency' },
 };
 
 // Coarse permissions; modules declare which they need per route.
@@ -41,7 +45,17 @@ const PERMS = {
   'hire': ['employer', 'platform_admin'],
   'analytics.aggregate': ['platform_admin', 'agency_admin', 'coordinator', 'donor', 'govt_viewer', 'cpo'],
   'ops': ['platform_admin', 'agency_admin', 'coordinator', 'facilitator'],
+  // v2 — form round-trip engine and community services
+  'forms.capture': ['platform_admin', 'agency_admin', 'coordinator', 'facilitator', 'health_worker', 'field_officer'],
+  'forms.review': ['platform_admin', 'agency_admin', 'doctor', 'field_officer'],
+  'forms.design': ['platform_admin', 'agency_admin'],
+  'health.capture': ['platform_admin', 'health_worker'],
+  'health.review': ['platform_admin', 'doctor'],
+  'services.assist': ['platform_admin', 'agency_admin', 'coordinator', 'facilitator', 'field_officer'],
+  'agri.advise': ['platform_admin', 'agency_admin', 'field_officer'],
 };
+// Staff who register people and record their consent (in person).
+const REGISTRARS = ['learner.write', 'forms.capture'];
 
 // Consent scopes a person can grant to an agency.
 const SCOPES = {
@@ -51,6 +65,17 @@ const SCOPES = {
   contact: 'Phone / guardian contact for messages',
   employment: 'Share profile with employers for jobs',
   research: 'Anonymised use in research and impact reports',
+  // v2
+  health: 'Health readings, screening and doctor advice',
+  services: 'Applications for government schemes and certificates',
+  livelihood: 'Farm, forest produce and livelihood records',
+  survey: 'Answers to community surveys',
+};
+// Scopes only certain roles may ever read, even with consent (data minimisation).
+// Platform stewards may read (audited); the CPO does not read health data.
+const RESTRICTED = {
+  wellbeing: { roles: ['counsellor'], message: 'wellbeing data is restricted to counsellors', stewardRoles: ['platform_admin', 'cpo'] },
+  health: { roles: ['health_worker', 'doctor'], message: 'health data is restricted to health workers and doctors', stewardRoles: ['platform_admin'] },
 };
 
 const K_ANON = 5; // aggregates below this count are suppressed
@@ -77,7 +102,11 @@ function makePolicy(store) {
   // Can `user` see `scope` data of person `personId`? Returns {ok, reason}.
   function canSee(user, personId, scope = 'profile') {
     if (!user) return { ok: false, reason: 'not signed in' };
-    if (user.role === 'platform_admin' || user.role === 'cpo') return { ok: true, reason: 'steward', audited: true };
+    const rs = RESTRICTED[scope];
+    if (user.role === 'platform_admin' || user.role === 'cpo') {
+      if (rs && !rs.stewardRoles.includes(user.role)) return { ok: false, reason: rs.message };
+      return { ok: true, reason: 'steward', audited: true };
+    }
     if (user.person_id === personId) return { ok: true, reason: 'self' };
     if (user.role === 'guardian') {
       const p = store.get('persons', personId);
@@ -90,7 +119,7 @@ function makePolicy(store) {
       return activeConsent(personId, user.agency_id, 'employment') ? { ok: true, reason: 'employment consent' } : { ok: false, reason: 'no employment consent' };
     }
     if (!user.agency_id) return { ok: false, reason: 'no agency' };
-    if (scope === 'wellbeing' && !['counsellor'].includes(user.role)) return { ok: false, reason: 'wellbeing data is restricted to counsellors' };
+    if (rs && !rs.roles.includes(user.role)) return { ok: false, reason: rs.message };
     if (!enrolledWith(personId, user.agency_id)) return { ok: false, reason: 'person not enrolled with your agency' };
     if (!activeConsent(personId, user.agency_id, scope)) return { ok: false, reason: `no active "${scope}" consent for your agency` };
     return { ok: true, reason: 'enrolment + consent' };
@@ -124,7 +153,15 @@ function makePolicy(store) {
     return n > 0 && n < K_ANON ? `<${K_ANON}` : n;
   }
 
-  return { can, canSee, visiblePersonIds, activeConsent, enrolledWith, isMinor, suppress, ROLES, PERMS, SCOPES };
+  // Modules may declare extra consent scopes in their manifest (never override core ones).
+  function registerScope(id, label, restrictTo) {
+    if (!/^[a-z][a-z0-9_]*$/.test(id)) throw new Error('bad scope id ' + id);
+    if (!SCOPES[id]) SCOPES[id] = label || id;
+    if (Array.isArray(restrictTo) && restrictTo.length && !RESTRICTED[id]) RESTRICTED[id] = { roles: restrictTo, message: `${id} data is restricted`, stewardRoles: ['platform_admin'] };
+  }
+  const isRegistrar = (user) => REGISTRARS.some((p) => can(user, p));
+
+  return { can, canSee, visiblePersonIds, activeConsent, enrolledWith, isMinor, suppress, registerScope, isRegistrar, ROLES, PERMS, SCOPES, RESTRICTED };
 }
 
-module.exports = { makePolicy, ROLES, PERMS, SCOPES, K_ANON };
+module.exports = { makePolicy, ROLES, PERMS, SCOPES, RESTRICTED, K_ANON };

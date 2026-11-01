@@ -225,8 +225,21 @@ async function seed({ app, brain, host }) {
   });
 
   usePilot(false);
+  // v2: households — each demo family (guardian + their children/youth) is one home. No randomness used,
+  // so earlier demo data is unchanged.
+  const households = [];
+  store.tx(() => {
+    for (const head of out.adults) {
+      const kids = out.persons.filter((x) => x.guardian_id === head.id);
+      const hh = brain.householdCreate({ hamlet_id: head.hamlet_id, name: head.name.split(' ')[0] + "'s family", head_person_id: head.id, members: kids.map((k) => k.id) }, null);
+      households.push(hh);
+    }
+  });
+  for (const p of out.persons) { const fresh = store.get('persons', p.id); if (fresh) p.household_id = fresh.household_id; }
   const demo = {
+    households,
     brain, store, R, daysAgo, DEMO_PASSWORD,
+    rng: (n) => rngFactory(n), // v2: modules use their OWN stream so adding a module never changes others' demo data
     hamlets: Object.values(out.hamlets), hamletByKey: out.hamlets,
     agencies: Object.values(out.agencies), agencyByKey: out.agencies,
     persons: out.persons, children: out.children, youth: out.youth, adults: out.adults,

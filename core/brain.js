@@ -6,6 +6,7 @@ const crypto = require('crypto');
 const { openDb, migrateCore, CORE_TABLES } = require('./db');
 const { Store, newId, nowIso } = require('./store');
 const { makePolicy } = require('./policy');
+const { makeForms } = require('./forms');
 
 function hashPassword(pw, salt = crypto.randomBytes(16).toString('hex')) {
   return 'scrypt$' + salt + '$' + crypto.scryptSync(pw, salt, 32).toString('hex');
@@ -35,6 +36,7 @@ class Brain {
     this.nodeRole = role; // 'cloud' | 'hub'
     this.store = new Store(this.db, nodeId, { ...CORE_TABLES });
     this.policy = makePolicy(this.store);
+    this.forms = makeForms(this);
     this.authed = this.authed.bind(this);
     this.requires = this.requires.bind(this);
   }
@@ -139,6 +141,43 @@ class Brain {
     return out;
   }
 
+  // ---------- households (v2) ----------
+  // A household groups people in one home so every service sees the same family.
+  householdCreate({ hamlet_id, name, head_person_id = null, house_no = null, members = [] }, actor) {
+    if (!this.store.get('hamlets', hamlet_id)) throw Object.assign(new Error('hamlet not found'), { status: 404 });
+    return this.store.tx(() => {
+      const hh = this.store.put('households', { hamlet_id, name: name || null, head_person_id, house_no }, { actor: actor && actor.id });
+      for (const pid of new Set([head_person_id, ...members].filter(Boolean))) {
+        const p = this.store.get('persons', pid);
+        if (p && p.hamlet_id === hamlet_id) this.store.put('persons', { ...p, household_id: hh.id }, { actor: actor && actor.id });
+      }
+      return hh;
+    });
+  }
+  // Members of a household that this user may see (policy-filtered, redacted).
+  householdMembers(user, householdId) {
+    const ids = this.policy.visiblePersonIds(user);
+    const rows = this.store.find('persons', { household_id: householdId }, { order: 'name' });
+    return rows.filter((p) => ids === null || ids.includes(p.id)).map((p) => this.redact(p, user));
+  }
+
+  // ---------- module switches per hamlet (v2) ----------
+  // Default is ON everywhere; a hamlet (through its Oorukoottam) may switch a service off.
+  moduleEnabledIn(moduleId, hamletId) {
+    if (!hamletId) return true;
+    const r = this.store.one('SELECT enabled FROM module_scopes WHERE module_id=? AND hamlet_id=? AND deleted=0 ORDER BY updated_at DESC LIMIT 1', moduleId, hamletId);
+    return !r || Number(r.enabled) === 1;
+  }
+  setModuleInHamlet(moduleId, hamletId, enabled, actor, note = null) {
+    const cur = this.store.one('SELECT * FROM module_scopes WHERE module_id=? AND hamlet_id=? AND deleted=0', moduleId, hamletId);
+    const row = this.store.put('module_scopes', { ...(cur ? { id: cur.id } : {}), module_id: moduleId, hamlet_id: hamletId, enabled: enabled ? 1 : 0, decided_by: actor && actor.id, note }, { actor: actor && actor.id });
+    this.audit(actor, enabled ? 'module.enable_hamlet' : 'module.disable_hamlet', moduleId, { hamlet_id: hamletId, note });
+    return row;
+  }
+  moduleOffHamlets(moduleId) {
+    return this.store.all('SELECT hamlet_id FROM module_scopes WHERE module_id=? AND deleted=0 AND enabled=0', moduleId).map((r) => r.hamlet_id);
+  }
+
   // ---------- passport ----------
   award({ person_id, type = 'competency', ref, title, level = 1, evidence = null, agency_id }, actor) {
     const p = this.store.get('persons', person_id);
@@ -164,20 +203,20 @@ class Brain {
   }
 
   // ---------- what modules get ----------
-  facade(moduleId) {
+  facade(moduleId, moduleVersion = null) {
     const b = this;
     return {
       nodeId: b.nodeId,
       nodeRole: b.nodeRole,
       brand: b.brand,
-      policy: { can: b.policy.can, canSee: b.policy.canSee, suppress: b.policy.suppress, isMinor: b.policy.isMinor, ROLES: b.policy.ROLES, SCOPES: b.policy.SCOPES },
+      policy: { can: b.policy.can, canSee: b.policy.canSee, suppress: b.policy.suppress, isMinor: b.policy.isMinor, ROLES: b.policy.ROLES, SCOPES: b.policy.SCOPES, RESTRICTED: b.policy.RESTRICTED },
       persons: {
         visible: (user, opts) => b.personsVisible(user, opts),
         visibleIds: (user) => b.policy.visiblePersonIds(user),
         get: (user, id, scope) => b.getPerson(user, id, scope),
         raw: (id) => b.store.get('persons', id), // for system jobs (no user) — never return to clients unredacted
         // minimal, display-safe fields (no phone/dob) for building rosters after a policy check
-        basic: (id) => { const p = b.store.get('persons', id); if (!p) return null; const age = p.dob ? Math.floor((Date.now() - new Date(p.dob)) / 3.15576e10) : null; return { id: p.id, name: p.name, hamlet_id: p.hamlet_id, kind: p.kind, gender: p.gender, age, school_class: p.school_class, language: p.language }; },
+        basic: (id) => { const p = b.store.get('persons', id); if (!p) return null; const age = p.dob ? Math.floor((Date.now() - new Date(p.dob)) / 3.15576e10) : null; return { id: p.id, name: p.name, hamlet_id: p.hamlet_id, kind: p.kind, gender: p.gender, age, school_class: p.school_class, language: p.language, household_id: p.household_id || null, guardian_id: p.guardian_id || null }; },
       },
       hamlets: { list: () => b.store.find('hamlets', {}, { order: 'name' }), get: (id) => b.store.get('hamlets', id) },
       agencies: { list: () => b.store.find('agencies', {}, { order: 'name' }), get: (id) => b.store.get('agencies', id) },
@@ -204,7 +243,40 @@ class Brain {
         forProgramme: (prid) => b.store.find('enrolments', { programme_id: prid }),
         enrol: (person_id, programme_id, user) => b.enrol(person_id, programme_id, user),
       },
-      consent: { has: (pid, aid, scope) => b.policy.activeConsent(pid, aid, scope) },
+      consent: {
+        has: (pid, aid, scope) => b.policy.activeConsent(pid, aid, scope),
+        // Record an in-person consent for the user's own agency (registrars only). Adds scopes to existing ones.
+        grant: ({ person_id, scopes, granted_by = null, relation = null, method = 'in_person' }, user) => {
+          if (!user || !b.policy.isRegistrar(user) || !user.agency_id) throw Object.assign(new Error('Only agency staff can record consent'), { status: 403 });
+          const p = b.store.get('persons', person_id);
+          if (!p) throw Object.assign(new Error('person not found'), { status: 404 });
+          const cur = b.store.find('consents', { person_id, agency_id: user.agency_id, status: 'active' })[0];
+          const all = [...new Set([...(cur && Array.isArray(cur.scopes) ? cur.scopes : []), ...scopes])];
+          const by = granted_by || (b.policy.isMinor(p) ? p.guardian_id : p.id);
+          return b.grantConsent({ person_id, agency_id: user.agency_id, scopes: all, granted_by: by, relation: relation || (by === p.id ? 'self' : (p.relation || 'guardian')), method }, user);
+        },
+      },
+      households: {
+        get: (id) => b.store.get('households', id),
+        list: (w = {}) => b.store.find('households', w, { order: 'name' }),
+        members: (user, id) => b.householdMembers(user, id),
+        create: (row, user) => b.householdCreate(row, user),
+      },
+      forms: {
+        // A module defines forms in its own namespace and may attach a rule (its sub-engine) to each.
+        define: (def, user) => b.forms.define(moduleId, def, user, moduleVersion),
+        rule: (key, fn) => { const d = b.forms.getDef(key); if (d && d.module !== moduleId) throw new Error(`form ${key} belongs to ${d.module}`); b.forms.rule(moduleId, key, fn); },
+        get: (key) => b.forms.getDef(key),
+        submit: (user, args) => { const d = b.forms.getDef(args.form_key); if (!d || d.module !== moduleId) throw Object.assign(new Error('Form not found.'), { status: 404 }); return b.forms.submit(user, args, { moduleEnabledIn: (m, h) => b.moduleEnabledIn(m, h) }); },
+        list: (user, opts = {}) => b.forms.list(user, { ...opts, module: moduleId }),
+        queue: (user, opts = {}) => b.forms.queue(user, { ...opts, module: moduleId }),
+        one: (user, id) => { const s = b.forms.one(user, id); if (s.module !== moduleId) throw Object.assign(new Error('Not found.'), { status: 404 }); return s; },
+        reply: (user, id, args) => { const s = b.store.get('form_submissions', id); if (!s || s.module !== moduleId) throw Object.assign(new Error('Not found.'), { status: 404 }); return b.forms.reply(user, id, args); },
+        validate: (key, answers) => { const d = b.forms.getDef(key); if (!d) throw new Error('no form ' + key); return b.forms.validate(d, answers); },
+        canCapture: (user, key) => { const d = b.forms.getDef(key); return !!d && b.forms.canCapture(user, d); },
+        canReview: (user, key) => { const d = b.forms.getDef(key); return !!d && b.forms.canReview(user, d); },
+      },
+      modules: { enabledIn: (hamletId, id = moduleId) => b.moduleEnabledIn(id, hamletId) },
       passport: { award: (args, user) => b.award(args, user), entries: (pid) => b.store.find('passport_entries', { person_id: pid }, { order: 'issued_at DESC' }) },
       competencies: { list: (w = {}) => b.store.find('competencies', w, { order: 'code' }), upsert: (row) => b.store.put('competencies', row) },
       notify: (pid, msg, opts, user) => b.notify(pid, msg, { ...opts, module: moduleId }, user),

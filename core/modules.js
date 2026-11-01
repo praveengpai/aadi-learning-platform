@@ -5,7 +5,26 @@
 // tripped and returns a friendly 503 while the rest of the platform runs on.
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 const express = require('express');
+
+// Signed module packages (v2). When PLATFORM_MODULE_KEY is set, a module loads only if its
+// SIGNATURE file matches an HMAC of its files — a tampered or unknown module is refused.
+function moduleDigest(dir) {
+  const h = crypto.createHash('sha256');
+  const walk = (d) => {
+    for (const name of fs.readdirSync(d).sort()) {
+      if (name === 'SIGNATURE' || name.startsWith('.')) continue;
+      const f = path.join(d, name);
+      const st = fs.statSync(f);
+      if (st.isDirectory()) walk(f);
+      else { h.update(path.relative(dir, f).split(path.sep).join('/') + '\0'); h.update(fs.readFileSync(f)); h.update('\0'); }
+    }
+  };
+  walk(dir);
+  return h.digest('hex');
+}
+const signModule = (dir, key) => crypto.createHmac('sha256', key).update(moduleDigest(dir)).digest('hex');
 
 const BREAKER = { threshold: 5, windowMs: 60_000, coolOffMs: 30_000 };
 // Modules allowed to read core personal tables directly (for aggregate-only work).
@@ -25,7 +44,15 @@ class ModuleHost {
 
   loadAll() {
     if (!fs.existsSync(this.dir)) return;
-    const ids = fs.readdirSync(this.dir).filter((d) => fs.existsSync(path.join(this.dir, d, 'manifest.json'))).sort();
+    let ids = fs.readdirSync(this.dir).filter((d) => fs.existsSync(path.join(this.dir, d, 'manifest.json'))).sort();
+    // A hub installs only the modules its hamlets use: AADI_MODULES=learning,health,... (critical modules always load).
+    const allow = (process.env.AADI_MODULES || '').split(',').map((x) => x.trim()).filter(Boolean);
+    if (allow.length) {
+      ids = ids.filter((id) => {
+        if (allow.includes(id)) return true;
+        try { return !!JSON.parse(fs.readFileSync(path.join(this.dir, id, 'manifest.json'), 'utf8')).critical; } catch (_) { return false; }
+      });
+    }
     for (const id of ids) this.load(id);
   }
 
@@ -37,6 +64,16 @@ class ModuleHost {
       const manifest = JSON.parse(fs.readFileSync(path.join(base, 'manifest.json'), 'utf8'));
       if (manifest.id !== id) throw new Error(`manifest id "${manifest.id}" must equal folder "${id}"`);
       rec.manifest = manifest;
+      const key = process.env.PLATFORM_MODULE_KEY;
+      if (key) {
+        const sigFile = path.join(base, 'SIGNATURE');
+        const sig = fs.existsSync(sigFile) ? fs.readFileSync(sigFile, 'utf8').trim() : '';
+        const want = signModule(base, key);
+        if (!sig || sig.length !== want.length || !crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(want))) throw new Error('module signature missing or invalid — refusing to load');
+        rec.signed = true;
+      }
+      // Consent scopes a module adds (e.g. a programme-specific scope). Core scopes are never overridden.
+      for (const [sid, sc] of Object.entries(manifest.consent_scopes || {})) this.brain.policy.registerScope(sid, typeof sc === 'string' ? sc : sc.label, sc && sc.restrict_to);
       const prefix = id.replace(/-/g, '_') + '_';
       // Register module-owned replicated tables (must be prefixed with module id).
       const { db } = this.brain;
@@ -76,7 +113,21 @@ class ModuleHost {
     this.brain.audit(actor, on ? 'module.enable' : 'module.disable', id);
   }
 
+  // Is this module switched off in every hamlet the signed-in user works in / lives in?
+  _offForUser(rec, req) {
+    const off = this.brain.moduleOffHamlets(rec.id);
+    if (!off.length) return false;
+    const h = req.headers.authorization || '';
+    const token = h.startsWith('Bearer ') ? h.slice(7) : (req.headers.cookie || '').split(/;\s*/).map((c) => c.split('=')).find(([k]) => k === 'aadi_t')?.[1];
+    const u = this.brain.userFromToken(token);
+    if (!u || u.role === 'platform_admin') return false;
+    let hs = Array.isArray(u.hamlet_ids) ? u.hamlet_ids : [];
+    if (!hs.length && u.person_id) { const p = this.brain.store.get('persons', u.person_id); if (p) hs = [p.hamlet_id]; }
+    return hs.length > 0 && hs.every((x) => off.includes(x));
+  }
+
   _gate(rec, req, res, next) {
+    if (rec.state === 'up' && this._offForUser(rec, req)) return res.status(503).json({ error: 'module_off_here', module: rec.id, message: 'This service is not offered in your hamlet. The community decided to switch it off.' });
     if (rec.state === 'failed') return res.status(503).json({ error: 'module_unavailable', module: rec.id, message: 'This service is temporarily unavailable. Everything else keeps working.' });
     if (rec.state === 'disabled') return res.status(503).json({ error: 'module_disabled', module: rec.id, message: 'This service is switched off by the administrator.' });
     if (rec.breaker.openUntil > Date.now()) return res.status(503).json({ error: 'module_tripped', module: rec.id, retryAfterSec: Math.ceil((rec.breaker.openUntil - Date.now()) / 1000), message: 'This service had repeated errors and is resting. Other services are unaffected.' });
@@ -169,7 +220,7 @@ class ModuleHost {
         return brain.store.emit(type, payload, { actor: user && user.id, hamlet_id });
       },
       on: (type, fn) => host.subs.push({ moduleId: rec.id, type, fn }),
-      brain: brain.facade(rec.id),
+      brain: brain.facade(rec.id, rec.manifest && rec.manifest.version),
       log: (...a) => console.log(`[${rec.id}]`, ...a),
       httpError: (status, message) => Object.assign(new Error(message), { status }),
     };
@@ -183,7 +234,30 @@ class ModuleHost {
       state: m.breaker.openUntil > Date.now() ? 'tripped' : m.state,
       error: m.error || null, lastError: m.lastError || null, calls: m.calls, failures: m.failures, trips: m.breaker.trips,
       critical: !!m.manifest?.critical,
+      signed: !!m.signed,
+      budget: m.manifest?.budget || null,
+      off_hamlets: this.brain.moduleOffHamlets(m.id),
     }));
+  }
+
+  // Declared budgets vs what the module actually stores on this node (v2).
+  budgets() {
+    const { db } = this.brain;
+    let pageSize = 4096;
+    try { pageSize = db.prepare('PRAGMA page_size').get().page_size; } catch (_) { /* default */ }
+    return this.status().map((s) => {
+      const rec = this.modules.get(s.id);
+      const tables = Object.keys(rec.manifest?.tables || {});
+      let rows = 0, bytes = 0, sized = true;
+      for (const t of tables) {
+        try { rows += db.prepare(`SELECT COUNT(*) n FROM ${t}`).get().n; } catch (_) { /* table missing */ }
+        if (sized) { try { bytes += db.prepare('SELECT SUM(pgsize) b FROM dbstat WHERE name=?').get(t).b || 0; } catch (_) { sized = false; } }
+      }
+      if (!sized) bytes = null;
+      const b = s.budget || {};
+      const mb = bytes === null ? null : Math.round((bytes / 1048576) * 100) / 100;
+      return { id: s.id, state: s.state, rows, storage_mb: mb, budget_storage_mb: b.storage_mb ?? null, over_budget: b.storage_mb != null && mb != null && mb > b.storage_mb, sync_priority: b.sync_priority ?? 3, power: b.power || 'low', page_size: pageSize };
+    });
   }
 
   // Health snapshot per module (module may expose api.health()).
@@ -205,4 +279,4 @@ class ModuleHost {
   }
 }
 
-module.exports = { ModuleHost, BREAKER };
+module.exports = { ModuleHost, BREAKER, moduleDigest, signModule };

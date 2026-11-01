@@ -1,0 +1,12 @@
+{
+  "id": "surveys", "version": "1.0.0",
+  "name": "Forms & Surveys", "name_ml": "ഫോമുകളും സർവേകളും", "icon": "📋",
+  "description": "Offline forms with consent: fill at the hub, review in the city, reply returns on the next visit. Imports ODK XLSForm; exports CSV. The shared round-trip engine every service module uses.",
+  "tables": {},
+  "budget": { "storage_mb": 50, "sync_priority": 2, "power": "low" },
+  "emits": [], "subscribes": [],
+  "nav": [
+    { "view": "home", "label": "Forms & Surveys", "label_ml": "ഫോമുകൾ", "icon": "📋", "roles": ["facilitator", "coordinator", "agency_admin", "platform_admin", "health_worker", "doctor", "field_officer"], "section": "community" },
+    { "view": "queue", "label": "Replies to send", "label_ml": "മറുപടി നൽകാൻ", "icon": "📨", "roles": ["agency_admin", "platform_admin", "doctor", "field_officer"], "section": "ops" }
+  ]
+}

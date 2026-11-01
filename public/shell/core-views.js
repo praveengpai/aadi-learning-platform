@@ -282,6 +282,20 @@ export const coreViews = {
       { key: 'failures', label: t('Errors', 'പിഴവുകൾ'), render: (m) => h('span', { title: m.lastError || m.error || '' }, `${m.failures} ${m.trips ? `(${m.trips} trips)` : ''}`) },
       { key: 'x', label: '', render: (m) => m.critical ? ui.badge(t('Critical — always on', 'നിർണായകം'), 'info') : m.state === 'failed' ? h('span', { class: 'small' }, m.error) : ui.button(m.state === 'disabled' ? t('Switch on', 'ഓൺ') : t('Switch off', 'ഓഫ്'), async () => { await k.core.post(`/modules/${m.id}/${m.state === 'disabled' ? 'enable' : 'disable'}`); await k.reloadModules(); k.refresh(); }, { small: true, tone: m.state === 'disabled' ? 'primary' : 'danger' }) },
     ], mods));
+    // v2 — services per hamlet: the Oorukoottam decides which services come into its hamlet.
+    const pick = h('select', { class: 'input', style: { maxWidth: '320px' } }, mods.filter((m) => !m.critical && m.state !== 'failed').map((m) => h('option', { value: m.id }, `${m.icon || ''} ${t(m.name || m.id, m.name_ml)}`)));
+    const grid = h('div');
+    const paint = async () => {
+      const rows = await k.core.get(`/modules/${pick.value}/hamlets`);
+      grid.replaceChildren(ui.table([
+        { key: 'name', label: t('Hamlet', 'ഊര്'), render: (r) => t(r.name, r.name_ml) },
+        { key: 'enabled', label: t('Service here', 'ഇവിടെ സേവനം'), render: (r) => ui.badge(r.enabled ? t('On', 'ഓൺ') : t('Off by community decision', 'സമൂഹ തീരുമാനപ്രകാരം ഓഫ്'), r.enabled ? 'good' : 'warn') },
+        { key: 'x', label: '', render: (r) => (['platform_admin', 'agency_admin'].includes(state.user.role) ? ui.button(r.enabled ? t('Switch off here', 'ഇവിടെ ഓഫ്') : t('Switch on here', 'ഇവിടെ ഓൺ'), async () => { const note = r.enabled ? prompt(t('Record the Oorukoottam decision (date, note):', 'ഊരുകൂട്ടം തീരുമാനം രേഖപ്പെടുത്തുക:')) : ''; if (r.enabled && note === null) return; await k.core.post(`/modules/${pick.value}/hamlets/${r.hamlet_id}`, { enabled: !r.enabled, note }); paint(); }, { small: true, tone: r.enabled ? 'danger' : 'primary' }) : '') },
+      ], rows));
+    };
+    pick.addEventListener('change', paint);
+    el.append(ui.section(t('Services per hamlet', 'ഓരോ ഊരിലെയും സേവനങ്ങൾ'), [h('p', { class: 'small muted' }, t('Each hamlet decides, through its Oorukoottam, which services come in. Safeguarding is always on.', 'ഏതൊക്കെ സേവനങ്ങൾ വേണമെന്ന് ഓരോ ഊരും ഊരുകൂട്ടത്തിലൂടെ തീരുമാനിക്കുന്നു. സുരക്ഷ എപ്പോഴും ഓൺ.')), pick, grid]));
+    if (mods.length) paint();
   },
 
   // ---------------------------------------------------------------- resilience

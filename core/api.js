@@ -24,7 +24,7 @@ module.exports = function coreApi(brain, host) {
   r.get('/me', brain.authed, A((req, res) => res.json({ user: brain.publicUser(req.user), node: { id: brain.nodeId, role: brain.nodeRole } })));
   r.get('/demo-accounts', A((req, res) => {
     if (process.env.AADI_DEMO !== '1') return res.json([]);
-    const order = ['learner', 'guardian', 'facilitator', 'teacher', 'counsellor', 'mentor', 'coordinator', 'agency_admin', 'platform_admin', 'cpo', 'donor', 'employer', 'govt_viewer'];
+    const order = ['learner', 'guardian', 'facilitator', 'teacher', 'counsellor', 'mentor', 'health_worker', 'doctor', 'field_officer', 'coordinator', 'agency_admin', 'platform_admin', 'cpo', 'donor', 'employer', 'govt_viewer'];
     res.json(store.all('SELECT username, role, display_name, agency_id FROM users WHERE deleted=0 AND active=1 AND username LIKE \'demo.%\'')
       .sort((a, b) => order.indexOf(a.role) - order.indexOf(b.role) || a.username.localeCompare(b.username))
       .map((u) => ({ ...u, role_label: policy.ROLES[u.role]?.label, agency: u.agency_id ? store.get('agencies', u.agency_id)?.name : null })));
@@ -105,7 +105,7 @@ module.exports = function coreApi(brain, host) {
     res.json({ ...p, guardian: guardian && { id: guardian.id, name: guardian.name, relation: p.relation }, consents, access, enrolments: access.progress ? brain.store.all(`SELECT e.*, pr.title, pr.track, pr.module, a.name agency_name FROM enrolments e JOIN programmes pr ON pr.id=e.programme_id JOIN agencies a ON a.id=e.agency_id WHERE e.person_id=? AND e.deleted=0`, p.id).filter((e) => req.user.role === 'platform_admin' || !req.user.agency_id || ['learner', 'guardian'].includes(req.user.role) || e.agency_id === req.user.agency_id || policy.activeConsent(p.id, req.user.agency_id, 'progress')) : [] });
   }));
   // Register a new learner. Agencies may register; record is owned by the person.
-  r.post('/persons', need('learner.write'), A((req, res) => {
+  r.post('/persons', need('learner.write', 'forms.capture'), A((req, res) => {
     const b = req.body;
     const out = store.tx(() => {
       let guardian = null;
@@ -129,7 +129,7 @@ module.exports = function coreApi(brain, host) {
     const u = req.user;
     // Who may record consent: the person themself, their guardian, or staff recording an in-person/IVR consent.
     const selfOrGuardian = u.person_id === p.id || (u.role === 'guardian' && p.guardian_id === u.person_id);
-    if (!selfOrGuardian && !policy.can(u, 'learner.write')) return res.status(403).json({ error: 'forbidden', message: 'Only the learner, guardian, or staff recording an in-person consent can do this.' });
+    if (!selfOrGuardian && !policy.isRegistrar(u)) return res.status(403).json({ error: 'forbidden', message: 'Only the learner, guardian, or staff recording an in-person consent can do this.' });
     const granted_by = u.role === 'guardian' ? u.person_id : (b.granted_by || (p.guardian_id && policy.isMinor(p) ? p.guardian_id : p.id));
     res.json(brain.grantConsent({ person_id: p.id, agency_id: b.agency_id || u.agency_id, scopes: b.scopes, granted_by, relation: b.relation || (granted_by === p.id ? 'self' : 'guardian'), method: selfOrGuardian ? 'app' : (b.method || 'in_person'), expires_at: b.expires_at }, u));
   }));
@@ -144,7 +144,7 @@ module.exports = function coreApi(brain, host) {
   }));
 
   // --- enrolment ---
-  r.post('/enrolments', need('learner.write'), A((req, res) => res.json(brain.enrol(req.body.person_id, req.body.programme_id, req.user))));
+  r.post('/enrolments', need('learner.write', 'forms.capture'), A((req, res) => res.json(brain.enrol(req.body.person_id, req.body.programme_id, req.user))));
   r.post('/enrolments/:id/status', need('learner.write'), A((req, res) => {
     const e = store.get('enrolments', req.params.id);
     if (!e || (req.user.role !== 'platform_admin' && e.agency_id !== req.user.agency_id)) return res.status(404).json({ error: 'not_found' });
@@ -191,9 +191,72 @@ module.exports = function coreApi(brain, host) {
     res.json(brain.publicUser(store.put('users', { ...u, safeguarding_trained: 1, active: 1 }, { actor: req.user.id })));
   }));
 
+  // --- households (v2) ---
+  r.get('/households', need('learner.read', 'forms.capture'), A((req, res) => {
+    const w = {};
+    if (req.query.hamlet_id) w.hamlet_id = req.query.hamlet_id;
+    let rows = store.find('households', w, { order: 'name', limit: 2000 });
+    if (Array.isArray(req.user.hamlet_ids) && req.user.hamlet_ids.length && req.user.role !== 'platform_admin') rows = rows.filter((h) => req.user.hamlet_ids.includes(h.hamlet_id));
+    // Only households where the user can see at least one member — no family lists by the back door.
+    const ids = policy.visiblePersonIds(req.user);
+    if (ids !== null) {
+      const vis = new Set(ids.length ? store.all(`SELECT DISTINCT household_id h FROM persons WHERE deleted=0 AND household_id IS NOT NULL AND id IN (${ids.map(() => '?').join(',')})`, ...ids).map((r) => r.h) : []);
+      rows = rows.filter((h) => vis.has(h.id));
+    }
+    res.json(rows.map((h) => ({ ...h, members: brain.householdMembers(req.user, h.id).map((p) => ({ id: p.id, name: p.name, kind: p.kind, age: p.age, gender: p.gender })) })));
+  }));
+  r.post('/households', need('learner.write', 'forms.capture'), A((req, res) => {
+    for (const pid of [req.body.head_person_id, ...(req.body.members || [])].filter(Boolean)) {
+      if (!policy.canSee(req.user, pid, 'profile').ok) return res.status(403).json({ error: 'forbidden', message: 'You can only group people you are permitted to see.' });
+    }
+    res.json(brain.householdCreate(req.body, req.user));
+  }));
+
+  // --- forms: the shared round-trip engine (v2) ---
+  const F = brain.forms;
+  r.get('/forms', brain.authed, A((req, res) => res.json(F.defsFor(req.user, { module: req.query.module || null }).map((d) => ({ ...d, can_capture: F.canCapture(req.user, d), can_review: F.canReview(req.user, d) })))));
+  r.get('/forms/defs/:key', brain.authed, A((req, res) => {
+    const d = F.getDef(req.params.key);
+    if (!d || !(F.canCapture(req.user, d) || F.canReview(req.user, d) || (d.allow_self && req.user.person_id))) return res.status(404).json({ error: 'not_found' });
+    res.json({ ...d, can_capture: F.canCapture(req.user, d), can_review: F.canReview(req.user, d) });
+  }));
+  r.post('/forms/defs', need('forms.design'), A((req, res) => {
+    const def = { ...req.body, agency_id: req.user.role === 'platform_admin' ? (req.body.agency_id || null) : req.user.agency_id, source: req.body.source || 'designer' };
+    const ex = F.getDef(def.key);
+    if (ex && ex.module !== 'surveys') return res.status(409).json({ error: 'conflict', message: 'That form key belongs to a service module.' });
+    if (ex && ex.agency_id && req.user.role !== 'platform_admin' && ex.agency_id !== req.user.agency_id) return res.status(403).json({ error: 'forbidden' });
+    res.json(F.define('surveys', def, req.user));
+  }));
+  r.post('/forms/import-xlsform', need('forms.design'), A((req, res) => res.json(F.fromXlsform(req.body || {}))));
+  r.post('/forms/submissions', brain.authed, A((req, res) => {
+    try { res.json(F.submit(req.user, req.body || {}, { moduleEnabledIn: (m, h) => brain.moduleEnabledIn(m, h) })); }
+    catch (e) { if (e.errors) return res.status(400).json({ error: 'invalid', message: e.message, errors: e.errors }); throw e; }
+  }));
+  r.get('/forms/submissions', brain.authed, A((req, res) => res.json(F.list(req.user, { form_key: req.query.form_key, module: req.query.module, status: req.query.status, mine: req.query.mine === '1', person_id: req.query.person_id, hamlet_id: req.query.hamlet_id, limit: req.query.limit }))));
+  r.get('/forms/queue', brain.authed, A((req, res) => res.json(F.queue(req.user, { form_key: req.query.form_key, module: req.query.module, hamlet_id: req.query.hamlet_id }))));
+  r.get('/forms/submissions/:id', brain.authed, A((req, res) => res.json(F.one(req.user, req.params.id))));
+  r.post('/forms/submissions/:id/claim', brain.authed, A((req, res) => res.json(F.claim(req.user, req.params.id))));
+  r.post('/forms/submissions/:id/reply', brain.authed, A((req, res) => res.json(F.reply(req.user, req.params.id, req.body || {}))));
+  r.post('/forms/submissions/:id/seen', brain.authed, A((req, res) => res.json(F.markSeen(req.user, req.params.id))));
+  r.post('/forms/submissions/:id/close', brain.authed, A((req, res) => res.json(F.close(req.user, req.params.id, req.body || {}))));
+  r.get('/forms/export/:key.csv', brain.authed, A((req, res) => { const csv = F.exportCsv(req.user, req.params.key); res.type('text/csv').setHeader('Content-Disposition', `attachment; filename="${req.params.key}.csv"`); res.send(csv); }));
+
+  // --- roles and scopes, for admin screens (v2) ---
+  r.get('/roles', brain.authed, A((req, res) => res.json({ roles: policy.ROLES, scopes: policy.SCOPES, restricted: Object.fromEntries(Object.entries(policy.RESTRICTED).map(([k, v]) => [k, v.roles])) })));
+
   // --- platform: modules, health, audit, chain ---
   r.get('/modules', A((req, res) => res.json(host.status())));
   r.post('/modules/:id/:action(enable|disable)', need('platform.manage'), A((req, res) => { host.setEnabled(req.params.id, req.params.action === 'enable', req.user); res.json(host.status().find((m) => m.id === req.params.id)); }));
+  // Which hamlets have this service? The community (Oorukoottam) decides; a steward or agency admin records it.
+  r.get('/modules/:id/hamlets', brain.authed, A((req, res) => res.json(store.find('hamlets', {}, { order: 'name' }).map((h) => ({ hamlet_id: h.id, name: h.name, name_ml: h.name_ml, enabled: brain.moduleEnabledIn(req.params.id, h.id) })))));
+  r.post('/modules/:id/hamlets/:hid', need('platform.manage', 'agency.manage'), A((req, res) => {
+    if (!host.modules.has(req.params.id)) return res.status(404).json({ error: 'not_found' });
+    const m = host.modules.get(req.params.id);
+    if (m.manifest && m.manifest.critical && !req.body.enabled) return res.status(400).json({ error: 'critical', message: 'Safeguarding cannot be switched off in any hamlet.' });
+    if (!store.get('hamlets', req.params.hid)) return res.status(404).json({ error: 'not_found' });
+    res.json(brain.setModuleInHamlet(req.params.id, req.params.hid, !!req.body.enabled, req.user, req.body.note || null));
+  }));
+  r.get('/modules/budgets', need('platform.manage', 'ops'), A((req, res) => res.json(host.budgets())));
   r.get('/health', A((req, res) => {
     const ev = store.one('SELECT COUNT(*) n, MAX(ts) last FROM events');
     res.json({ ok: true, node: brain.nodeId, role: brain.nodeRole, time: new Date().toISOString(), events: ev.n, last_event: ev.last, modules: host.status().map((m) => ({ id: m.id, state: m.state })), sync: brain.db.prepare('SELECT * FROM sync_cursors').all() });
