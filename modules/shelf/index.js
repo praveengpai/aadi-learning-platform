@@ -208,11 +208,12 @@ module.exports = function init(ctx) {
       if (seen.has(key)) continue; seen.add(key);
       const r = rows.get(key);
       const doneToday = !!(r && r.last_reviewed_at && String(r.last_reviewed_at).slice(0, 10) === t);
-      const v = r ? { due: r.due, interval: r.interval_days } : virtualDue(it);
+      // A card reviewed today is ranked by the state it had this morning (prev_due), so the day's list keeps its order.
+      const v = r && doneToday && r.prev_due ? { due: r.prev_due, interval: Number(r.prev_interval) || r.interval_days } : r ? { due: r.due, interval: r.interval_days } : virtualDue(it);
       const low = typeof it.pct === 'number' && it.pct < LOW && ['lesson', 'quiz', 'homework', 'mock'].includes(it.kind);
       // lower = more urgent. Reviewed-today items keep their place so the day's list is stable.
       const overdue = daysBetween(v.due, t);
-      const prio = doneToday ? -1e6 : (low ? -1000 : 0) - Math.min(overdue, 365) * (it.kind === 'book' ? 0.3 : 1) + (hashNum(pid + t + key) % 1000) / 1000;
+      const prio = (low ? -1000 : 0) - Math.min(overdue, 365) * (it.kind === 'book' ? 0.3 : 1) + (hashNum(pid + t + key) % 1000) / 1000;
       cands.push({ ...it, due: v.due, interval_days: v.interval, reviews: r ? r.reviews || 0 : 0, last_result: r ? r.last_result : null, done_today: doneToday, low, prio, is_due: doneToday || v.due <= t });
     }
     cands.sort((a, b) => a.prio - b.prio);
@@ -325,8 +326,11 @@ module.exports = function init(ctx) {
     iv = Math.min(MAX_INTERVAL, iv);
     const now = new Date().toISOString();
     const due = addDays(today(), iv);
+    // Remember this morning's state the first time a card is reviewed today (keeps today's list order stable).
+    const firstToday = !(cur && cur.last_reviewed_at && String(cur.last_reviewed_at).slice(0, 10) === today());
+    const morning = firstToday ? (cur ? { due: cur.due, interval: cur.interval_days } : virtualDue(it)) : { due: cur.prev_due, interval: cur.prev_interval };
     const row = tx(() => {
-      const r = data.put('shelf_reviews', { ...(cur ? { id: cur.id } : {}), person_id: pid, hamlet_id: person && person.hamlet_id, kind, ref, title: it.title, module: it.module, interval_days: iv, ease: Math.round(ease * 100) / 100, due, last_result: result, reviews, last_reviewed_at: now }, req.user);
+      const r = data.put('shelf_reviews', { ...(cur ? { id: cur.id } : {}), person_id: pid, hamlet_id: person && person.hamlet_id, kind, ref, title: it.title, module: it.module, interval_days: iv, ease: Math.round(ease * 100) / 100, due, last_result: result, reviews, last_reviewed_at: now, prev_due: morning.due, prev_interval: morning.interval }, req.user);
       data.put('shelf_log', { person_id: pid, hamlet_id: person && person.hamlet_id, kind, ref, module: it.module, result, interval_days: iv, at: now }, req.user);
       return r;
     });
