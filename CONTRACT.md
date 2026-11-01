@@ -214,7 +214,7 @@ Rules must be pure, fast and never throw (a throw is caught and logged as "pleas
 **Clinical and agronomic rules are drafts until an expert approves them** — mark the thresholds in a `content/RULES.md` file with their source and "PENDING EXPERT REVIEW".
 
 ### Module-scoped engine calls (`ctx.brain.forms`)
-`submit(user, {form_key, person_id|household_id|hamlet_id, answers, client_ref}) · list(user, {status, person_id, hamlet_id, mine, form_key}) · queue(user) · one(user, id) · reply(user, id, {reply, reply_ml, outcome, close}) · validate(key, answers) · canCapture(user, key) · canReview(user, key) · get(key)` — all restricted to your module's forms and fully policy-checked (consent, restricted scopes, agency, hamlet, per-hamlet switch). Submitting is idempotent per `client_ref`.
+`submit(user, {form_key, person_id|household_id|hamlet_id, answers, client_ref}) · markSeen(user, id) · close(user, id, {outcome}) · list(user, {status, person_id, hamlet_id, mine, form_key}) · queue(user) · one(user, id) · reply(user, id, {reply, reply_ml, outcome, close}) · validate(key, answers) · canCapture(user, key) · canReview(user, key) · get(key)` — all restricted to your module's forms and fully policy-checked (consent, restricted scopes, agency, hamlet, per-hamlet switch). Submitting is idempotent per `client_ref`.
 
 ### Core API (the generic screens and other modules use it too)
 `GET /api/core/forms?module=` · `GET /api/core/forms/defs/:key` · `POST /api/core/forms/submissions` · `GET /api/core/forms/submissions?module=&status=&mine=1&person_id=` · `GET /api/core/forms/queue?module=` · `GET /api/core/forms/submissions/:id` · `POST …/:id/claim|reply|seen|close` · `GET /api/core/forms/export/:key.csv`.
@@ -241,3 +241,12 @@ Declare in `manifest.json`: `"budget": { "storage_mb": 50, "sync_priority": 1-5 
 - Tests must cover: restricted-scope denial (e.g. a facilitator or CPO cannot read health), another agency's staff denied, consent withdrawal removing access, a reviewer reply reaching the capturer, and the per-hamlet switch.
 - Notifications never contain sensitive details.
 - No real personal data in seeds — fictional people only. Seeds must finish in < 5 s and must not use the shared demo RNG in a way that changes other modules' data: draw from your own stream: `const R = demo.rng(<your unique number>)` (same API as `demo.R`). Never call the shared `demo.R` in a new module.
+
+## v2.1 — lessons from the Wave 1 security review (MUST follow)
+- Read your own form answers only through the view `<id>_form_rows` (or `brain.forms.*`). `form_submissions` is sealed. If your module holds sensitive personal data, set `"sealed": true` in the manifest: then no other module can read your tables or receive your rows on the event bus.
+- Never spread `req.body` into `data.put`. Build rows from an explicit field list; never accept `id`, `agency_id`, `hamlet_id`, `person_id`, `created_by` from the client without checking the user may act on that record (load it, check its agency/hamlet, check `canSee`).
+- Every person-level route checks `brain.policy.canSee(user, personId, scope)` (it already enforces consent, restricted scopes, minors-only for guardians and the user's `hamlet_ids`). Every hamlet-level route checks the user's `hamlet_ids`.
+- Aggregates for donors/govt/other agencies: suppress counts < 5, and if any hamlet cell is suppressed hide the matching total ("hidden") so it cannot be subtracted back; use a fixed time window for external viewers; filter by the user's agency unless steward/donor/govt.
+- Notifications never name the service or contain case details (`brain.notify` already drops the module name for sealed modules).
+- Guardians act only for minor wards; adults' records are their own.
+- Include a security section in your tests: another agency, hamlet-limited staff outside their hamlet, donor, consent withdrawal, mass-assignment attempt (posting someone else's id), and an aggregate subtraction check.
