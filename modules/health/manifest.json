@@ -1,0 +1,18 @@
+{
+  "id": "health", "version": "1.0.0",
+  "name": "Health & Elder Screening", "name_ml": "ആരോഗ്യ, വയോജന പരിശോധന", "icon": "🩺",
+  "description": "ASHA workers and nurses capture vitals, child growth, pregnancy and elder screening offline at the weekly hub; a remote doctor reviews in the city; advice and follow-ups come back on the next visit. Screening and referral support only — not a diagnosis tool.",
+  "tables": {
+    "health_followups": ["person_id", "hamlet_id", "agency_id", "due", "reason", "reason_ml", "status", "submission_id", "advice_template", "created_by", "done_at", "done_by", "note"]
+  },
+  "types": {},
+  "budget": { "storage_mb": 40, "sync_priority": 1, "power": "low" },
+  "emits": ["health.followup_created", "health.followup_done"],
+  "subscribes": [],
+  "nav": [
+    { "view": "home", "label": "Health visits", "label_ml": "ആരോഗ്യ സന്ദർശനം", "icon": "🩺", "roles": ["health_worker", "platform_admin"], "section": "care" },
+    { "view": "queue", "label": "Doctor review queue", "label_ml": "ഡോക്ടർ പരിശോധനാ നിര", "icon": "👩‍⚕️", "roles": ["doctor", "platform_admin"], "section": "care" },
+    { "view": "family", "label": "Health advice for my family", "label_ml": "കുടുംബത്തിനുള്ള ആരോഗ്യ ഉപദേശം", "icon": "💚", "roles": ["learner", "guardian"], "section": "care" },
+    { "view": "aggregate", "label": "Health screening overview", "label_ml": "ആരോഗ്യ പരിശോധന — അവലോകനം", "icon": "📊", "roles": ["agency_admin", "platform_admin", "doctor", "health_worker", "donor", "govt_viewer"], "section": "insight" }
+  ]
+}
