@@ -1,0 +1,38 @@
+{
+  "id": "livelihoods",
+  "version": "1.0.0",
+  "name": "Livelihoods & Self-Help Groups",
+  "name_ml": "ഉപജീവനം, അയൽക്കൂട്ടങ്ങൾ",
+  "icon": "🤝",
+  "description": "Self-help groups (NHG/SHG), joint liability groups and small enterprises keep their books offline: meetings, savings, internal loans and repayments, loan requests reviewed by the CDS, products listed for sale through a city partner, and k-anonymised trends for funders.",
+  "sealed": true,
+  "tables": {
+    "livelihoods_groups": ["hamlet_id", "agency_id", "name", "name_ml", "type", "formed_on", "meeting_day", "thrift", "status", "notes", "created_by"],
+    "livelihoods_members": ["group_id", "hamlet_id", "agency_id", "person_id", "role", "joined_on", "status", "left_on", "added_by"],
+    "livelihoods_meetings": ["group_id", "hamlet_id", "agency_id", "date", "attendance", "savings_collected", "notes", "entered_by", "client_ref"],
+    "livelihoods_txns": ["group_id", "hamlet_id", "agency_id", "date", "kind", "amount", "person_id", "months", "request_id", "meeting_id", "note", "entered_by", "entered_at", "client_ref", "voided", "void_reason", "voided_by"],
+    "livelihoods_products": ["group_id", "hamlet_id", "agency_id", "name", "name_ml", "category", "unit", "price", "stock", "description", "photo", "status", "group_agreed", "agreed_on", "agreed_by", "approved_by", "approved_at", "created_by", "is_demo"]
+  },
+  "types": {
+    "thrift": "INTEGER",
+    "attendance": "INTEGER",
+    "savings_collected": "INTEGER",
+    "amount": "INTEGER",
+    "months": "INTEGER",
+    "voided": "INTEGER",
+    "price": "INTEGER",
+    "stock": "INTEGER",
+    "group_agreed": "INTEGER",
+    "is_demo": "INTEGER"
+  },
+  "budget": { "storage_mb": 40, "sync_priority": 2, "power": "low" },
+  "emits": ["livelihoods.group_created", "livelihoods.meeting_recorded", "livelihoods.loan_given", "livelihoods.product_listed"],
+  "subscribes": [],
+  "nav": [
+    { "view": "home", "label": "Self-help groups", "label_ml": "അയൽക്കൂട്ടങ്ങൾ", "icon": "🤝", "roles": ["facilitator", "coordinator", "field_officer", "agency_admin", "platform_admin"], "section": "community" },
+    { "view": "review", "label": "Loan requests", "label_ml": "വായ്പ അപേക്ഷകൾ", "icon": "📝", "roles": ["field_officer", "agency_admin", "platform_admin"], "section": "community" },
+    { "view": "my", "label": "My group savings", "label_ml": "എന്റെ സമ്പാദ്യം", "icon": "🪙", "roles": ["learner", "guardian"], "section": "community" },
+    { "view": "catalogue", "label": "Hamlet products", "label_ml": "ഊരിലെ ഉൽപ്പന്നങ്ങൾ", "icon": "🍯", "roles": ["learner", "guardian", "facilitator", "coordinator", "field_officer", "agency_admin", "platform_admin", "donor", "employer", "govt_viewer", "mentor", "teacher", "counsellor", "cpo"], "section": "community" },
+    { "view": "impact", "label": "SHG trends", "label_ml": "അയൽക്കൂട്ട കണക്കുകൾ", "icon": "📊", "roles": ["donor", "govt_viewer", "agency_admin", "coordinator", "platform_admin", "cpo"], "section": "insight" }
+  ]
+}
