@@ -169,10 +169,30 @@ function makeForms(brain) {
     }
     if (user.role === 'platform_admin') return true;
     if (!(canCapture(user, def) || canReview(user, def))) return false;
-    if (sub.agency_id !== user.agency_id && !(def.review && def.review.agency_id === user.agency_id)) return false;
-    if (Array.isArray(user.hamlet_ids) && user.hamlet_ids.length && !user.hamlet_ids.includes(sub.hamlet_id)) return false;
+    const forwarded = def.review && def.review.agency_id === user.agency_id && sub.agency_id !== user.agency_id;
+    if (sub.agency_id !== user.agency_id && !forwarded) return false;
+    if (outsideArea(user, sub)) return false;
+    // Household answers stay visible only while the head of household's consent to THIS agency lasts.
+    if (sub.household_id || def.subject === 'household') {
+      const hh = sub.household_id && store.get('households', sub.household_id);
+      if (!hh || !hh.head_person_id || !policy.activeConsent(hh.head_person_id, user.agency_id, def.scope)) return false;
+    }
+    // Hamlet-level forms: only agencies present in that hamlet.
+    if (def.subject === 'hamlet' && !store.one("SELECT 1 x FROM agency_presence WHERE agency_id=? AND hamlet_id=? AND deleted=0 AND status='active'", user.agency_id, sub.hamlet_id)) return false;
     return true;
   }
+
+  // The person themself and a guardian see a family-safe view of restricted-scope records:
+  // the advice that came back, not raw clinical answers or flag codes.
+  function familySafe(user, s, def) {
+    if (!def || !policy.RESTRICTED[def.scope]) return s;
+    if (!['learner', 'guardian'].includes(user.role) && !(user.person_id && user.person_id === s.person_id)) return s;
+    if (policy.RESTRICTED[def.scope].roles.includes(user.role)) return s;
+    return { ...s, answers: {}, flags: [], priority: 0, family_view: true };
+  }
+  // A service switched off in a hamlet is off for its records too (stewards excepted).
+  const switchedOff = (user, s) => user.role !== 'platform_admin' && moduleOff && moduleOff(s.module, s.hamlet_id);
+  let moduleOff = null;
 
   // Strip photos from list views (they are large); full record via one().
   const slim = (s) => {
@@ -198,11 +218,8 @@ function makeForms(brain) {
   function submit(user, { form_key, person_id = null, household_id = null, hamlet_id = null, answers, client_ref = null }, { moduleEnabledIn } = {}) {
     const def = getDef(form_key);
     if (!def || def.status !== 'active') throw err(404, 'Form not found.');
-    // Idempotent: the browser's offline outbox may replay the same submission.
-    if (client_ref) {
-      const dup = store.one('SELECT * FROM form_submissions WHERE client_ref=? AND captured_by=? AND deleted=0', String(client_ref), user.id);
-      if (dup) return { ...dup, duplicate: true };
-    }
+    if (def.subject !== 'person') person_id = null;
+    if (def.subject !== 'household') household_id = def.subject === 'person' ? household_id : null;
     const self = person_id && user.person_id === person_id && def.allow_self;
     if (!self && !canCapture(user, def)) throw err(403, 'Your role cannot fill in this form.');
     if (def.agency_id && user.role !== 'platform_admin' && def.agency_id !== user.agency_id) throw err(403, 'This form belongs to another agency.');
@@ -228,6 +245,11 @@ function makeForms(brain) {
     } else if (!hamlet || !store.get('hamlets', hamlet)) throw err(400, 'Choose the hamlet.');
     if (Array.isArray(user.hamlet_ids) && user.hamlet_ids.length && !user.hamlet_ids.includes(hamlet) && user.role !== 'platform_admin') throw err(403, 'This hamlet is outside your area.');
     if (moduleEnabledIn && !moduleEnabledIn(def.module, hamlet)) throw err(403, 'This service is switched off in this hamlet.', 'module_off_here');
+    // Idempotent: the browser's offline outbox may replay the same submission (checked after permissions).
+    if (client_ref) {
+      const dup = store.one('SELECT * FROM form_submissions WHERE client_ref=? AND captured_by=? AND deleted=0', String(client_ref), user.id);
+      if (dup) return { ...dup, duplicate: true };
+    }
     const v = validate(def, answers);
     if (!v.ok) throw Object.assign(err(400, v.errors.map((e) => e.message).join('; '), 'invalid'), { errors: v.errors });
     let flags = [], priority = 0;
@@ -254,8 +276,9 @@ function makeForms(brain) {
     if (!s) throw err(404, 'Not found.');
     const def = getDef(s.form_key);
     if (!visible(user, s, def)) throw err(403, 'Not permitted.');
-    if (user.role === 'platform_admin' && s.person_id && user.person_id !== s.person_id) brain.audit(user, 'steward.form_read', s.person_id, { form: s.form_key });
-    return { ...decorate(s, def), form: def, can_reply: canReview(user, def) && !['closed'].includes(s.status) };
+    if (switchedOff(user, s)) throw err(403, 'This service is switched off in this hamlet.', 'module_off_here');
+    if (user.role === 'platform_admin' && s.person_id && user.person_id !== s.person_id) brain.audit(user, 'steward.form_read', s.person_id, policy.RESTRICTED[def.scope] ? { scope: 'restricted' } : { form: s.form_key });
+    return { ...familySafe(user, decorate(s, def), def), form: familySafe(user, {}, def).family_view ? { ...def, fields: [] } : def, can_reply: canReview(user, def) && !['closed'].includes(s.status) };
   }
 
   function list(user, { form_key = null, module = null, status = null, mine = false, person_id = null, hamlet_id = null, limit = 200 } = {}) {
@@ -277,8 +300,8 @@ function makeForms(brain) {
     for (const s of store.all(sql, ...p)) {
       if (!defs.has(s.form_key)) defs.set(s.form_key, getDef(s.form_key));
       const def = defs.get(s.form_key);
-      if (!visible(user, s, def)) continue;
-      out.push(decorate(slim(s), def));
+      if (!visible(user, s, def) || switchedOff(user, s)) continue;
+      out.push(familySafe(user, decorate(slim(s), def), def));
       if (out.length >= Math.min(Number(limit) || 200, 1000)) break;
     }
     return out;
@@ -294,6 +317,7 @@ function makeForms(brain) {
     if (!s) throw err(404, 'Not found.');
     const def = getDef(s.form_key);
     if (!visible(user, s, def) || !canReview(user, def)) throw err(403, 'You cannot answer this form.');
+    if (switchedOff(user, s)) throw err(403, 'This service is switched off in this hamlet.', 'module_off_here');
     if (s.status === 'closed') throw err(409, 'Already closed.');
     if (!text || String(text).trim().length < 2) throw err(400, 'Write a reply.');
     const now = nowIso();
@@ -338,7 +362,7 @@ function makeForms(brain) {
     if (!canReview(user, def) && !policy.can(user, 'forms.design')) throw err(403, 'Not permitted.');
     const rows = list(user, { form_key, limit: 1000 });
     const cols = def.fields.filter((f) => !['note', 'photo'].includes(f.type)).map((f) => f.name);
-    const q = (v) => { const x = v === null || v === undefined ? '' : Array.isArray(v) ? v.join(' ') : String(v); return /[",\n]/.test(x) ? '"' + x.replace(/"/g, '""') + '"' : x; };
+    const q = (v) => { let x = v === null || v === undefined ? '' : Array.isArray(v) ? v.join(' ') : String(v); if (/^[=+\-@\t\r]/.test(x)) x = "'" + x; return /[",\n]/.test(x) ? '"' + x.replace(/"/g, '""') + '"' : x; };
     const head = ['submission_id', 'captured_at', 'hamlet', 'person_id', 'status', ...cols, 'flags', 'reply', 'outcome'];
     const lines = [head.join(',')];
     for (const r of rows) lines.push([r.id, r.captured_at, r.hamlet, r.person_id, r.status, ...cols.map((c) => r.answers[c]), (r.flags || []).map((f) => f.code).join(' '), r.reply, r.outcome].map(q).join(','));
@@ -386,6 +410,7 @@ function makeForms(brain) {
   return {
     TYPES, STATUSES, basic, define, getDef, defsFor, canCapture, canReview, validate, visible, submit, one, list, queue, reply, claim, markSeen, close, exportCsv, fromXlsform,
     rule: (module, key, fn) => rules.set(module + '|' + key, fn),
+    setModuleSwitch: (fn) => { moduleOff = fn; },
   };
 }
 

@@ -1,19 +1,110 @@
 {
-  "id": "govtservices", "version": "1.0.0",
-  "name": "Government Services & Schemes", "name_ml": "സർക്കാർ സേവനങ്ങളും പദ്ധതികളും", "icon": "🏛️",
+  "id": "govtservices",
+  "version": "1.0.0",
+  "name": "Government Services & Schemes",
+  "name_ml": "സർക്കാർ സേവനങ്ങളും പദ്ധതികളും",
+  "icon": "🏛️",
   "description": "A mobile Akshaya desk: document checklist, 'may be eligible' scheme suggestions, offline applications that travel to the ST Department / Akshaya, and a plain-language status timeline for the family. Never submits to government portals itself.",
   "tables": {
-    "govtservices_documents": ["person_id", "hamlet_id", "agency_id", "doc", "status", "updated_by", "note"],
-    "govtservices_status_log": ["submission_id", "person_id", "hamlet_id", "agency_id", "outcome", "note", "note_ml", "by_user", "at"]
+    "govtservices_documents": [
+      "person_id",
+      "hamlet_id",
+      "agency_id",
+      "doc",
+      "status",
+      "updated_by",
+      "note"
+    ],
+    "govtservices_status_log": [
+      "submission_id",
+      "person_id",
+      "hamlet_id",
+      "agency_id",
+      "outcome",
+      "note",
+      "note_ml",
+      "by_user",
+      "at"
+    ]
   },
-  "budget": { "storage_mb": 20, "sync_priority": 2, "power": "low" },
-  "emits": ["govtservices.documents_updated"],
-  "subscribes": ["forms.submitted", "forms.replied"],
+  "budget": {
+    "storage_mb": 20,
+    "sync_priority": 2,
+    "power": "low"
+  },
+  "emits": [
+    "govtservices.documents_updated"
+  ],
+  "subscribes": [
+    "forms.submitted",
+    "forms.replied"
+  ],
   "nav": [
-    { "view": "home", "label": "Scheme Help Desk", "label_ml": "പദ്ധതി സഹായ ഡെസ്ക്", "icon": "🏛️", "roles": ["facilitator", "coordinator", "field_officer", "agency_admin", "platform_admin"], "section": "community" },
-    { "view": "board", "label": "Applications", "label_ml": "അപേക്ഷകൾ", "icon": "🗂️", "roles": ["facilitator", "coordinator", "field_officer", "agency_admin", "platform_admin"], "section": "community" },
-    { "view": "office", "label": "Office queue", "label_ml": "ഓഫീസ് ക്യൂ", "icon": "🏢", "roles": ["field_officer", "agency_admin", "platform_admin"], "section": "ops" },
-    { "view": "family", "label": "My documents & applications", "label_ml": "എന്റെ രേഖകളും അപേക്ഷകളും", "icon": "📂", "roles": ["learner", "guardian"], "section": "community" },
-    { "view": "aggregate", "label": "Scheme access (numbers)", "label_ml": "പദ്ധതി ലഭ്യത (എണ്ണം)", "icon": "📊", "roles": ["donor", "govt_viewer", "platform_admin", "agency_admin", "coordinator"], "section": "insight" }
-  ]
+    {
+      "view": "home",
+      "label": "Scheme Help Desk",
+      "label_ml": "പദ്ധതി സഹായ ഡെസ്ക്",
+      "icon": "🏛️",
+      "roles": [
+        "facilitator",
+        "coordinator",
+        "field_officer",
+        "agency_admin",
+        "platform_admin"
+      ],
+      "section": "community"
+    },
+    {
+      "view": "board",
+      "label": "Applications",
+      "label_ml": "അപേക്ഷകൾ",
+      "icon": "🗂️",
+      "roles": [
+        "facilitator",
+        "coordinator",
+        "field_officer",
+        "agency_admin",
+        "platform_admin"
+      ],
+      "section": "community"
+    },
+    {
+      "view": "office",
+      "label": "Office queue",
+      "label_ml": "ഓഫീസ് ക്യൂ",
+      "icon": "🏢",
+      "roles": [
+        "field_officer",
+        "agency_admin",
+        "platform_admin"
+      ],
+      "section": "ops"
+    },
+    {
+      "view": "family",
+      "label": "My documents & applications",
+      "label_ml": "എന്റെ രേഖകളും അപേക്ഷകളും",
+      "icon": "📂",
+      "roles": [
+        "learner",
+        "guardian"
+      ],
+      "section": "community"
+    },
+    {
+      "view": "aggregate",
+      "label": "Scheme access (numbers)",
+      "label_ml": "പദ്ധതി ലഭ്യത (എണ്ണം)",
+      "icon": "📊",
+      "roles": [
+        "donor",
+        "govt_viewer",
+        "platform_admin",
+        "agency_admin",
+        "coordinator"
+      ],
+      "section": "insight"
+    }
+  ],
+  "sealed": true
 }

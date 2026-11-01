@@ -197,6 +197,8 @@ function setLang(l) {
 }
 async function logout() {
   try { await http('POST', '/api/core/auth/logout'); } catch (_) { /* ignore */ }
+  // Shared tablets: remove everything this user's screens cached on the device.
+  try { const me = state.user && state.user.id; for (const k of Object.keys(localStorage)) if (k.startsWith('aadi.c:' + me + ':')) localStorage.removeItem(k); } catch (_) { /* ignore */ }
   state.user = null; frame = null; localStorage.removeItem('aadi.lastme'); location.hash = '#/home'; render();
 }
 

@@ -218,7 +218,10 @@ module.exports = function init(ctx) {
   router.get('/aggregate', requires('analytics.aggregate', 'health.capture', 'health.review'), (req, res) => {
     const u = req.user;
     const allAgencies = ['platform_admin', 'donor', 'govt_viewer'].includes(u.role);
-    const since = new Date(Date.now() - (Number(req.query.days) || 180) * DAY).toISOString();
+    const priv0 = ['platform_admin', 'agency_admin', 'coordinator'].includes(u.role);
+    // External viewers get a fixed, coarse window: changing the window must not reveal one new check.
+    const days = priv0 ? (Number(req.query.days) || 180) : 180;
+    const since = new Date(Date.now() - days * DAY).toISOString();
     const rows = sql(`SELECT hamlet_id, form_key, person_id, priority, flags, status, agency_id FROM health_form_rows WHERE deleted=0 AND module='health' AND captured_at>=?${allAgencies ? '' : ' AND agency_id=?'}`, since, ...(allAgencies ? [] : [u.agency_id || '-']));
     const priv = ['platform_admin', 'agency_admin', 'coordinator', 'cpo'].includes(u.role);
     const sup = (n) => brain.policy.suppress(n, u);
@@ -246,10 +249,15 @@ module.exports = function init(ctx) {
       hamlets.push({ hamlet_id: hid, hamlet: h ? h.name : '', hamlet_ml: h ? h.name_ml : '', people_screened: sup(g.people.size), checks: sup(g.checks), flagged: sup(g.flagged.size), urgent: sup(g.urgent.size), pct_flagged: pct(g.flagged.size, g.people.size), by_form: Object.fromEntries(FORM_KEYS.map((k) => [k, sup(g.forms[k] || 0)])) });
     }
     hamlets.sort((a, b) => String(a.hamlet).localeCompare(String(b.hamlet)));
+    // Complementary suppression: if any hamlet's cell is hidden, hide the total too (no "total − others").
+    const hid = (v) => typeof v === 'string';
+    const hideTotal = {};
+    for (const k of ['people_screened', 'checks', 'flagged', 'urgent']) hideTotal[k] = hamlets.some((h) => hid(h[k]));
+    const hideForm = Object.fromEntries(FORM_KEYS.map((k) => [k, hamlets.some((h) => hid(h.by_form[k]))]));
     const fuDone = sqlOne(`SELECT COUNT(*) n, SUM(status='done') d FROM health_followups WHERE deleted=0 AND status IN ('open','done')${allAgencies ? '' : ' AND agency_id=?'}`, ...(allAgencies ? [] : [u.agency_id || '-']));
     res.json({
       disclaimer: DISCLAIMER, since: since.slice(0, 10), k_anon: 5,
-      totals: { people_screened: sup(tot.people.size), checks: sup(tot.checks), flagged: sup(tot.flagged.size), urgent: sup(tot.urgent.size), pct_flagged: pct(tot.flagged.size, tot.people.size), followups: sup(fuDone.n || 0), followups_done: sup(fuDone.d || 0), by_form: Object.fromEntries(FORM_KEYS.map((k) => [k, sup(tot.forms[k] || 0)])) },
+      totals: { people_screened: hideTotal.people_screened ? 'hidden' : sup(tot.people.size), checks: hideTotal.checks ? 'hidden' : sup(tot.checks), flagged: hideTotal.flagged ? 'hidden' : sup(tot.flagged.size), urgent: hideTotal.urgent ? 'hidden' : sup(tot.urgent.size), pct_flagged: hideTotal.flagged || hideTotal.people_screened ? null : pct(tot.flagged.size, tot.people.size), followups: sup(fuDone.n || 0), followups_done: sup(fuDone.d || 0), by_form: Object.fromEntries(FORM_KEYS.map((k) => [k, hideForm[k] ? 'hidden' : sup(tot.forms[k] || 0)])) },
       hamlets,
       note: 'Counts of people and checks only. Numbers under 5 are hidden so no family can be identified.',
     });
@@ -258,7 +266,7 @@ module.exports = function init(ctx) {
   // The engine's default reply notification names the form ("a reply to \"Pregnancy check\" …"), which is
   // sensitive on a shared phone. When a doctor replies through the generic core route, withdraw that
   // message before the channels module sends it and queue a neutral one instead. (Brain request filed.)
-  const NEUTRAL = () => `${brain.brand.short}: a message from the health team is waiting for you. Please visit the centre on the next visit day.`;
+  const NEUTRAL = () => `${brain.brand.short}: you have a message waiting at the centre. Please come on the next visit day.`; // never name the service
   ctx.on('forms.replied', (ev) => {
     const pl = ev.payload || {};
     if (pl.module !== 'health' || quiet.delete(pl.id)) return; // our own replies never queue the engine's message

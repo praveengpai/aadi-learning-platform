@@ -54,17 +54,23 @@ export async function http(method, url, body) {
     err.status = res.status; err.data = data;
     throw err;
   }
-  if (method === 'GET') { lsSet(cacheKey(url), { t: Date.now(), v: data }); trimCache(); }
+  if (method === 'GET' && cacheable(url)) { lsSet(cacheKey(url), { t: Date.now(), v: data }); trimCache(); }
   return data;
 }
 
+// Records that must never sit in plain device storage (health, form answers, case queues).
+const NO_CACHE = [/\/api\/core\/forms\/(submissions|queue)/, /\/api\/m\/health\/(?!meta)/, /\/api\/m\/govtservices\/(documents|applications|person|my|family)/];
+const cacheable = (url) => !NO_CACHE.some((r) => r.test(url));
+const idemKey = () => (state.user ? state.user.id : 'x') + '-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+
 function queue(method, url, body) {
   const q = lsGet(OUTBOX_KEY) || [];
-  q.push({ method, url, body, at: Date.now(), user: state.user && state.user.id });
+  q.push({ method, url, body, at: Date.now(), user: state.user && state.user.id, key: idemKey() });
   lsSet(OUTBOX_KEY, q);
   toast(t('Saved on this device. It will be sent when the connection returns.', 'ഈ ഉപകരണത്തിൽ സൂക്ഷിച്ചു. കണക്ഷൻ വരുമ്പോൾ അയയ്ക്കും.'), 'warn');
 }
 export function outboxCount() { return (lsGet(OUTBOX_KEY) || []).length; }
+export function outboxFailed() { return lsGet(OUTBOX_KEY + '.failed') || []; }
 let replaying = false;
 export async function replayOutbox() {
   if (replaying) return; replaying = true;
@@ -75,8 +81,19 @@ export async function replayOutbox() {
     for (const item of q) {
       if (state.user && item.user && item.user !== state.user.id) { keep.push(item); continue; }
       try {
-        const r = await fetch(item.url, { method: item.method, headers: { 'content-type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify(item.body) });
-        if (r.status >= 500) keep.push(item); else sent++;
+        const r = await fetch(item.url, { method: item.method, headers: { 'content-type': 'application/json', 'x-idempotency-key': item.key || '' }, credentials: 'same-origin', body: JSON.stringify(item.body) });
+        // Keep it when the server is down, the session expired, or we were asked to slow down.
+        if (r.status >= 500 || [401, 408, 429].includes(r.status)) { keep.push(item); if (r.status === 401) break; continue; }
+        if (r.status >= 400) {
+          // Refused for a real reason (consent withdrawn, switched off …): keep a visible record, never drop silently.
+          let msg = ''; try { msg = (await r.json()).message || ''; } catch (_) { /* ignore */ }
+          const failed = lsGet(OUTBOX_KEY + '.failed') || [];
+          failed.push({ ...item, status: r.status, message: msg, failed_at: Date.now() });
+          lsSet(OUTBOX_KEY + '.failed', failed.slice(-50));
+          toast(t('A saved change could not be sent: ', 'സൂക്ഷിച്ച ഒരു മാറ്റം അയയ്ക്കാനായില്ല: ') + (msg || r.status), 'bad');
+          continue;
+        }
+        sent++;
       } catch (_) { keep.push(item); break; }
     }
     q = keep.concat((lsGet(OUTBOX_KEY) || []).slice(q.length));

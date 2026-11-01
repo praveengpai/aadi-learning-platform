@@ -110,7 +110,8 @@ function makePolicy(store) {
     if (user.person_id === personId) return { ok: true, reason: 'self' };
     if (user.role === 'guardian') {
       const p = store.get('persons', personId);
-      if (p && p.guardian_id === user.person_id) return { ok: true, reason: 'guardian' };
+      // A guardian acts for a MINOR ward only; an adult child's records are their own (DPDP Act 2023).
+      if (p && p.guardian_id === user.person_id && isMinor(p)) return { ok: true, reason: 'guardian' };
       return { ok: false, reason: 'not your ward' };
     }
     if (['learner', 'donor', 'govt_viewer'].includes(user.role)) return { ok: false, reason: 'role has no person-level access' };
@@ -120,6 +121,11 @@ function makePolicy(store) {
     }
     if (!user.agency_id) return { ok: false, reason: 'no agency' };
     if (rs && !rs.roles.includes(user.role)) return { ok: false, reason: rs.message };
+    // Staff limited to particular hamlets see only people living there.
+    if (Array.isArray(user.hamlet_ids) && user.hamlet_ids.length) {
+      const p = store.get('persons', personId);
+      if (!p || !user.hamlet_ids.includes(p.hamlet_id)) return { ok: false, reason: 'outside your hamlets' };
+    }
     if (!enrolledWith(personId, user.agency_id)) return { ok: false, reason: 'person not enrolled with your agency' };
     if (!activeConsent(personId, user.agency_id, scope)) return { ok: false, reason: `no active "${scope}" consent for your agency` };
     return { ok: true, reason: 'enrolment + consent' };
@@ -131,7 +137,7 @@ function makePolicy(store) {
     if (user.role === 'platform_admin' || user.role === 'cpo') return null; // null = all
     if (user.role === 'learner') return [user.person_id];
     if (['donor', 'govt_viewer'].includes(user.role)) return []; // aggregates only
-    if (user.role === 'guardian') return [user.person_id, ...store.all('SELECT id FROM persons WHERE guardian_id=? AND deleted=0', user.person_id).map((r) => r.id)];
+    if (user.role === 'guardian') return [user.person_id, ...store.all('SELECT * FROM persons WHERE guardian_id=? AND deleted=0', user.person_id).filter((p) => isMinor(p)).map((r) => r.id)];
     if (!user.agency_id) return [];
     const scope = user.role === 'employer' ? 'employment' : 'profile';
     const rows = store.all(`SELECT DISTINCT c.person_id id FROM consents c

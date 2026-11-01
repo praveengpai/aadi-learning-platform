@@ -7,6 +7,8 @@ const { openDb, migrateCore, CORE_TABLES } = require('./db');
 const { Store, newId, nowIso } = require('./store');
 const { makePolicy } = require('./policy');
 const { makeForms } = require('./forms');
+// Programme tracks/modules whose membership reveals restricted data.
+const RESTRICTED_TRACKS = { health: 'health', elder_care: 'health', antenatal: 'health' };
 
 function hashPassword(pw, salt = crypto.randomBytes(16).toString('hex')) {
   return 'scrypt$' + salt + '$' + crypto.scryptSync(pw, salt, 32).toString('hex');
@@ -37,6 +39,7 @@ class Brain {
     this.store = new Store(this.db, nodeId, { ...CORE_TABLES });
     this.policy = makePolicy(this.store);
     this.forms = makeForms(this);
+    this.forms.setModuleSwitch((m, h) => !this.moduleEnabledIn(m, h));
     this.authed = this.authed.bind(this);
     this.requires = this.requires.bind(this);
   }
@@ -101,13 +104,13 @@ class Brain {
     if (hamlet_id) { sql += ' AND hamlet_id=?'; params.push(hamlet_id); }
     if (kind) { sql += ' AND kind=?'; params.push(kind); }
     if (q) { sql += ' AND name LIKE ?'; params.push('%' + q + '%'); }
-    sql += ` ORDER BY name LIMIT ${Number(limit) || 500}`;
+    sql += ` ORDER BY name LIMIT ${Math.min(500, Math.max(1, Number(limit) || 500))}`;
     return this.store.all(sql, ...params).map((p) => this.redact(p, user));
   }
   getPerson(user, id, scope = 'profile') {
     const v = this.policy.canSee(user, id, scope);
     if (!v.ok) { const e = new Error('Not permitted: ' + v.reason); e.status = 403; throw e; }
-    if (v.audited && user.person_id !== id) this.audit(user, 'steward.person_read', id, { scope });
+    if (v.audited && user.person_id !== id) this.audit(user, 'steward.person_read', id, { scope: this.policy.RESTRICTED[scope] ? 'restricted' : scope });
     const p = this.store.get('persons', id);
     if (!p) { const e = new Error('Not found'); e.status = 404; throw e; }
     return this.redact(p, user);
@@ -116,7 +119,7 @@ class Brain {
   redact(p, user) {
     const out = { ...p, age: p.dob ? Math.floor((Date.now() - new Date(p.dob)) / 3.15576e10) : null, minor: this.policy.isMinor(p) };
     if (user.person_id === p.id || user.role === 'platform_admin' || user.role === 'cpo') return out;
-    if (user.role === 'guardian' && p.guardian_id === user.person_id) return out;
+    if (user.role === 'guardian' && p.guardian_id === user.person_id && this.policy.isMinor(p)) return out;
     if (!user.agency_id || !this.policy.activeConsent(p.id, user.agency_id, 'contact')) { out.phone = out.phone ? '••••••' + String(out.phone).slice(-2) : null; out.contact_hidden = true; }
     return out;
   }
@@ -139,6 +142,12 @@ class Brain {
     this.audit(actor, 'consent.revoke', c.person_id, { agency_id: c.agency_id });
     this.store.emit('core.consent_revoked', { person_id: c.person_id, agency_id: c.agency_id, scopes: c.scopes }, { actor: actor && actor.id, hamlet_id: c.hamlet_id });
     return out;
+  }
+
+  // Being enrolled in a health (or other restricted) programme is itself sensitive data.
+  enrolmentVisible(user, personId, e) {
+    const scope = RESTRICTED_TRACKS[e.track] || (e.module && RESTRICTED_TRACKS[e.module]);
+    return !scope || this.policy.canSee(user, personId, scope).ok;
   }
 
   // ---------- households (v2) ----------
@@ -191,7 +200,8 @@ class Brain {
     const p = this.getPerson(user, personId, 'progress');
     const entries = this.store.all('SELECT pe.*, a.name agency_name FROM passport_entries pe LEFT JOIN agencies a ON a.id=pe.issued_by_agency WHERE pe.person_id=? AND pe.deleted=0 ORDER BY pe.issued_at DESC', personId);
     const enrol = this.store.all(`SELECT e.*, pr.title, pr.title_ml, pr.module, pr.track, a.name agency_name FROM enrolments e
-      JOIN programmes pr ON pr.id=e.programme_id LEFT JOIN agencies a ON a.id=e.agency_id WHERE e.person_id=? AND e.deleted=0`, personId);
+      JOIN programmes pr ON pr.id=e.programme_id LEFT JOIN agencies a ON a.id=e.agency_id WHERE e.person_id=? AND e.deleted=0`, personId)
+      .filter((e) => this.enrolmentVisible(user, personId, e));
     const hamlet = this.store.get('hamlets', p.hamlet_id);
     return { person: p, hamlet, entries, enrolments: enrol, verify_code: personId.slice(-8).toUpperCase(), issued_by: `${this.brand.name} · ${this.brand.owner}` };
   }
@@ -199,6 +209,8 @@ class Brain {
   // ---------- notifications (outbox, delivered by channels module) ----------
   notify(person_id, message, { channel = 'auto', module = 'core' } = {}, actor) {
     const p = this.store.get('persons', person_id);
+    // Outbox rows are seen by staff: a sealed service (health, …) is never named on them.
+    if (this.sealedModules && this.sealedModules.has(module)) module = 'core';
     return this.store.put('notifications', { person_id, hamlet_id: p && p.hamlet_id, channel, message, status: 'queued', module, created_at: nowIso() }, { actor: actor && actor.id });
   }
 
@@ -215,7 +227,7 @@ class Brain {
         visibleIds: (user) => b.policy.visiblePersonIds(user),
         get: (user, id, scope) => b.getPerson(user, id, scope),
         // A guardian's own children (or [] for anyone else).
-        wards: (user) => (user && user.role === 'guardian' && user.person_id ? b.store.find('persons', { guardian_id: user.person_id }, { order: 'name' }).map((p) => b.redact(p, user)) : []),
+        wards: (user) => (user && user.role === 'guardian' && user.person_id ? b.store.find('persons', { guardian_id: user.person_id }, { order: 'name' }).filter((p) => b.policy.isMinor(p)).map((p) => b.redact(p, user)) : []),
         raw: (id) => b.store.get('persons', id), // for system jobs (no user) — never return to clients unredacted
         // minimal, display-safe fields (no phone/dob) for building rosters after a policy check
         basic: (id) => { const p = b.store.get('persons', id); if (!p) return null; const age = p.dob ? Math.floor((Date.now() - new Date(p.dob)) / 3.15576e10) : null; return { id: p.id, name: p.name, hamlet_id: p.hamlet_id, kind: p.kind, gender: p.gender, age, school_class: p.school_class, language: p.language, household_id: p.household_id || null, guardian_id: p.guardian_id || null }; },

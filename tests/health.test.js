@@ -152,8 +152,11 @@ test('the person and their guardian see only their own record — in plain words
   const fam = await N.as('demo.guardian').get(M + '/family');
   assert.equal(fam.status, 200, JSON.stringify(fam.body));
   const ids = fam.body.people.map((p) => p.person_id);
-  const wards = B().store.all('SELECT id FROM persons WHERE guardian_id=? AND deleted=0', D.demoGuardian.id).map((r) => r.id);
-  assert.deepEqual([...ids].sort(), [D.demoGuardian.id, ...wards].sort(), 'guardian: self + own wards only');
+  // A guardian acts only for MINOR wards; an adult child's health record is their own (DPDP Act 2023).
+  const wards = B().store.all('SELECT * FROM persons WHERE guardian_id=? AND deleted=0', D.demoGuardian.id).filter((p) => B().policy.isMinor(p)).map((r) => r.id);
+  assert.deepEqual([...ids].sort(), [D.demoGuardian.id, ...wards].sort(), 'guardian: self + own minor wards only');
+  const adult = B().store.all('SELECT * FROM persons WHERE guardian_id=? AND deleted=0', D.demoGuardian.id).find((p) => !B().policy.isMinor(p));
+  if (adult) assert.ok(!ids.includes(adult.id), 'adult child not shown to the parent');
   assert.ok(ids.includes(learner.id));
   const all = JSON.stringify(fam.body);
   assert.doesNotMatch(all, /"answers"|"flags"|bp_sys|muac|priority/, 'no raw readings or flags for the family');

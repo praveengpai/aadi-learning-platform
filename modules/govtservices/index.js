@@ -314,7 +314,9 @@ module.exports = function init(ctx) {
   // Aggregate for donors / government: per hamlet, by scheme and outcome. Small counts suppressed; no names.
   router.get('/aggregate', requires('analytics.aggregate'), (req, res) => {
     const u = req.user;
-    const rows = sql('SELECT hamlet_id, answers, status, outcome FROM govtservices_form_rows WHERE deleted=0 AND module=? AND form_key=?', ctx.id, FORM_KEY);
+    // Other agencies' admins see only their own agency's applications; stewards and external viewers see all (suppressed).
+    const all = ['platform_admin', 'donor', 'govt_viewer'].includes(u.role);
+    const rows = sql(`SELECT hamlet_id, answers, status, outcome FROM govtservices_form_rows WHERE deleted=0 AND module=? AND form_key=?${all ? '' : ' AND agency_id=?'}`, ctx.id, FORM_KEY, ...(all ? [] : [u.agency_id || '-']));
     const by = {};
     const tot = { total: 0, by_scheme: {}, by_outcome: {} };
     for (const r of rows) {
@@ -325,11 +327,16 @@ module.exports = function init(ctx) {
       const h = (by[r.hamlet_id] = by[r.hamlet_id] || { total: 0, by_scheme: {}, by_outcome: {} });
       for (const x of [h, tot]) { x.total++; x.by_scheme[scheme] = (x.by_scheme[scheme] || 0) + 1; x.by_outcome[stage] = (x.by_outcome[stage] || 0) + 1; }
     }
-    const sup = (o) => Object.fromEntries(Object.entries(o).map(([k, v]) => [k, P.suppress(v, u)]));
-    const hamlets = Object.entries(by).map(([hid, x]) => { const h = brain.hamlets.get(hid) || {}; return { hamlet_id: hid, name: h.name, name_ml: h.name_ml, district: h.district, total: P.suppress(x.total, u), by_scheme: sup(x.by_scheme), by_outcome: sup(x.by_outcome) }; });
+    // Always suppress small counts here (scheme names like widow/disability pension are sensitive), then hide
+    // any total whose hamlet cells include a hidden one, so totals cannot be subtracted back.
+    const ks = (v) => (u.role === 'platform_admin' ? v : v > 0 && v < 5 ? '<5' : v);
+    const sup = (o) => Object.fromEntries(Object.entries(o).map(([k, v]) => [k, ks(v)]));
+    const hamlets = Object.entries(by).map(([hid, x]) => { const h = brain.hamlets.get(hid) || {}; return { hamlet_id: hid, name: h.name, name_ml: h.name_ml, district: h.district, total: ks(x.total), by_scheme: sup(x.by_scheme), by_outcome: sup(x.by_outcome) }; });
+    const hiddenIn = (field, k) => hamlets.some((h) => typeof (k ? h[field][k] : h[field]) === 'string');
+    const totSup = (field) => Object.fromEntries(Object.entries(tot[field]).map(([k, v]) => [k, hiddenIn(field, k) ? 'hidden' : ks(v)]));
     res.json({ k_anonymity: 5, note: 'Counts below 5 are shown as "<5". No names or person-level data.', note_ml: '5-ൽ താഴെയുള്ള എണ്ണം "<5" എന്ന് കാണിക്കും. പേരുകളോ വ്യക്തിഗത വിവരങ്ങളോ ഇല്ല.',
       schemes: CAT.schemes.map((s) => ({ key: s.key, title: s.title, title_ml: s.title_ml, icon: s.icon })), outcomes: CAT.outcomes.map((o) => ({ key: o.key, label: o.label, label_ml: o.label_ml, icon: o.icon })),
-      totals: { total: P.suppress(tot.total, u), by_scheme: sup(tot.by_scheme), by_outcome: sup(tot.by_outcome) }, hamlets });
+      totals: { total: hiddenIn('total') ? 'hidden' : ks(tot.total), by_scheme: totSup('by_scheme'), by_outcome: totSup('by_outcome') }, hamlets });
   });
 
   // ---------------- seed ----------------

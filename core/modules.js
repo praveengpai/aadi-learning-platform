@@ -66,6 +66,7 @@ class ModuleHost {
       const manifest = JSON.parse(fs.readFileSync(path.join(base, 'manifest.json'), 'utf8'));
       if (manifest.id !== id) throw new Error(`manifest id "${manifest.id}" must equal folder "${id}"`);
       rec.manifest = manifest;
+      if (manifest.sealed) (this.brain.sealedModules = this.brain.sealedModules || new Set()).add(id);
       const key = process.env.PLATFORM_MODULE_KEY;
       if (key) {
         const sigFile = path.join(base, 'SIGNATURE');
@@ -174,13 +175,30 @@ class ModuleHost {
     };
   }
 
+  // Row-change events carry whole rows. A subscriber receives the full row only for data it may read;
+  // otherwise just {table, id, hamlet_id} — health answers never travel the bus to an education module.
+  _eventFor(ev, rec) {
+    if (!(ev.type === 'row.upsert' || ev.type === 'row.delete') || !ev.payload || !ev.payload.row) return ev;
+    const t = ev.payload.table;
+    const own = t.startsWith(rec.id.replace(/-/g, '_') + '_');
+    if (own) return ev;
+    let ok = true;
+    if (SEALED.includes(t)) ok = false;
+    else if (PERSONAL_CORE.includes(t)) ok = (PRIVILEGED['core.read'] || []).includes(rec.id);
+    else for (const [mid, m] of this.modules) { if (mid !== rec.id && m.manifest && m.manifest.sealed && t.startsWith(mid.replace(/-/g, '_') + '_')) ok = false; }
+    if (ok) return ev;
+    const r = ev.payload.row;
+    return { ...ev, payload: { table: t, row: { id: r.id, hamlet_id: r.hamlet_id || null, deleted: r.deleted || 0 }, redacted: true } };
+  }
+
   _dispatch(ev) {
     for (const s of this.subs) {
       if (s.type !== '*' && s.type !== ev.type && !(s.type.endsWith('*') && ev.type.startsWith(s.type.slice(0, -1)))) continue;
       const rec = this.modules.get(s.moduleId);
       if (!rec || rec.state !== 'up' || rec.breaker.openUntil > Date.now()) continue;
+      const evx = this._eventFor(ev, rec);
       setImmediate(() => {
-        try { const r = s.fn(ev); if (r && r.catch) r.catch((e) => this._fail(rec, e, 'event ' + ev.type)); } catch (e) { this._fail(rec, e, 'event ' + ev.type); }
+        try { const r = s.fn(evx); if (r && r.catch) r.catch((e) => this._fail(rec, e, 'event ' + ev.type)); } catch (e) { this._fail(rec, e, 'event ' + ev.type); }
       });
     }
   }
@@ -194,14 +212,30 @@ class ModuleHost {
     for (const m of ['get', 'post', 'put', 'patch', 'delete']) {
       wrapRouter[m] = (p, ...hs) => router[m](p, ...hs.map((h, i) => (i === hs.length - 1 ? host._wrap(rec, h) : h)));
     }
+    // Every identifier in the query that names a table or view is checked — not just the word after
+    // FROM/JOIN — so comma joins, quoted names and sub-queries cannot reach sealed data.
+    const sealedOwner = (t) => { for (const [mid, m] of host.modules) { if (mid !== rec.id && m.manifest && m.manifest.sealed && t.startsWith(mid.replace(/-/g, '_') + '_')) return mid; } return null; };
+    const isView = (t) => !!brain.db.prepare("SELECT 1 x FROM sqlite_master WHERE type='view' AND name=?").get(t);
     const checkSql = (sql) => {
       if (!/^\s*(SELECT|WITH)\b/i.test(sql)) throw new Error('ctx.sql is read-only (SELECT/WITH)');
-      const ids = [...sql.matchAll(/\b(?:FROM|JOIN)\s+([a-z_][a-z0-9_]*)/gi)].map((m) => m[1].toLowerCase());
-      for (const t of ids) {
+      if (/;\s*\S/.test(sql)) throw new Error('ctx.sql takes one statement');
+      const noStrings = sql.replace(/'(?:[^']|'')*'/g, "''");
+      const names = new Set();
+      for (const m of noStrings.matchAll(/"([^"]+)"|`([^`]+)`|\[([^\]]+)\]|(\.)?\b([A-Za-z_][A-Za-z0-9_]*)\b/g)) {
+        if (m[4]) continue; // qualified column (alias.column)
+        names.add(String(m[1] || m[2] || m[3] || m[5]).toLowerCase());
+      }
+      for (const t of names) {
+        const known = brain.store.tables[t] || SEALED.includes(t) || PERSONAL_CORE.includes(t) || SAFE_CORE.includes(t) || t.startsWith('sqlite_') || (/_form_rows$/.test(t) && isView(t)) || t === 'events' || t === 'sessions' || t === 'kv' || t === 'sync_cursors' || t === 'module_state';
+        if (!known) continue; // a column, alias or keyword
         if (own(t) || SAFE_CORE.includes(t)) continue;
-        if (SEALED.includes(t)) throw new Error(`module "${rec.id}" may not read "${t}" — use the view ${prefix}form_rows (your own forms only) or ctx.brain.forms`);
+        if (SEALED.includes(t) || /_form_rows$/.test(t)) throw new Error(`module "${rec.id}" may not read "${t}" — use the view ${prefix}form_rows (your own forms only) or ctx.brain.forms`);
         if (PERSONAL_CORE.includes(t) && privileged) continue;
-        if (brain.store.tables[t] && !PERSONAL_CORE.includes(t) && !SAFE_CORE.includes(t)) continue; // other modules' tables: read-only allowed
+        if (brain.store.tables[t] && !PERSONAL_CORE.includes(t)) {
+          const so = sealedOwner(t);
+          if (so) throw new Error(`module "${rec.id}" may not read "${t}" — ${so} keeps its data sealed`);
+          continue; // other (non-sealed) modules' tables: read-only allowed
+        }
         throw new Error(`module "${rec.id}" may not read table "${t}" directly — use ctx.brain APIs`);
       }
     };

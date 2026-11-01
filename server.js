@@ -36,6 +36,20 @@ function createApp(opts = {}) {
   });
   app.use('/api/sync', sync.router);
   app.use(express.json({ limit: '5mb' }));
+  // Offline replays carry x-idempotency-key: a write already applied returns its first answer again.
+  brain.db.exec('CREATE TABLE IF NOT EXISTS idempotency (key TEXT PRIMARY KEY, user_id TEXT, status INTEGER, body TEXT, at TEXT)');
+  app.use((req, res, next) => {
+    const key = req.headers['x-idempotency-key'];
+    if (!key || req.method === 'GET' || String(key).length > 120) return next();
+    const hit = brain.db.prepare('SELECT * FROM idempotency WHERE key=?').get(String(key));
+    if (hit) return res.status(hit.status).type('json').send(hit.body);
+    const json = res.json.bind(res);
+    res.json = (body) => {
+      if (res.statusCode < 400) { try { brain.db.prepare('INSERT OR IGNORE INTO idempotency (key,user_id,status,body,at) VALUES (?,?,?,?,?)').run(String(key), req.user ? req.user.id : null, res.statusCode, JSON.stringify(body), new Date().toISOString()); } catch (_) { /* best effort */ } }
+      return json(body);
+    };
+    next();
+  });
   app.use('/api/core', coreApi(brain, host));
   app.use('/api/m', host.router);
   // module front-end bundles: /m/<id>/ui.js etc.
