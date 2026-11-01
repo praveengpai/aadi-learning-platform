@@ -241,6 +241,54 @@ test('claim status: valid transitions only, by the range office or (hand-in, pay
   // the family sees the timeline in plain words
 });
 
+test('core routes: only the range office decides an incident; the capturing agency\'s admin and the capturer cannot', async () => {
+  const f = sharedFarmer();
+  const r = await report('demo.facilitator', f.id, { animal: 'elephant', estimated_loss: 15000 }, 'wl-core-1');
+  assert.equal(r.status, 200, JSON.stringify(r.body));
+  const id = r.body.id;
+  const core = (who, act, body = {}) => N.as(who).post(`/api/core/forms/submissions/${id}/${act}`, body);
+  const inQueue = async () => !!(await N.as('demo.forest').get(base + '/queue')).body.items.find((x) => x.id === id);
+  assert.ok(await inQueue());
+  // the reported bypass: CIF admin replies through the generic core route
+  const rep = await core('demo.cif.admin', 'reply', { reply: 'Handled by us', outcome: 'paid', close: true });
+  assert.equal(rep.status, 403, JSON.stringify(rep.body));
+  assert.equal((await core('demo.cif.admin', 'claim')).status, 403);
+  assert.equal((await core('demo.cif.admin', 'close', { outcome: 'paid' })).status, 403);
+  assert.equal(B.forms.mayDecide(user('demo.cif.admin'), id).ok, false);
+  // the capturer cannot close (or answer) an unanswered incident
+  assert.equal((await core('demo.facilitator', 'close', { outcome: 'paid' })).status, 403);
+  assert.equal((await core('demo.facilitator', 'reply', { reply: 'done' })).status, 403);
+  // another department of the government cannot either
+  assert.equal((await core('demo.agri', 'reply', { reply: 'seen' })).status, 403);
+  let row = B.store.get('form_submissions', id);
+  assert.equal(row.status, 'submitted'); assert.equal(row.reply || null, null); assert.equal(row.outcome || null, null);
+  assert.ok(await inQueue(), 'still waiting in the Forest Range Office queue');
+  assert.ok((await N.as('demo.forest').get('/api/core/forms/queue')).body.find((x) => x.id === id), 'and in the core queue');
+  // the range office (field officer or its admin) may answer through the core route
+  assert.equal(B.forms.mayDecide(user('demo.forest.admin'), id).ok, true);
+  const ok = await core('demo.forest', 'reply', { reply: 'Inspection planned next week.' });
+  assert.equal(ok.status, 200, JSON.stringify(ok.body));
+  // now answered: the capturer may close it, but cannot set an outcome
+  const cl = await core('demo.facilitator', 'close', { outcome: 'paid' });
+  assert.equal(cl.status, 200, JSON.stringify(cl.body));
+  row = B.store.get('form_submissions', id);
+  assert.equal(row.status, 'closed'); assert.equal(row.outcome || null, null, 'capturer cannot set the outcome');
+});
+
+test('decider: a range-office reviewer without the field officer / admin role cannot decide', async () => {
+  const fo = FO().id;
+  // a doctor holds forms.review, so only the module's decider stops this account
+  if (!user('demo.forest.doc')) B.createUser({ username: 'demo.forest.doc', password: 'demo1234', role: 'doctor', agency_id: fo, display_name: 'Range office vet (test)', safeguarding_trained: 1 }, null);
+  const f = sharedFarmer();
+  const r = await report('demo.facilitator', f.id, { animal: 'wild_boar', estimated_loss: 900 }, 'wl-core-2');
+  assert.equal(r.status, 200);
+  assert.ok(B.forms.visible(user('demo.forest.doc'), B.store.get('form_submissions', r.body.id)), 'the reviewer can see it');
+  const m = B.forms.mayDecide(user('demo.forest.doc'), r.body.id);
+  assert.equal(m.ok, false); assert.match(m.why, /Forest Range Office/, 'refused by the module decider');
+  assert.equal((await N.as('demo.forest.doc').post(`/api/core/forms/submissions/${r.body.id}/reply`, { reply: 'ok' })).status, 403);
+  assert.equal(B.forms.mayDecide(user('demo.forest'), r.body.id).ok, true);
+});
+
 test('family sees its own incidents and plain-language claim timeline only', async () => {
   const g = user('demo.guardian');
   const my = await N.as('demo.guardian').get(base + '/my');

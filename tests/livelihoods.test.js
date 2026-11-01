@@ -482,6 +482,151 @@ test('aggregate: k-anonymised per hamlet, complementary suppression, fixed windo
   B.store.del('livelihoods_groups', tiny.id);
 });
 
+// ---------------- Wave 2 review: self-approval, hidden members in the ledger, who may cancel ----------------
+const core = (id, act) => `/api/core/forms/submissions/${id}/${act}`;
+const ensureCds2 = () => {
+  if (!user('demo.cds2')) B.createUser({ username: 'demo.cds2', password: 'demo1234', role: 'field_officer', agency_id: CDS_AGENCY_ID, hamlet_ids: user('demo.cds').hamlet_ids, display_name: 'Second CDS officer (test)', safeguarding_trained: 1 }, null);
+};
+// A CDS group (not the guardian's) with money to lend, and one of its consenting members.
+const lendingGroup = () => {
+  for (const g of B.store.all('SELECT * FROM livelihoods_groups WHERE deleted=0 AND agency_id=? ORDER BY name', CDS_AGENCY_ID)) {
+    const tx = B.store.all('SELECT * FROM livelihoods_txns WHERE deleted=0 AND group_id=?', g.id);
+    if (L.summarize(tx).lendable < 300000) continue;
+    const m = members(g.id).find((x) => x.person_id !== D.demoGuardian.id && B.policy.canSee(user('demo.cds'), x.person_id, 'livelihood').ok);
+    if (m) return { g, pid: m.person_id };
+  }
+  return null;
+};
+
+test('loans: no self-approval through core or module routes; loan_out needs a request approved by another reviewer; once, within the amount', async () => {
+  ensureCds2();
+  const { g, pid } = lendingGroup();
+  const fac = N.as('demo.cds');
+  const give = (who, body) => N.as(who).post(`${M}/groups/${g.id}/txns`, { kind: 'loan_out', months: 4, date: today(), person_id: pid, ...body });
+  const s = await fac.post(`${M}/groups/${g.id}/loan-requests`, { person_id: pid, purpose: 'enterprise', amount: 1000, months: 4, group_agreed: 'yes', client_ref: 'lr-self-1' });
+  assert.equal(s.status, 200, JSON.stringify(s.body));
+  const id = s.body.id;
+  // the reported attack: the capturer closes her own request as "approved" through the core route
+  assert.equal((await fac.post(core(id, 'close'), { outcome: 'approved' })).status, 403, 'engine refuses the self-close');
+  assert.equal((await fac.post(core(id, 'reply'), { reply: 'ok', outcome: 'approved' })).status, 403, 'engine refuses the self-reply');
+  assert.equal((await fac.post(core(id, 'claim'))).status, 403);
+  assert.equal((await fac.post(`${M}/requests/${id}/decide`, { decision: 'approved' })).status, 403);
+  assert.equal(B.forms.mayDecide(user('demo.cds'), id).ok, false);
+  let row = B.store.get('form_submissions', id);
+  assert.equal(row.status, 'submitted'); assert.equal(row.outcome || null, null);
+  // another agency's reviewer cannot decide it either
+  assert.equal((await N.as('demo.cif.admin').post(core(id, 'reply'), { reply: 'ok', outcome: 'approved' })).status, 403);
+  // a loan with no request at all, or against an unanswered one, is refused
+  const noReq = await give('demo.cds', { amount: 50000 });
+  assert.equal(noReq.status, 400, JSON.stringify(noReq.body));
+  assert.equal((await give('demo.cds', { amount: 50000, request_id: id })).status, 409);
+  // a record that claims approval but was "approved" by its own capturer (e.g. forged and synced) is refused
+  B.store.put('form_submissions', { ...row, status: 'replied', outcome: 'approved', reply: 'ok', replied_by: row.captured_by, replied_at: new Date().toISOString() });
+  assert.equal((await give('demo.cds', { amount: 50000, request_id: id })).status, 409, 'self-approved record cannot be paid');
+  // … or by someone outside the group's agency
+  B.store.put('form_submissions', { ...B.store.get('form_submissions', id), replied_by: user('demo.cif.admin').id });
+  assert.equal((await give('demo.cds', { amount: 50000, request_id: id })).status, 409, 'approval from another agency cannot be paid');
+  B.store.put('form_submissions', { ...row });
+  // a second CDS reviewer may decide (core route): approved
+  const ok = await N.as('demo.cds2').post(core(id, 'reply'), { reply: 'Approved.', outcome: 'approved' });
+  assert.equal(ok.status, 200, JSON.stringify(ok.body));
+  // the capturer may now close it (answered) but cannot change the outcome
+  const cl = await fac.post(core(id, 'close'), { outcome: 'declined' });
+  assert.equal(cl.status, 200, JSON.stringify(cl.body));
+  assert.equal(B.store.get('form_submissions', id).outcome, 'approved', 'capturer cannot set the outcome');
+  // paid out: within the approved amount, once
+  assert.equal((await give('demo.cds', { amount: 100001, request_id: id })).status, 400, 'more than approved');
+  const paid = await give('demo.cds', { amount: 100000, request_id: id, client_ref: 'lo-1' });
+  assert.equal(paid.status, 200, JSON.stringify(paid.body));
+  assert.equal((await give('demo.cds2', { amount: 1000, request_id: id })).status, 409, 'one payout per request');
+  // a request for another member cannot be used for this one
+  const other = members(g.id).find((x) => x.person_id !== pid && B.policy.canSee(user('demo.cds'), x.person_id, 'livelihood').ok);
+  if (other) assert.equal((await N.as('demo.cds').post(`${M}/groups/${g.id}/txns`, { kind: 'loan_out', months: 4, date: today(), person_id: other.person_id, amount: 1000, request_id: id })).status, 400);
+  // the module decider is registered: the engine reports the module's own reason for the capturer path too
+  const s2 = await N.as('demo.cds2').post(`${M}/groups/${g.id}/loan-requests`, { person_id: pid, purpose: 'other', amount: 500, months: 2, client_ref: 'lr-self-2' });
+  assert.equal(s2.status, 200);
+  assert.equal(B.forms.mayDecide(user('demo.cds2'), s2.body.id).ok, false);
+  assert.equal(B.forms.mayDecide(user('demo.cds'), s2.body.id).ok, true, 'the other officer may decide');
+  assert.equal(B.forms.mayDecide(user('demo.cds.admin'), s2.body.id).ok, true);
+});
+
+test('consent withdrawal: hidden members\' entries never appear one by one — only a per-meeting "others" total of 2+ people', async () => {
+  const g = groupsIn('h2')[0];
+  const fac = N.as('demo.cds');
+  const mem = members(g.id).filter((x) => B.policy.canSee(user('demo.cds'), x.person_id, 'livelihood').ok);
+  assert.ok(mem.length >= 3);
+  const [a, b, c] = mem;
+  const day = today();
+  const m1 = await fac.post(`${M}/groups/${g.id}/meetings`, { date: day, attendance: 3, client_ref: 'hid-m1', savings: [{ person_id: a.person_id, amount: 1101 }, { person_id: b.person_id, amount: 1202 }, { person_id: c.person_id, amount: 1409 }] });
+  assert.equal(m1.status, 200, JSON.stringify(m1.body));
+  const m2 = await fac.post(`${M}/groups/${g.id}/meetings`, { date: day, attendance: 2, client_ref: 'hid-m2', savings: [{ person_id: a.person_id, amount: 1307 }, { person_id: c.person_id, amount: 1511 }] });
+  assert.equal(m2.status, 200, JSON.stringify(m2.body));
+  const theirs = B.store.all('SELECT * FROM livelihoods_txns WHERE deleted=0 AND group_id=? AND person_id IN (?,?)', g.id, a.person_id, b.person_id);
+  const revoked = [a, b].map((x) => B.store.find('consents', { person_id: x.person_id, agency_id: CDS_AGENCY_ID, status: 'active' })[0]);
+  for (const x of revoked) B.revokeConsent(x.id, null);
+  try {
+    const book = await fac.get(M + '/groups/' + g.id);
+    assert.equal(book.status, 200);
+    assert.equal(book.body.hidden_members, 2);
+    const L2 = book.body.ledger;
+    const ids = new Set(theirs.map((t) => t.id));
+    assert.ok(L2.every((t) => !ids.has(t.id)), 'no hidden entry id');
+    assert.ok(L2.every((t) => t.person_id !== a.person_id && t.person_id !== b.person_id));
+    assert.ok(L2.every((t) => !('member_hidden' in t)));
+    for (const amt of [1101, 1202, 1307]) assert.ok(!L2.some((t) => t.amount === amt), 'no individual hidden amount ' + amt);
+    const others = L2.filter((t) => t.others);
+    const o = others.find((t) => t.amount === 1101 + 1202);
+    assert.ok(o, 'meeting 1: one "others" line with the total of the two hidden members');
+    assert.equal(o.kind, 'savings'); assert.equal(o.date, day);
+    assert.deepEqual(Object.keys(o).filter((k) => ['meeting_id', 'note', 'months', 'request_id', 'entered_by', 'person_name'].includes(k) && o[k]), []);
+    assert.ok(!others.some((t) => t.amount === 1307), 'meeting 2 had one hidden member: no separate line');
+    assert.ok(L2.some((t) => t.person_id === c.person_id && t.amount === 1409), 'consenting member still shown');
+    assert.ok(L2.some((t) => t.person_id === c.person_id && t.amount === 1511));
+    // still inside the totals
+    assert.equal(book.body.meetings.find((x) => x.id === m2.body.meeting.id).savings_collected, 1307 + 1511);
+    // hidden entries cannot be cancelled one by one
+    assert.equal((await fac.post(`${M}/txns/${theirs[0].id}/void`, { reason: 'test' })).status, 403);
+  } finally {
+    for (const x of revoked) B.grantConsent({ person_id: x.person_id, agency_id: CDS_AGENCY_ID, scopes: x.scopes, granted_by: x.granted_by, relation: x.relation }, null);
+  }
+  const back = await fac.get(M + '/groups/' + g.id);
+  assert.ok(back.body.ledger.some((t) => t.person_id === a.person_id && t.amount === 1307), 'visible again after consent is given again');
+});
+
+test('cancelling: loans and repayments only by the agency admin or whoever entered them; every cancellation keeps reason, who and when', async () => {
+  ensureCds2();
+  const { g, pid } = lendingGroup();
+  const req = await N.as('demo.cds').post(`${M}/groups/${g.id}/loan-requests`, { person_id: pid, purpose: 'livestock', amount: 600, months: 3, group_agreed: 'yes', client_ref: 'lr-void-1' });
+  assert.equal(req.status, 200, JSON.stringify(req.body));
+  assert.equal((await N.as('demo.cds.admin').post(`${M}/requests/${req.body.id}/decide`, { decision: 'approved' })).status, 200);
+  const loan = await N.as('demo.cds').post(`${M}/groups/${g.id}/txns`, { kind: 'loan_out', amount: 60000, months: 3, date: L.addDays(today(), -1), person_id: pid, request_id: req.body.id });
+  assert.equal(loan.status, 200, JSON.stringify(loan.body));
+  const rep = await N.as('demo.cds').post(`${M}/groups/${g.id}/txns`, { kind: 'repayment', amount: 1000, date: today(), person_id: pid });
+  assert.equal(rep.status, 200, JSON.stringify(rep.body));
+  // another officer of the same agency cannot cancel them
+  assert.equal((await N.as('demo.cds2').post(`${M}/txns/${rep.body.id}/void`, { reason: 'wrong member' })).status, 403);
+  assert.equal((await N.as('demo.cds2').post(`${M}/txns/${loan.body.id}/void`, { reason: 'wrong member' })).status, 403);
+  // whoever entered it can (with a reason)
+  assert.equal((await N.as('demo.cds').post(`${M}/txns/${rep.body.id}/void`, {})).status, 400, 'reason needed');
+  const v1 = await N.as('demo.cds').post(`${M}/txns/${rep.body.id}/void`, { reason: 'Entered twice' });
+  assert.equal(v1.status, 200, JSON.stringify(v1.body));
+  assert.equal(v1.body.voided, true); assert.equal(v1.body.void_reason, 'Entered twice');
+  assert.ok(v1.body.voided_at && v1.body.voided_by_name);
+  // the agency admin can cancel the loan
+  const v2 = await N.as('demo.cds.admin').post(`${M}/txns/${loan.body.id}/void`, { reason: 'Member changed her mind' });
+  assert.equal(v2.status, 200, JSON.stringify(v2.body));
+  const saved = B.store.get('livelihoods_txns', loan.body.id);
+  assert.equal(saved.voided_by, user('demo.cds.admin').id);
+  assert.ok(saved.voided_at);
+  assert.equal(saved.void_reason, 'Member changed her mind');
+  // ordinary entries: any officer of the agency may cancel, still with reason, who and when
+  const exp = await N.as('demo.cds').post(`${M}/groups/${g.id}/txns`, { kind: 'income', amount: 700, date: today(), note: 'test' });
+  assert.equal(exp.status, 200);
+  const v3 = await N.as('demo.cds2').post(`${M}/txns/${exp.body.id}/void`, { reason: 'Typo' });
+  assert.equal(v3.status, 200, JSON.stringify(v3.body));
+  assert.equal(B.store.get('livelihoods_txns', exp.body.id).voided_by, user('demo.cds2').id);
+});
+
 test('sealed: other modules cannot read livelihoods tables', () => {
   const express = require('express');
   const ctx = N.host._ctx(N.host.modules.get('learning'), express.Router(), 'learning_');

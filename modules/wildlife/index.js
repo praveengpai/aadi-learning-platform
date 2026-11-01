@@ -81,6 +81,15 @@ module.exports = function init(ctx) {
   ensureForm(true);
   brain.forms.rule(FORM_KEY, (answers) => L.assess(answers));
   const forestId = () => { ensureForm(); return reviewAgency || null; };
+  // Who may answer an incident — on this module's routes AND the generic core routes: only the range office
+  // the form is forwarded to (its field officers or its admin). The engine already refuses other agencies
+  // and the capturer; this also refuses other roles of that office and any form not yet forwarded.
+  brain.forms.decider(FORM_KEY, (u, s, def) => {
+    const to = def && def.review && def.review.agency_id;
+    if (!to) return 'This incident has not been forwarded to a Forest Range Office yet.';
+    if (!u.agency_id || u.agency_id !== to || !['field_officer', 'agency_admin'].includes(u.role)) return 'Only the Forest Range Office replies to incidents.';
+    return true;
+  });
 
   // ---------------- who may do what ----------------
   const isDept = (u, agencyId = null) => { agencyId = agencyId || forestId(); return !!(u && u.agency_id && agencyId && u.agency_id === agencyId && P.can(u, 'forms.review')); };

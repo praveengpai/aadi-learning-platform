@@ -10,7 +10,7 @@
     "livelihoods_groups": ["hamlet_id", "agency_id", "name", "name_ml", "type", "formed_on", "meeting_day", "thrift", "status", "notes", "created_by"],
     "livelihoods_members": ["group_id", "hamlet_id", "agency_id", "person_id", "role", "joined_on", "status", "left_on", "added_by"],
     "livelihoods_meetings": ["group_id", "hamlet_id", "agency_id", "date", "attendance", "savings_collected", "notes", "entered_by", "client_ref"],
-    "livelihoods_txns": ["group_id", "hamlet_id", "agency_id", "date", "kind", "amount", "person_id", "months", "request_id", "meeting_id", "note", "entered_by", "entered_at", "client_ref", "voided", "void_reason", "voided_by"],
+    "livelihoods_txns": ["group_id", "hamlet_id", "agency_id", "date", "kind", "amount", "person_id", "months", "request_id", "meeting_id", "note", "entered_by", "entered_at", "client_ref", "voided", "void_reason", "voided_by", "voided_at"],
     "livelihoods_products": ["group_id", "hamlet_id", "agency_id", "name", "name_ml", "category", "unit", "price", "stock", "description", "photo", "status", "group_agreed", "agreed_on", "agreed_by", "approved_by", "approved_at", "created_by", "is_demo"]
   },
   "types": {
