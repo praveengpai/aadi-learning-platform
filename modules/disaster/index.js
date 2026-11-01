@@ -8,7 +8,11 @@
 //   • a consent-based list of people who need help to evacuate — the family states the help in
 //     plain categories; nothing is copied from health, disability or pregnancy records;
 //   • incident reports (form engine, hamlet subject) answered by the district disaster cell;
-//   • warnings / advisories issued only by agency admins or stewards, synced to every hub.
+//   • warnings / advisories issued only by admins of an agency running a "disaster" programme in the
+//     hamlet (or stewards), from a fixed list of official sources; a red warning needs a second person
+//     of the same agency to confirm it before it shows; synced to every hub.
+// Every responder action (consent, help list, plans, profile, checklist) is limited to agencies that run
+// a "disaster" programme in that hamlet; help entries are kept per agency; profile edits are logged.
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
@@ -32,6 +36,16 @@ const CELL_ID = process.env.DISASTER_CELL_AGENCY_ID || 'agy_disaster_cell';
 // Roles that may ever read the "people needing help" list (mirrors manifest consent_scopes.emergency).
 const RESPONDERS = ['field_officer', 'coordinator', 'agency_admin'];
 const DEMO_PREFIX = 'DEMO — not a real warning';
+// Where a warning may come from: a fixed list (free text let anyone write "District Collector" on a fake).
+const SOURCES = [
+  { key: 'imd', label: 'IMD (India Meteorological Department)', label_ml: 'ഇന്ത്യ കാലാവസ്ഥാ വകുപ്പ് (IMD)' },
+  { key: 'ksdma', label: 'KSDMA (Kerala State Disaster Management Authority)', label_ml: 'സംസ്ഥാന ദുരന്ത നിവാരണ അതോറിറ്റി (KSDMA)' },
+  { key: 'ddma', label: 'District Disaster Management Authority', label_ml: 'ജില്ലാ ദുരന്ത നിവാരണ അതോറിറ്റി' },
+  { key: 'panchayat', label: 'Panchayat', label_ml: 'പഞ്ചായത്ത്' },
+  { key: 'platform_demo', label: 'Platform demo', label_ml: 'പ്ലാറ്റ്‌ഫോം ഡെമോ', demo: true },
+];
+const SOURCE = Object.fromEntries(SOURCES.map((x) => [x.key, x]));
+const sourceOf = (v) => { const x = String(v === undefined || v === null ? '' : v).trim().toLowerCase(); return SOURCE[x] || SOURCES.find((s) => s.label.toLowerCase() === x) || null; };
 const DEMO_PREFIX_ML = 'ഡെമോ — യഥാർത്ഥ മുന്നറിയിപ്പല്ല';
 const DAY = 86400e3;
 
@@ -103,6 +117,9 @@ module.exports = function init(ctx) {
   const steward = (u) => u && u.role === 'platform_admin';
   const hamletLimited = (u) => Array.isArray(u.hamlet_ids) && u.hamlet_ids.length > 0;
   const present = (agencyId, hamletId) => !!(agencyId && sqlOne("SELECT 1 x FROM agency_presence WHERE agency_id=? AND hamlet_id=? AND deleted=0 AND status='active'", agencyId, hamletId));
+  // An agency is a disaster responder in a hamlet only if it runs a "disaster" programme there.
+  const runsDisaster = (agencyId, hamletId) => !!(agencyId && hamletId && sqlOne("SELECT 1 x FROM programmes WHERE agency_id=? AND hamlet_id=? AND module='disaster' AND deleted=0 AND status='active'", agencyId, hamletId));
+  const inMyArea = (u, hamletId) => !hamletLimited(u) || u.hamlet_ids.includes(hamletId);
   const hid = (prefix, ...parts) => prefix + '_' + crypto.createHash('sha1').update(parts.join('|')).digest('hex').slice(0, 20);
   const nowIso = () => new Date().toISOString();
   // The coming south-west monsoon (June–September). After September we prepare for next year's.
@@ -113,6 +130,17 @@ module.exports = function init(ctx) {
   brain.forms.define(INCIDENT_FORM, null);
   brain.forms.rule(PLAN_KEY, (a) => planRule(a));
   brain.forms.rule(INCIDENT_KEY, (a) => incidentRule(a));
+  // Incidents are decided (replied to / closed / claimed) only by the district cell's responders —
+  // on the module route AND the core routes. The engine already enforces "receiving agency only" and
+  // four eyes; this adds: responder roles only, inside their own hamlets, and never by the capturer.
+  brain.forms.decider(INCIDENT_KEY, (u, s) => {
+    if (u.role === 'platform_admin') return true;
+    if (u.agency_id !== CELL_ID) return 'Only the district disaster cell answers incident reports.';
+    if (!RESPONDERS.includes(u.role)) return 'Only the disaster cell\'s responders answer incident reports.';
+    if (s.captured_by === u.id) return 'Someone else must answer what you reported.';
+    if (Array.isArray(u.hamlet_ids) && u.hamlet_ids.length && !u.hamlet_ids.includes(s.hamlet_id)) return 'This hamlet is outside your area.';
+    return true;
+  });
 
   // ---------- who relates to which hamlet ----------
   function myHamlets(u) {
@@ -132,13 +160,17 @@ module.exports = function init(ctx) {
     if (!steward(u) && !brain.modules.enabledIn(h.id)) throw Object.assign(httpError(403, 'Disaster preparedness is switched off in this hamlet.'), { code: 'module_off_here' });
     return h;
   }
-  // Profile editors: coordinators / agency admins of an agency present in the hamlet (or the steward).
-  const canEditProfile = (u, hamletId) => steward(u) || (['coordinator', 'agency_admin'].includes(u.role) && present(u.agency_id, hamletId) && (!hamletLimited(u) || u.hamlet_ids.includes(hamletId)));
-  // Checklist: any capture/coordination staff of an agency present there.
-  const canTick = (u, hamletId) => steward(u) || ((P.can(u, 'hamlet.coordinate') || P.can(u, 'forms.capture')) && present(u.agency_id, hamletId) && (!hamletLimited(u) || u.hamlet_ids.includes(hamletId)));
-  // Warnings: only agency admins (for hamlets their agency serves) and stewards.
-  const canIssue = (u, hamletId) => steward(u) || (u.role === 'agency_admin' && present(u.agency_id, hamletId));
+  // Everything below is limited to agencies that run a "disaster" programme in that hamlet (or the
+  // steward). Merely being present in a hamlet (Krishi Bhavan, Kudumbashree, …) is not enough.
+  // Profile editors: coordinators / agency admins of such an agency.
+  const canEditProfile = (u, hamletId) => steward(u) || (['coordinator', 'agency_admin'].includes(u.role) && runsDisaster(u.agency_id, hamletId) && inMyArea(u, hamletId));
+  // Checklist: capture/coordination staff of such an agency.
+  const canTick = (u, hamletId) => steward(u) || ((P.can(u, 'hamlet.coordinate') || P.can(u, 'forms.capture')) && runsDisaster(u.agency_id, hamletId) && inMyArea(u, hamletId));
+  // Warnings: agency admins of such an agency, and stewards.
+  const canIssue = (u, hamletId) => steward(u) || (u.role === 'agency_admin' && runsDisaster(u.agency_id, hamletId) && inMyArea(u, hamletId));
   const isResponder = (u) => steward(u) || RESPONDERS.includes(u.role);
+  // A responder for this hamlet: responder role in an agency running a disaster programme there.
+  const responderHere = (u, hamletId) => steward(u) || (RESPONDERS.includes(u.role) && runsDisaster(u.agency_id, hamletId) && inMyArea(u, hamletId));
 
   // ---------- risk profiles ----------
   const profileId = (hamletId) => 'dsr_' + hamletId;
@@ -182,6 +214,19 @@ module.exports = function init(ctx) {
     return out;
   }
   const getProfile = (hamletId) => data.get('disaster_risk_profiles', profileId(hamletId));
+  // Edit history (who / when / what) for risk profiles and helplines — shown to the disaster cell.
+  const TRACKED = ['hazards', 'points', 'nearest_phc', 'road_head', 'contacts', 'last_drill', 'note'];
+  const strip = (v) => (Array.isArray(v) ? v.map((x) => (x && typeof x === 'object' ? Object.fromEntries(Object.entries(x).filter(([k]) => k !== 'verify')) : x)) : v);
+  function logProfileChange(hamletId, before, after, u, why = 'edit') {
+    const changes = [];
+    for (const f of TRACKED) {
+      const a = before ? strip(before[f]) : null, b = strip(after[f]);
+      if (JSON.stringify(a === undefined ? null : a) !== JSON.stringify(b === undefined ? null : b)) changes.push({ field: f, before: a === undefined ? null : a, after: b === undefined ? null : b });
+    }
+    if (!changes.length) return null;
+    return data.put('disaster_profile_history', { hamlet_id: hamletId, agency_id: u.agency_id || null, changed_by: u.id, changed_by_name: u.display_name, changed_at: nowIso(), reason: why, fields: changes.map((c) => c.field), changes }, u);
+  }
+  const canSeeHistory = (u, hamletId) => steward(u) || canEditProfile(u, hamletId) || responderHere(u, hamletId);
   const profileOut = (row, hamletId) => {
     const p = row || blankProfile(hamletId);
     return { id: p.id, hamlet_id: hamletId, hazards: p.hazards || {}, points: p.points || [], nearest_phc: p.nearest_phc || '', road_head: p.road_head || '', contacts: (p.contacts || []).map((c) => ({ ...c, verify: true })), last_drill: p.last_drill || null, note: p.note || '', is_demo: Number(p.is_demo || 0) === 1, updated_at: row ? row.updated_at : null, updated_by_name: p.updated_by_name || null, exists: !!row };
@@ -191,14 +236,21 @@ module.exports = function init(ctx) {
   const warningOut = (w) => {
     const L = LEVEL[w.level] || LEVEL.yellow;
     const now = nowIso();
-    return { id: w.id, hamlet_ids: w.hamlet_ids || [], level: w.level, level_label: L.label, level_label_ml: L.label_ml, icon: L.icon, advice: L.advice, advice_ml: L.advice_ml, title: w.title, title_ml: w.title_ml, body: w.body, body_ml: w.body_ml, valid_from: w.valid_from, valid_to: w.valid_to, source: w.source, status: w.status, is_demo: Number(w.is_demo || 0) === 1, issued_by_name: w.issued_by_name, agency_id: w.agency_id, active: w.status === 'active' && w.valid_from <= now && w.valid_to > now, updated_at: w.updated_at };
+    return { id: w.id, hamlet_ids: w.hamlet_ids || [], level: w.level, level_label: L.label, level_label_ml: L.label_ml, icon: L.icon, advice: L.advice, advice_ml: L.advice_ml, title: w.title, title_ml: w.title_ml, body: w.body, body_ml: w.body_ml, valid_from: w.valid_from, valid_to: w.valid_to, source: w.source, status: w.status, is_demo: Number(w.is_demo || 0) === 1, issued_by_name: w.issued_by_name, agency_id: w.agency_id, confirmed_by_name: w.confirmed_by_name || null, confirmed_at: w.confirmed_at || null, needs_confirmation: w.status === 'pending_confirmation', active: w.status === 'active' && w.valid_from <= now && w.valid_to > now, updated_at: w.updated_at };
   };
-  function warningsFor(hamletIds, { activeOnly = true } = {}) {
+  function warningsFor(hamletIds, { activeOnly = true, viewer = null } = {}) {
     const set = new Set(hamletIds);
     return data.find('disaster_warnings', {}, { order: 'valid_from DESC', limit: 500 }).map(warningOut)
       .filter((w) => w.hamlet_ids.some((h) => set.has(h)) && (!activeOnly || w.active))
+      // A red warning waiting for its second person is seen only inside the issuing agency (and by the steward).
+      .filter((w) => w.status !== 'pending_confirmation' || (viewer && (steward(viewer) || (viewer.agency_id && viewer.agency_id === w.agency_id))))
       .sort((a, b) => (b.active - a.active) || (LEVEL_RANK[b.level] - LEVEL_RANK[a.level]) || String(b.valid_from).localeCompare(String(a.valid_from)));
   }
+
+  // Red warnings from this user's agency still waiting for a second person (shown so they can confirm).
+  const pendingFor = (u, hamletId) => (u && (steward(u) || responderHere(u, hamletId))
+    ? data.find('disaster_warnings', { status: 'pending_confirmation' }, { limit: 200 }).filter((w) => (w.hamlet_ids || []).includes(hamletId) && (steward(u) || w.agency_id === u.agency_id)).map(warningOut)
+    : []);
 
   // ---------- checklist ----------
   function checklist(hamletId, seasonKey = season()) {
@@ -207,33 +259,37 @@ module.exports = function init(ctx) {
   }
 
   // ---------- people needing help (consent scope "emergency") ----------
-  const helpId = (pid) => hid('dsh', pid);
+  // One entry per (agency, person): each disaster agency keeps its own list; nobody can overwrite,
+  // read or delete another agency's entry.
+  const helpId = (agencyId, pid) => hid('dsh', agencyId || '-', pid);
+  const helpRow = (agencyId, pid) => data.find('disaster_help_needed', { person_id: pid, agency_id: agencyId })[0] || null;
   function canSeeHelp(u, pid) {
     const v = P.canSee(u, pid, 'emergency');
     return v.ok ? v : null;
   }
-  function needResponder(u) {
+  function needResponder(u, hamletId) {
     if (!isResponder(u)) throw httpError(403, 'Only disaster responders (field officers, coordinators, agency admins) with the family\'s consent see this list.');
+    if (hamletId && !responderHere(u, hamletId)) throw httpError(403, 'Only an agency that runs a disaster preparedness programme in this hamlet can do this.');
   }
 
-  // Data minimisation: when someone no longer shares "emergency" with any agency, drop their entry.
+  // Data minimisation: when someone no longer shares "emergency" with an agency, drop that agency's entry.
   on('core.consent_revoked', (ev) => {
     const pid = ev.payload && ev.payload.person_id;
     if (!pid) return;
-    const row = data.get('disaster_help_needed', helpId(pid));
-    if (!row) return;
-    if (brain.agencies.list().some((a) => brain.consent.has(pid, a.id, 'emergency'))) return;
-    data.del('disaster_help_needed', row.id, null);
+    for (const row of data.find('disaster_help_needed', { person_id: pid })) {
+      if (row.agency_id && brain.consent.has(pid, row.agency_id, 'emergency')) continue;
+      data.del('disaster_help_needed', row.id, null);
+    }
   });
 
   // ================================================================ routes
-  router.get('/catalogue', authed, (req, res) => res.json({ status: CAT.status, status_ml: CAT.status_ml, hazards: CAT.hazards, hazard_levels: CAT.hazard_levels, point_kinds: CAT.point_kinds, help_needs: CAT.help_needs, warning_levels: CAT.warning_levels, checklist: CAT.checklist, default_contacts: CAT.default_contacts, verify_note: CAT.verify_note, verify_note_ml: CAT.verify_note_ml, incident_outcomes: CAT.incident_outcomes, demo_prefix: DEMO_PREFIX, season: season(), cell_agency_id: CELL_ID }));
+  router.get('/catalogue', authed, (req, res) => res.json({ status: CAT.status, status_ml: CAT.status_ml, hazards: CAT.hazards, hazard_levels: CAT.hazard_levels, point_kinds: CAT.point_kinds, help_needs: CAT.help_needs, warning_levels: CAT.warning_levels, checklist: CAT.checklist, default_contacts: CAT.default_contacts, verify_note: CAT.verify_note, verify_note_ml: CAT.verify_note_ml, incident_outcomes: CAT.incident_outcomes, warning_sources: SOURCES.filter((x) => !x.demo || steward(req.user)).map(({ key, label, label_ml }) => ({ key, label, label_ml })), demo_prefix: DEMO_PREFIX, season: season(), cell_agency_id: CELL_ID }));
 
   // Hamlets this user relates to, with the service switch and the current top warning.
   router.get('/hamlets', authed, (req, res) => {
     const u = req.user;
     const ids = myHamlets(u);
-    const warn = warningsFor(ids);
+    const warn = warningsFor(ids, { viewer: u });
     res.json(brain.hamlets.list().filter((h) => ids.includes(h.id)).map((h) => {
       const top = warn.find((w) => w.hamlet_ids.includes(h.id));
       return { id: h.id, name: h.name, name_ml: h.name_ml, district: h.district, enabled: brain.modules.enabledIn(h.id), warning: top ? { level: top.level, icon: top.icon, title: top.title, title_ml: top.title_ml, is_demo: top.is_demo } : null };
@@ -250,9 +306,9 @@ module.exports = function init(ctx) {
     const plans = staff && brain.forms.canCapture(u, PLAN_KEY) ? brain.forms.list(u, { form_key: PLAN_KEY, hamlet_id: h.id, limit: 1000 }).length : null;
     res.json({
       hamlet: { id: h.id, name: h.name, name_ml: h.name_ml, district: h.district, panchayat: h.panchayat },
-      warnings: warningsFor([h.id]), profile: profileOut(getProfile(h.id), h.id), checklist: staff ? checklist(h.id) : null, season: season(),
+      warnings: warningsFor([h.id], { viewer: u }), pending_warnings: pendingFor(u, h.id), profile: profileOut(getProfile(h.id), h.id), checklist: staff ? checklist(h.id) : null, season: season(),
       verify_note: CAT.verify_note, verify_note_ml: CAT.verify_note_ml, status: CAT.status, status_ml: CAT.status_ml,
-      can: { edit_profile: canEditProfile(u, h.id), tick: canTick(u, h.id), issue: canIssue(u, h.id), plans: brain.forms.canCapture(u, PLAN_KEY) && present(u.agency_id, h.id), help: isResponder(u), incident: brain.forms.canCapture(u, INCIDENT_KEY) && (steward(u) || present(u.agency_id, h.id)), review: brain.forms.canReview(u, INCIDENT_KEY) },
+      can: { edit_profile: canEditProfile(u, h.id), tick: canTick(u, h.id), issue: canIssue(u, h.id), plans: brain.forms.canCapture(u, PLAN_KEY) && responderHere(u, h.id), help: responderHere(u, h.id), history: canSeeHistory(u, h.id), incident: brain.forms.canCapture(u, INCIDENT_KEY) && (steward(u) || present(u.agency_id, h.id)), review: brain.forms.canReview(u, INCIDENT_KEY) },
       plans_recorded: plans,
     });
   });
@@ -261,6 +317,12 @@ module.exports = function init(ctx) {
   router.get('/profile/:hamletId', authed, (req, res) => {
     const h = needHamlet(req.user, req.params.hamletId);
     res.json(profileOut(getProfile(h.id), h.id));
+  });
+  router.get('/profile/:hamletId/history', authed, (req, res) => {
+    const u = req.user;
+    const h = needHamlet(u, req.params.hamletId);
+    if (!canSeeHistory(u, h.id)) throw httpError(403, 'Only the disaster cell working in this hamlet sees the edit history.');
+    res.json(data.find('disaster_profile_history', { hamlet_id: h.id }, { order: 'changed_at DESC', limit: 200 }).map((r) => ({ id: r.id, changed_at: r.changed_at, changed_by_name: r.changed_by_name, agency_id: r.agency_id, agency: (brain.agencies.get(r.agency_id) || {}).name || null, reason: r.reason, fields: r.fields || [], changes: r.changes || [] })));
   });
   router.put('/profile/:hamletId', requires('hamlet.coordinate'), (req, res) => {
     const u = req.user;
@@ -282,6 +344,7 @@ module.exports = function init(ctx) {
       note: b.note !== undefined ? S(b.note, 600) : (cur ? cur.note : ''),
       is_demo: 0, updated_by: u.id, updated_by_name: u.display_name,
     }, u);
+    logProfileChange(h.id, cur, row, u);
     emit('disaster.profile_updated', { hamlet_id: h.id }, u, h.id);
     res.json(profileOut(row, h.id));
   });
@@ -304,7 +367,7 @@ module.exports = function init(ctx) {
     const row = data.put('disaster_checklist', { id: hid('dsc', h.id, sk, b.item), hamlet_id: h.id, agency_id: u.agency_id || null, season: sk, item: b.item, done: done ? 1 : 0, done_at: done ? nowIso() : null, done_by: done ? u.id : null, done_by_name: done ? u.display_name : null, note: S(b.note, 300) || null }, u);
     if (b.item === 'drill_held' && done) {
       const cur = getProfile(h.id);
-      if (cur) data.put('disaster_risk_profiles', { ...cur, last_drill: nowIso().slice(0, 10), updated_by: u.id, updated_by_name: u.display_name }, u);
+      if (cur) { const nx = data.put('disaster_risk_profiles', { ...cur, last_drill: nowIso().slice(0, 10), updated_by: u.id, updated_by_name: u.display_name }, u); logProfileChange(h.id, cur, nx, u, 'drill_held'); }
     }
     res.json({ item: row.item, done: Number(row.done) === 1, done_at: row.done_at, done_by_name: row.done_by_name, note: row.note });
   });
@@ -314,7 +377,7 @@ module.exports = function init(ctx) {
     const u = req.user;
     const ids = req.query.hamlet_id ? [needHamlet(u, req.query.hamlet_id).id] : myHamlets(u);
     const all = req.query.all === '1' && (steward(u) || u.role === 'agency_admin');
-    res.json(warningsFor(ids, { activeOnly: !all }));
+    res.json(warningsFor(ids, { activeOnly: !all, viewer: u }));
   });
   router.post('/warnings', requires('agency.manage'), (req, res) => {
     const u = req.user;
@@ -323,29 +386,54 @@ module.exports = function init(ctx) {
     if (!hamletIds.length) throw httpError(400, 'Choose at least one hamlet.');
     for (const h of hamletIds) {
       if (!brain.hamlets.get(h)) throw httpError(400, 'Unknown hamlet.');
-      if (!canIssue(u, h)) throw httpError(403, 'Your agency does not work in one of these hamlets.');
+      if (!canIssue(u, h)) throw httpError(403, 'Only an agency that runs a disaster preparedness programme in every chosen hamlet can issue a warning there.');
     }
     if (!LEVEL[b.level]) throw httpError(400, 'Level must be green, yellow, orange or red.');
-    const title = S(b.title, 160), body = S(b.body, 2000), source = S(b.source, 200);
+    const title = S(b.title, 160), body = S(b.body, 2000);
     if (title.length < 4) throw httpError(400, 'Write a short title.');
     if (body.length < 10) throw httpError(400, 'Write what people should do.');
-    if (source.length < 3) throw httpError(400, 'Say where the warning comes from (e.g. IMD bulletin, District Collector, KSDMA).');
-    if (/\bdemo\b/i.test(title + ' ' + source)) throw httpError(400, 'Real warnings must not be labelled as demo.');
+    // Source from a fixed list only — never free text (a fake "District Collector order" looks real).
+    const src = sourceOf(b.source);
+    if (!src) throw httpError(400, 'Choose the official source from the list: ' + SOURCES.filter((x) => !x.demo).map((x) => x.label).join(', ') + '.');
+    if (src.demo && !steward(u)) throw httpError(400, 'Real warnings must not be labelled as demo.');
+    if (!src.demo && /\bdemo\b/i.test(title)) throw httpError(400, 'Real warnings must not be labelled as demo.');
     const from = b.valid_from ? new Date(b.valid_from) : new Date();
     const to = b.valid_to ? new Date(b.valid_to) : new Date(from.getTime() + 2 * DAY);
     if (Number.isNaN(from.getTime()) || Number.isNaN(to.getTime()) || to <= from) throw httpError(400, 'Valid-until must be after valid-from.');
     if (to.getTime() - from.getTime() > 30 * DAY) throw httpError(400, 'A warning can be valid for at most 30 days — issue a new one after that.');
+    // A red warning ("leave now") from an agency needs a second person of the same agency before it shows.
+    const status = b.level === 'red' && !steward(u) ? 'pending_confirmation' : 'active';
+    const isDemo = !!src.demo;
     // Explicit fields only: never id, agency, issuer, demo flag or status from the client.
-    const row = data.put('disaster_warnings', { hamlet_ids: hamletIds, level: b.level, title, title_ml: S(b.title_ml, 300) || null, body, body_ml: S(b.body_ml, 3000) || null, valid_from: from.toISOString(), valid_to: to.toISOString(), source, status: 'active', is_demo: 0, agency_id: u.agency_id || null, issued_by: u.id, issued_by_name: u.display_name }, u);
-    emit('disaster.warning_issued', { id: row.id, level: row.level, hamlet_ids: hamletIds }, u, null);
-    brain.audit(u, 'warning.issue', row.id, { level: row.level, hamlets: hamletIds.length });
+    const row = data.put('disaster_warnings', { hamlet_ids: hamletIds, level: b.level, title: isDemo && !title.startsWith(DEMO_PREFIX) ? `${DEMO_PREFIX}: ${title}` : title, title_ml: S(b.title_ml, 300) || null, body, body_ml: S(b.body_ml, 3000) || null, valid_from: from.toISOString(), valid_to: to.toISOString(), source: src.label, status, is_demo: isDemo ? 1 : 0, agency_id: u.agency_id || null, issued_by: u.id, issued_by_name: u.display_name }, u);
+    if (status === 'active') emit('disaster.warning_issued', { id: row.id, level: row.level, hamlet_ids: hamletIds }, u, null);
+    brain.audit(u, 'warning.issue', row.id, { level: row.level, hamlets: hamletIds.length, status, source: src.key });
+    res.json(warningOut(row));
+  });
+  // Second person of the same agency confirms a red warning (four eyes); then it reaches the hubs.
+  router.post('/warnings/:id/confirm', authed, (req, res) => {
+    const u = req.user;
+    const w = data.get('disaster_warnings', req.params.id);
+    if (!w) throw httpError(404, 'Warning not found.');
+    if (w.status !== 'pending_confirmation') throw httpError(409, 'This warning is not waiting for confirmation.');
+    if (!steward(u)) {
+      if (w.agency_id !== u.agency_id) throw httpError(403, 'Only the agency that issued this warning can confirm it.');
+      if (w.issued_by === u.id) throw httpError(403, 'A second person of your agency must confirm a red warning.');
+      if (!(w.hamlet_ids || []).every((h) => responderHere(u, h))) throw httpError(403, 'Only disaster responders of your agency working in these hamlets can confirm.');
+    }
+    const row = data.put('disaster_warnings', { ...w, status: 'active', confirmed_by: u.id, confirmed_by_name: u.display_name, confirmed_at: nowIso() }, u);
+    emit('disaster.warning_issued', { id: row.id, level: row.level, hamlet_ids: row.hamlet_ids }, u, null);
+    brain.audit(u, 'warning.confirm', w.id, { level: w.level });
     res.json(warningOut(row));
   });
   router.post('/warnings/:id/cancel', requires('agency.manage'), (req, res) => {
     const u = req.user;
     const w = data.get('disaster_warnings', req.params.id);
     if (!w) throw httpError(404, 'Warning not found.');
-    if (!steward(u) && w.agency_id !== u.agency_id) throw httpError(403, 'Only the agency that issued this warning can cancel it.');
+    if (!steward(u)) {
+      if (w.agency_id !== u.agency_id) throw httpError(403, 'Only the agency that issued this warning can cancel it.');
+      if (!(w.hamlet_ids || []).some((h) => runsDisaster(u.agency_id, h))) throw httpError(403, 'Only an agency that runs a disaster preparedness programme in these hamlets can cancel this warning.');
+    }
     const row = data.put('disaster_warnings', { ...w, status: 'cancelled', cancelled_by: u.id, cancelled_at: nowIso() }, u);
     emit('disaster.warning_cancelled', { id: w.id }, u, null);
     brain.audit(u, 'warning.cancel', w.id);
@@ -357,7 +445,7 @@ module.exports = function init(ctx) {
   router.get('/households', requires('forms.capture'), (req, res) => {
     const u = req.user;
     const h = needHamlet(u, req.query.hamlet_id);
-    if (!brain.forms.canCapture(u, PLAN_KEY)) throw httpError(403, 'Only disaster responders record family plans.');
+    if (!brain.forms.canCapture(u, PLAN_KEY) || !responderHere(u, h.id)) throw httpError(403, 'Only disaster responders of an agency running a disaster preparedness programme here record family plans.');
     const plans = brain.forms.list(u, { form_key: PLAN_KEY, hamlet_id: h.id, limit: 1000 });
     const latest = {};
     for (const s of plans) if (!latest[s.household_id] || s.captured_at > latest[s.household_id].captured_at) latest[s.household_id] = s;
@@ -385,8 +473,9 @@ module.exports = function init(ctx) {
     const pid = S(b.person_id, 80);
     const p = brain.persons.raw(pid);
     if (!p) throw httpError(404, 'Person not found.');
-    if (!P.canSee(u, pid, 'profile').ok) throw httpError(403, 'You can record this only for people your agency already works with.');
     needHamlet(u, p.hamlet_id);
+    if (!responderHere(u, p.hamlet_id)) throw httpError(403, 'Only an agency that runs a disaster preparedness programme in this hamlet records this consent.');
+    if (!P.canSee(u, pid, 'profile').ok) throw httpError(403, 'You can record this only for people your agency already works with.');
     const c = brain.consent.grant({ person_id: pid, scopes: ['profile', 'emergency'], method: 'in_person' }, u);
     res.json({ person_id: pid, agency_id: c.agency_id, scopes: c.scopes, status: c.status });
   });
@@ -398,20 +487,35 @@ module.exports = function init(ctx) {
   });
 
   // ---------- people needing help to evacuate ----------
+  // Each agency sees only its OWN entries, and only while the person shares "emergency" with it.
+  const helpOut = (u, r) => {
+    const b = brain.persons.basic(r.person_id);
+    if (!b) return null;
+    const hh = b.household_id ? brain.households.get(b.household_id) : null;
+    const out = { person_id: b.id, name: b.name, age: b.age, household: hh ? { id: hh.id, name: hh.name, house_no: hh.house_no || null } : null, needs: (r.needs || []).filter((n) => NEED[n]), note: r.note || null, recorded_at: r.recorded_at, recorded_by_name: r.recorded_by_name };
+    if (steward(u)) { out.agency_id = r.agency_id; out.agency = (brain.agencies.get(r.agency_id) || {}).name || null; }
+    return out;
+  };
+  const mayReadHelpRow = (u, r) => {
+    if (!r || !r.agency_id) return null;
+    // The entry's own agency must still hold the person's "emergency" consent (steward: audited read).
+    if (!steward(u) && r.agency_id !== u.agency_id) return null;
+    if (!brain.consent.has(r.person_id, r.agency_id, 'emergency')) return null;
+    return canSeeHelp(u, r.person_id);
+  };
   router.get('/help', authed, (req, res) => {
     const u = req.user;
     needResponder(u);
     const h = needHamlet(u, req.query.hamlet_id);
-    const rows = data.find('disaster_help_needed', { hamlet_id: h.id }, { order: 'recorded_at DESC' });
+    needResponder(u, h.id);
+    const rows = data.find('disaster_help_needed', steward(u) ? { hamlet_id: h.id } : { hamlet_id: h.id, agency_id: u.agency_id }, { order: 'recorded_at DESC' });
     const people = [];
     for (const r of rows) {
-      const v = canSeeHelp(u, r.person_id);
+      const v = mayReadHelpRow(u, r);
       if (!v) continue;
       if (v.audited) brain.audit(u, 'steward.help_read', r.person_id, { scope: 'restricted' });
-      const b = brain.persons.basic(r.person_id);
-      if (!b) continue;
-      const hh = b.household_id ? brain.households.get(b.household_id) : null;
-      people.push({ person_id: b.id, name: b.name, age: b.age, household: hh ? { id: hh.id, name: hh.name, house_no: hh.house_no || null } : null, needs: (r.needs || []).filter((n) => NEED[n]), note: r.note || null, recorded_at: r.recorded_at, recorded_by_name: r.recorded_by_name });
+      const o = helpOut(u, r);
+      if (o) people.push(o);
     }
     // Households whose own plan (captured by this agency, head's consent still active) says help is needed.
     const covered = new Set(people.map((p) => p.household && p.household.id).filter(Boolean));
@@ -431,25 +535,38 @@ module.exports = function init(ctx) {
     const u = req.user;
     needResponder(u);
     const h = needHamlet(u, req.query.hamlet_id);
+    needResponder(u, h.id);
     const vis = brain.persons.visible(u, { hamlet_id: h.id, limit: 500 });
-    res.json(vis.map((p) => ({ id: p.id, name: p.name, age: p.age, kind: p.kind, household_id: p.household_id || null, emergency: !!canSeeHelp(u, p.id), listed: !!data.get('disaster_help_needed', helpId(p.id)) })));
+    res.json(vis.map((p) => ({ id: p.id, name: p.name, age: p.age, kind: p.kind, household_id: p.household_id || null, emergency: !!canSeeHelp(u, p.id) && (steward(u) || brain.consent.has(p.id, u.agency_id, 'emergency')), listed: !steward(u) && !!helpRow(u.agency_id, p.id) })));
   });
 
+  // Which agency's entry a request acts on: always the user's own; the steward names one (?agency_id=).
+  function helpTarget(u, req, pid) {
+    if (!steward(u)) return u.agency_id || null;
+    const a = S(req.query.agency_id || (req.body && req.body.agency_id), 80);
+    if (!a || !helpRow(a, pid)) throw httpError(400, 'Steward: name the agency whose entry to change (agency_id).');
+    return a;
+  }
   router.put('/help/:personId', authed, (req, res) => {
     const u = req.user;
     needResponder(u);
     const pid = req.params.personId;
     const p = brain.persons.raw(pid);
     if (!p) throw httpError(404, 'Person not found.');
-    if (!canSeeHelp(u, pid)) throw httpError(403, 'Not permitted: the family has not agreed to share "emergency" with your agency (or this person is outside your hamlets).');
     needHamlet(u, p.hamlet_id);
+    needResponder(u, p.hamlet_id);
+    const agencyId = helpTarget(u, req, pid);
+    if (!agencyId) throw httpError(403, 'Not permitted.');
+    if (!canSeeHelp(u, pid) || !brain.consent.has(pid, agencyId, 'emergency')) throw httpError(403, 'Not permitted: the family has not agreed to share "emergency" with your agency (or this person is outside your hamlets).');
+    const cur = helpRow(agencyId, pid);
+    if (cur && cur.agency_id !== agencyId) throw httpError(403, 'This entry belongs to another agency.');
     const b = req.body || {};
     const needs = [...new Set((Array.isArray(b.needs) ? b.needs : []).map(String))];
     if (!needs.length) throw httpError(400, 'Choose at least one kind of help.');
     if (needs.some((n) => !NEED[n])) throw httpError(400, 'Use the plain categories only: ' + Object.keys(NEED).join(', '));
     const note = S(b.note, 200);
-    // Explicit fields; person, hamlet and household come from the person record, never from the body.
-    const row = data.put('disaster_help_needed', { id: helpId(pid), person_id: pid, hamlet_id: p.hamlet_id, household_id: p.household_id || null, agency_id: u.agency_id || null, needs, note: note || null, recorded_by: u.id, recorded_by_name: u.display_name, recorded_at: nowIso() }, u);
+    // Explicit fields; person, hamlet and household come from the person record, agency from the account.
+    const row = data.put('disaster_help_needed', { id: cur ? cur.id : helpId(agencyId, pid), person_id: pid, hamlet_id: p.hamlet_id, household_id: p.household_id || null, agency_id: agencyId, needs, note: note || null, recorded_by: u.id, recorded_by_name: u.display_name, recorded_at: nowIso() }, u);
     emit('disaster.help_updated', { hamlet_id: p.hamlet_id }, u, p.hamlet_id);
     res.json({ person_id: pid, needs: row.needs, note: row.note, recorded_at: row.recorded_at });
   });
@@ -457,8 +574,14 @@ module.exports = function init(ctx) {
     const u = req.user;
     needResponder(u);
     const pid = req.params.personId;
+    const p = brain.persons.raw(pid);
+    if (!p) throw httpError(404, 'Person not found.');
+    needHamlet(u, p.hamlet_id);
+    needResponder(u, p.hamlet_id);
     if (!canSeeHelp(u, pid)) throw httpError(403, 'Not permitted.');
-    const row = data.get('disaster_help_needed', helpId(pid));
+    const agencyId = helpTarget(u, req, pid);
+    const row = agencyId ? helpRow(agencyId, pid) : null;
+    if (row && row.agency_id !== agencyId) throw httpError(403, 'This entry belongs to another agency.');
     if (row) data.del('disaster_help_needed', row.id, u);
     res.json({ removed: !!row });
   });
@@ -616,14 +739,14 @@ module.exports = function init(ctx) {
     tx(() => {
       for (const { hh, needs } of helpCandidates) {
         const pid = hh.head_person_id;
-        data.put('disaster_help_needed', { id: helpId(pid), person_id: pid, hamlet_id: hh.hamlet_id, household_id: hh.id, agency_id: cell.id, needs, note: needs.includes('needs_medicines') ? 'Keep 2 weeks of medicines ready' : null, recorded_by: officer.id, recorded_by_name: officer.display_name, recorded_at: new Date(now - R.int(3, 60) * DAY).toISOString() }, null);
+        data.put('disaster_help_needed', { id: helpId(cell.id, pid), person_id: pid, hamlet_id: hh.hamlet_id, household_id: hh.id, agency_id: cell.id, needs, note: needs.includes('needs_medicines') ? 'Keep 2 weeks of medicines ready' : null, recorded_by: officer.id, recorded_by_name: officer.display_name, recorded_at: new Date(now - R.int(3, 60) * DAY).toISOString() }, null);
       }
       // A youth in Thenmala who uses crutches after an accident has asked to be listed (fictional).
       const y = demo.youth.find((p) => p.hamlet_id === H.h2.id && !helpCandidates.some((c) => c.hh.head_person_id === p.id));
       if (y) {
         merge(y.id, ['profile', 'emergency']);
         B.enrol(y.id, progs[H.h2.id].id, null);
-        data.put('disaster_help_needed', { id: helpId(y.id), person_id: y.id, hamlet_id: y.hamlet_id, household_id: store.get('persons', y.id).household_id || null, agency_id: cell.id, needs: ['cannot_walk_far'], note: null, recorded_by: officer.id, recorded_by_name: officer.display_name, recorded_at: new Date(now - 20 * DAY).toISOString() }, null);
+        data.put('disaster_help_needed', { id: helpId(cell.id, y.id), person_id: y.id, hamlet_id: y.hamlet_id, household_id: store.get('persons', y.id).household_id || null, agency_id: cell.id, needs: ['cannot_walk_far'], note: null, recorded_by: officer.id, recorded_by_name: officer.display_name, recorded_at: new Date(now - 20 * DAY).toISOString() }, null);
       }
     });
 
@@ -635,7 +758,7 @@ module.exports = function init(ctx) {
         { hamlet_ids: [H.h2.id], level: 'yellow', title: `${DEMO_PREFIX}: river may rise — keep children away from the bank`, title_ml: `${DEMO_PREFIX_ML}: പുഴ ഉയരാം — കുട്ടികളെ കരയിൽ നിന്ന് അകറ്റി നിർത്തുക`, body: 'DEMO. The river may rise after rain upstream. Do not cross the causeway. Keep children away from the bank.', body_ml: 'ഡെമോ. മുകൾഭാഗത്തെ മഴയ്ക്ക് ശേഷം പുഴ ഉയരാം. ചപ്പാത്ത് കടക്കരുത്. കുട്ടികളെ കരയിൽ നിന്ന് അകറ്റി നിർത്തുക.', from: now - 3600e3, to: now + 3 * DAY },
         { hamlet_ids: [H.h2.id], level: 'red', title: `${DEMO_PREFIX}: flood — move to the temple ground`, title_ml: `${DEMO_PREFIX_ML}: വെള്ളപ്പൊക്കം — ക്ഷേത്ര മൈതാനത്തേക്ക് മാറുക`, body: 'DEMO (past). Flood warning from last monsoon, kept as an example.', body_ml: 'ഡെമോ (പഴയത്). കഴിഞ്ഞ മഴക്കാലത്തെ മുന്നറിയിപ്പ്, ഉദാഹരണമായി.', from: now - 120 * DAY, to: now - 118 * DAY },
       ];
-      for (const w of W) data.put('disaster_warnings', { hamlet_ids: w.hamlet_ids, level: w.level, title: w.title, title_ml: w.title_ml, body: w.body, body_ml: w.body_ml, valid_from: iso(w.from), valid_to: iso(w.to), source: 'DEMO — fictional district cell', status: 'active', is_demo: 1, agency_id: cell.id, issued_by: admin.id, issued_by_name: admin.display_name }, null);
+      for (const w of W) data.put('disaster_warnings', { hamlet_ids: w.hamlet_ids, level: w.level, title: w.title, title_ml: w.title_ml, body: w.body, body_ml: w.body_ml, valid_from: iso(w.from), valid_to: iso(w.to), source: SOURCE.platform_demo.label, status: 'active', is_demo: 1, agency_id: cell.id, issued_by: admin.id, issued_by_name: admin.display_name }, null);
     });
 
     // Incident reports: two from CIF's facilitator in Pachakkudi, one from the officer.

@@ -53,7 +53,20 @@
       "issued_by",
       "issued_by_name",
       "cancelled_by",
-      "cancelled_at"
+      "cancelled_at",
+      "confirmed_by",
+      "confirmed_by_name",
+      "confirmed_at"
+    ],
+    "disaster_profile_history": [
+      "hamlet_id",
+      "agency_id",
+      "changed_by",
+      "changed_by_name",
+      "changed_at",
+      "reason",
+      "fields",
+      "changes"
     ],
     "disaster_help_needed": [
       "person_id",
