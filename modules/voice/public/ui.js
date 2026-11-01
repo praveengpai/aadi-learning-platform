@@ -235,15 +235,21 @@ async function record(el, k) {
   }
   function drawLic() {
     const story = st.kind === 'oral_history';
-    lic.replaceChildren(h('p', { class: 'small' }, story ? t('The elder chooses who may listen. Read the choices aloud to them.', 'ആരൊക്കെ കേൾക്കാമെന്ന് മൂപ്പൻ തീരുമാനിക്കും. തിരഞ്ഞെടുപ്പുകൾ വായിച്ചു കേൾപ്പിക്കുക.') : t('Who may listen?', 'ആർക്കൊക്കെ കേൾക്കാം?')),
+    if (story) {
+      // An elder's story always starts "our hamlet only"; only the elder (or a child speaker's guardian) can widen it, from their own login.
+      lic.replaceChildren(h('p', { class: 'small' }, t('An elder\'s story starts as "our hamlet only". Only the elder can let more people listen, later, from their own login.', 'മൂപ്പന്മാരുടെ കഥ ആദ്യം "നമ്മുടെ ഊരിന് മാത്രം" ആയിരിക്കും. കൂടുതൽ പേർക്ക് കേൾക്കാൻ അനുവദിക്കാൻ മൂപ്പന് മാത്രമേ കഴിയൂ.')),
+        h('p', { class: 'small muted' }, t(W.withdraw.en, W.withdraw.ml)));
+      return;
+    }
+    lic.replaceChildren(h('p', { class: 'small' }, t('Who may listen?', 'ആർക്കൊക്കെ കേൾക്കാം?')),
       h('div', { class: 'voice-choice' }, m.licences.map((l) => h('label', null, h('input', { type: 'radio', name: 'vlic', value: l, checked: st.licence === l, onchange: () => { st.licence = l; } }), h('span', null, t(W.licence[l].en, W.licence[l].ml)), say(k, W.licence[l].en, W.licence[l].ml)))),
-      story ? h('p', { class: 'small muted' }, t(W.withdraw.en, W.withdraw.ml)) : null);
+      null);
   }
   drawPeople(); drawLic();
   const save = ui.button('📤 ' + t('Send for review', 'പരിശോധനയ്ക്ക് അയയ്ക്കുക'), async () => {
     if (!st.audio) { k.toast(t('Record the clip first.', 'ആദ്യം റെക്കോർഡ് ചെയ്യുക.'), 'warn'); return; }
     try {
-      const r = await k.api.post('/clips', { kind: st.kind, hamlet_ids: st.hamlets, language: langSel.value, title: title.value, title_ml: titleMl.value, transcript: transcript.value, audio: st.audio.audio, duration_s: st.audio.duration_s, speaker_person_id: st.speaker ? st.speaker.id : null, featured_person_ids: st.featured.map((p) => p.id), no_identifiable: noOne.checked, licence: st.licence });
+      const r = await k.api.post('/clips', { kind: st.kind, hamlet_ids: st.hamlets, language: langSel.value, title: title.value, title_ml: titleMl.value, transcript: transcript.value, audio: st.audio.audio, duration_s: st.audio.duration_s, speaker_person_id: st.speaker ? st.speaker.id : null, featured_person_ids: st.featured.map((p) => p.id), no_identifiable: noOne.checked, licence: st.kind === 'oral_history' ? undefined : st.licence });
       if (r && r.queued) k.toast(t('Saved on this phone — it will be sent when the hub is reachable.', 'ഈ ഫോണിൽ സൂക്ഷിച്ചു — ഹബ് ലഭ്യമാകുമ്പോൾ അയയ്ക്കും.'), 'info');
       else k.toast(t('Thank you! Sent for review.', 'നന്ദി! പരിശോധനയ്ക്ക് അയച്ചു.'), 'good');
       k.speak(t('Thank you. Sent for review.', 'നന്ദി. പരിശോധനയ്ക്ക് അയച്ചു.'));

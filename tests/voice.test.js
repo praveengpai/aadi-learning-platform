@@ -170,9 +170,11 @@ test('oral history: speaker\'s licence; withdrawal by the speaker (or a child\'s
   // the speaker must belong to the one hamlet the story is for
   assert.equal((await api('demo.facilitator').post('/api/m/voice/clips', { kind: 'oral_history', hamlet_ids: [H1()], language: 'Muthuvan', title: 'No speaker', audio: WAV })).status, 400);
   const story = await recordH1({ kind: 'oral_history', title: 'Story of the old path', speaker_person_id: gu.person_id, licence: 'cc_by_nc', no_identifiable: undefined });
-  assert.equal(story.licence, 'cc_by_nc');
-  assert.equal(story.licence_chosen_by, 'speaker');
+  assert.equal(story.licence, 'community', 'the recorder cannot choose a wider licence for the elder');
+  assert.equal(story.licence_chosen_by, 'default');
   await publish(story.id);
+  assert.equal((await api('demo.guardian').post(`/api/m/voice/clips/${story.id}/licence`, { licence: 'cc_by_nc' })).status, 200, 'the speaker widens it herself');
+  assert.equal(B.store.get('voice_clips', story.id).licence_chosen_by, 'speaker');
   assert.ok(ids((await api('demo.youth').get(`/api/m/voice/clips?hamlet_id=${H1()}`)).body).includes(story.id), 'shared licence: other hamlets may listen');
   // only the speaker / staff on their request can narrow or widen it; the recorder of a story cannot override for others
   assert.equal((await api('demo.youth').post(`/api/m/voice/clips/${story.id}/licence`, { licence: 'public' })).status, 403);
@@ -259,7 +261,7 @@ test('plays are counted per clip and hamlet — never per person', async () => {
   // trying to book plays into another hamlet lands in the clip's own hamlet
   assert.equal((await api('demo.guardian').post(`/api/m/voice/clips/${c.id}/play`, { hamlet_id: H2() })).body.hamlet_id, H1());
   const rows = B.store.all('SELECT * FROM voice_plays WHERE clip_id=? AND deleted=0', c.id);
-  assert.equal(rows.reduce((t, r) => t + r.plays, 0) - before, 15);
+  assert.equal(rows.reduce((t, r) => t + r.plays, 0) - before, 14, 'the guardian\'s second play the same day is not counted again');
   const cols = Object.keys(rows[0]);
   for (const bad of ['person_id', 'user_id', 'listener', 'actor']) assert.ok(!cols.includes(bad), 'no ' + bad);
   for (const r of rows) assert.equal(r.hamlet_id, H1());
@@ -267,7 +269,7 @@ test('plays are counted per clip and hamlet — never per person', async () => {
   assert.ok(evs.length >= 1);
   for (const e of evs) { assert.equal(e.actor, null, 'event log does not record who listened'); for (const u of ['demo.guardian', 'demo.learner']) assert.ok(!String(e.payload).includes(user(u).id)); }
   const reach = await api('demo.facilitator').get('/api/m/voice/reach');
-  assert.ok(reach.body.rows.find((r) => r.clip_id === c.id && r.total >= 15));
+  assert.ok(reach.body.rows.find((r) => r.clip_id === c.id && r.total >= 14));
 });
 
 test('another agency cannot edit, review, publish or withdraw CIF clips, nor change its gatherings', async () => {
@@ -410,4 +412,162 @@ test('storage budget is declared and reported', async () => {
   const express = require('express');
   const ctx = N.host._ctx(N.host.modules.get('learning'), express.Router(), 'learning_');
   assert.throws(() => ctx.sql('SELECT * FROM voice_clips'), /sealed/);
+});
+
+// ---------------- Security review (wave 2) regressions ----------------
+
+const eventsContaining = (node, needle) => node.brain.db.prepare('SELECT COUNT(*) n FROM events WHERE instr(payload, ?) > 0').get(needle).n;
+
+test('withdrawal scrubs audio and words from the event log on every node; a fresh hub never receives them', async () => {
+  const gu = user('demo.guardian');
+  ensureVisible(gu.person_id);
+  const audio = syntheticWav(1.73, [311.13, 349.23]);
+  const words = 'Unique words of the withdrawn story ' + Date.now();
+  const story = await recordH1({ kind: 'oral_history', title: 'A story to be taken back', speaker_person_id: gu.person_id, transcript: words, transcript_ml: words + ' ml', audio, duration_s: 1.7, no_identifiable: undefined });
+  await publish(story.id);
+  assert.ok(eventsContaining(N, audio) >= 1 && eventsContaining(N, words) >= 1, 'present in the log before withdrawal');
+  const w = await api('demo.guardian').post(`/api/m/voice/clips/${story.id}/withdraw`, { reason: 'no' });
+  assert.equal(w.status, 200, JSON.stringify(w.body));
+  assert.equal(eventsContaining(N, audio), 0, 'no event still holds the audio');
+  assert.equal(eventsContaining(N, words), 0, 'no event still holds the transcript');
+  assert.equal(eventsContaining(N, 'A story to be taken back'), 0, 'nor the title');
+  const row = B.store.get('voice_clips', story.id);
+  assert.equal(row.audio, null); assert.equal(row.transcript, null); assert.equal(row.status, 'withdrawn');
+  assert.equal(row.withdrawn_via, 'self'); assert.equal(row.withdrawn_by, gu.id);
+  assert.ok(B.store.one("SELECT 1 x FROM events WHERE type='core.redact' AND instr(payload, ?) > 0", story.id), 'a core.redact event carries the removal to other nodes');
+  assert.ok(B.store.verifyChain().ok, 'the hash chain still verifies');
+  // the seeded withdrawn story was redacted too
+  const seeded = B.store.one("SELECT id FROM voice_clips WHERE status='withdrawn' AND is_demo=1");
+  assert.ok(seeded);
+  const evs = B.store.all("SELECT payload FROM events WHERE type='row.upsert' AND json_extract(payload,'$.table')='voice_clips' AND json_extract(payload,'$.row.id')=?", seeded.id);
+  assert.ok(evs.length >= 2);
+  for (const e of evs) { const r = (typeof e.payload === 'string' ? JSON.parse(e.payload) : e.payload).row; assert.equal(r.audio, null); assert.equal(r.transcript, null); assert.equal(r.transcript_ml, null); }
+  const pull = await fetch(N.base + '/api/sync/pull?after=0&limit=5000', { headers: { 'x-sync-key': 'test-key' } }).then((r) => r.text());
+  assert.ok(!pull.includes(audio) && !pull.includes(words), 'a raw pull from 0 has neither');
+
+  // staff take an elder's story back on her in-person request (Komalikudi), then a fresh hub syncs
+  const h11 = D.hamletByKey.h11.id;
+  const target = B.store.one("SELECT * FROM voice_clips WHERE kind='oral_history' AND status='published' AND hamlet_id=? AND audio IS NOT NULL AND deleted=0", h11);
+  assert.ok(target, 'a published Komalikudi story');
+  assert.ok(eventsContaining(N, target.audio) >= 1);
+  assert.equal((await api('demo.aadi.facilitator').post(`/api/m/voice/clips/${target.id}/withdraw`, {})).status, 400, 'staff must confirm the speaker asked in person');
+  const tw = await api('demo.aadi.facilitator').post(`/api/m/voice/clips/${target.id}/withdraw`, { in_person: true, reason: 'asked at the centre' });
+  assert.equal(tw.status, 200, JSON.stringify(tw.body));
+  const tr = B.store.get('voice_clips', target.id);
+  assert.equal(tr.withdrawn_via, 'in_person'); assert.equal(tr.withdrawn_by, user('demo.aadi.facilitator').id);
+  assert.equal(eventsContaining(N, target.audio), 0);
+  const clipEvents = (node) => node.brain.db.prepare("SELECT payload FROM events WHERE json_extract(payload,'$.row.id')=?").all(target.id).map((e) => e.payload);
+  assert.ok(clipEvents(N).length >= 2 && clipEvents(N).every((p) => !p.includes(target.transcript)), 'no version of this clip keeps its transcript (seed texts repeat across hamlets)');
+  assert.ok(B.store.verifyChain().ok);
+  const hub = await bootDemo({ role: 'hub', upstream: N.base, noSeed: true, hamlets: h11 });
+  try {
+    await hub.sync.runOnce();
+    const hr = hub.brain.store.get('voice_clips', target.id);
+    assert.ok(hr, 'the hub received the clip record');
+    assert.equal(hr.status, 'withdrawn');
+    assert.equal(hr.audio, null); assert.equal(hr.transcript, null);
+    assert.equal(eventsContaining(hub, target.audio), 0, 'no copy of the audio on the hub');
+    assert.ok(clipEvents(hub).length >= 1 && clipEvents(hub).every((p) => !p.includes(target.transcript)), 'no copy of the transcript on the hub');
+    assert.equal(hub.brain.db.prepare('SELECT COUNT(*) n FROM voice_clips WHERE audio=?').get(target.audio).n, 0);
+    // a story still published there did arrive with its audio (the hub really synced voice data)
+    const kept = B.store.one("SELECT id, audio FROM voice_clips WHERE status='published' AND hamlet_id=? AND audio IS NOT NULL AND deleted=0", h11);
+    if (kept) assert.equal(hub.brain.store.get('voice_clips', kept.id).audio, kept.audio);
+  } finally { await hub.close(); }
+});
+
+test('only the speaker (or a child speaker\'s guardian) can widen an oral-history licence; staff only narrow, in person', async () => {
+  const gu = user('demo.guardian');
+  ensureVisible(gu.person_id);
+  const story = await recordH1({ kind: 'oral_history', title: 'Licence test story', speaker_person_id: gu.person_id, licence: 'public', no_identifiable: undefined });
+  assert.equal(story.licence, 'community');
+  await publish(story.id);
+  // the review finding: facilitator widens to public → refused, and another agency/hamlet still cannot listen
+  const f = await api('demo.facilitator').post(`/api/m/voice/clips/${story.id}/licence`, { licence: 'public' });
+  assert.equal(f.status, 403, JSON.stringify(f.body));
+  assert.equal((await api('demo.facilitator').post(`/api/m/voice/clips/${story.id}/licence`, { licence: 'public', in_person: true })).status, 403, 'even "in person" staff cannot widen');
+  assert.equal((await api('demo.cif.admin').post(`/api/m/voice/clips/${story.id}/licence`, { licence: 'cc_by_nc' })).status, 403, 'nor the agency admin');
+  assert.equal(B.store.get('voice_clips', story.id).licence, 'community');
+  assert.equal((await api('demo.facilitator2').get(`/api/m/voice/clips/${story.id}/audio`)).status, 404, 'another hamlet\'s staff cannot fetch the audio');
+  assert.equal((await api('demo.youth').get(`/api/m/voice/clips/${story.id}/audio`)).status, 404);
+  // the speaker widens; truthfully recorded
+  assert.equal((await api('demo.guardian').post(`/api/m/voice/clips/${story.id}/licence`, { licence: 'public' })).status, 200);
+  let row = B.store.get('voice_clips', story.id);
+  assert.equal(row.licence, 'public'); assert.equal(row.licence_chosen_by, 'speaker'); assert.equal(row.licence_changed_by, gu.id); assert.equal(row.licence_changed_via, 'own_login');
+  // staff may narrow only on the speaker's in-person request, recorded as such
+  assert.equal((await api('demo.facilitator').post(`/api/m/voice/clips/${story.id}/licence`, { licence: 'community' })).status, 400);
+  assert.equal((await api('demo.facilitator.vjt').post(`/api/m/voice/clips/${story.id}/licence`, { licence: 'community', in_person: true })).status, 403, 'another agency cannot narrow');
+  const n = await api('demo.facilitator').post(`/api/m/voice/clips/${story.id}/licence`, { licence: 'community', in_person: true });
+  assert.equal(n.status, 200, JSON.stringify(n.body));
+  row = B.store.get('voice_clips', story.id);
+  assert.equal(row.licence, 'community'); assert.equal(row.licence_chosen_by, 'staff_on_speaker_request'); assert.equal(row.licence_changed_by, user('demo.facilitator').id); assert.equal(row.licence_changed_via, 'in_person');
+  // a recorder's edit cannot change the elder's licence either
+  const draft = await recordH1({ kind: 'oral_history', title: 'Draft story', speaker_person_id: gu.person_id, no_identifiable: undefined });
+  const e = await api('demo.facilitator').put('/api/m/voice/clips/' + draft.id, { licence: 'public' });
+  assert.equal(e.status, 200);
+  assert.equal(B.store.get('voice_clips', draft.id).licence, 'community');
+  // a minor speaker's guardian may widen for the child
+  const child = D.demoLearner;
+  ensureVisible(child.id);
+  const kid = await recordH1({ kind: 'oral_history', title: 'A child tells a story', speaker_person_id: child.id, no_identifiable: undefined });
+  await publish(kid.id);
+  assert.equal((await api('demo.guardian').post(`/api/m/voice/clips/${kid.id}/licence`, { licence: 'cc_by_nc' })).status, 200);
+  assert.equal(B.store.get('voice_clips', kid.id).licence_chosen_by, 'guardian');
+});
+
+test('plays cannot be inflated: phones count 1, today only, once per listener per clip per day; hub group bounded', async () => {
+  const c = await recordH1({ title: 'Inflate me' });
+  await publish(c.id);
+  const sum = () => B.store.one('SELECT COALESCE(SUM(plays),0) n FROM voice_plays WHERE clip_id=? AND deleted=0', c.id).n;
+  const r = await api('demo.learner').post(`/api/m/voice/clips/${c.id}/play`, { count: 50, day: '2026-10-01' });
+  assert.equal(r.status, 200);
+  assert.equal(r.body.counted, true);
+  assert.equal(r.body.day, new Date().toISOString().slice(0, 10), 'server day, not the client\'s');
+  assert.equal(sum(), 1, 'a phone play is always 1');
+  assert.equal(B.store.one('SELECT COUNT(*) n FROM voice_plays WHERE clip_id=? AND day=?', c.id, '2026-10-01').n, 0, 'no back-dated row');
+  for (let i = 0; i < 5; i++) assert.equal((await api('demo.learner').post(`/api/m/voice/clips/${c.id}/play`, {})).body.counted, false);
+  assert.equal(sum(), 1, 'repeat plays the same day are not counted');
+  assert.equal((await api('demo.learner').post(`/api/m/voice/clips/${c.id}/play`, { channel: 'hub', count: 50 })).status, 403, 'a learner cannot report speaker plays');
+  const hubPlay = await api('demo.facilitator').post(`/api/m/voice/clips/${c.id}/play`, { channel: 'hub', count: 5000 });
+  assert.equal(hubPlay.status, 200);
+  assert.equal(sum(), 1 + 50, 'hub group count is capped');
+  assert.equal((await api('demo.facilitator').post(`/api/m/voice/clips/${c.id}/play`, { channel: 'hub', count: 50 })).body.counted, false, 'once per staff per clip per day');
+  assert.equal(sum(), 51);
+  // nothing that identifies the listener, not even a hashed key, is stored or synced
+  const cols = B.db.prepare('PRAGMA table_info(voice_plays)').all().map((x) => x.name);
+  assert.deepEqual(cols.filter((x) => !['id', 'updated_at', 'node', 'deleted', 'clip_id', 'hamlet_id', 'day', 'channel', 'plays'].includes(x)), []);
+  const evs = B.store.all("SELECT actor, payload FROM events WHERE json_extract(payload,'$.table')='voice_plays' AND instr(payload, ?) > 0", c.id);
+  for (const e of evs) { assert.equal(e.actor, null); assert.ok(!String(e.payload).includes(user('demo.learner').id)); }
+});
+
+test('audio with bytes hidden after the media data is refused (WAV, Ogg, WebM, MP4)', async () => {
+  const fac = api('demo.facilitator');
+  const post = (audio, duration_s = 2) => fac.post('/api/m/voice/clips', { kind: 'bulletin', hamlet_ids: [H1()], language: 'Muthuvan', title: 'Trailing bytes', audio, duration_s, no_identifiable: true });
+  const tail = Buffer.from('<script>alert(1)</script>PAYLOAD');
+  const b64 = (u) => Buffer.from(u.split(',')[1], 'base64');
+  const withTail = (mime, buf) => `data:${mime};base64,` + Buffer.concat([buf, tail]).toString('base64');
+  // WAV
+  const wav = b64(WAV);
+  assert.equal((await post(withTail('audio/wav', wav))).status, 400, 'WAV with bytes after the RIFF data');
+  const lying = Buffer.concat([wav, tail]); lying.writeUInt32LE(lying.length - 8, 4); // RIFF grown to cover the junk
+  assert.equal((await post('data:audio/wav;base64,' + lying.toString('base64'))).status, 400, 'junk inside RIFF after the data chunk');
+  // Ogg
+  const ogg = oggOpus(2);
+  assert.equal((await post(ogg)).status, 200);
+  assert.equal((await post(withTail('audio/ogg', b64(ogg)))).status, 400, 'Ogg with bytes after the last page');
+  // WebM: EBML header + sized Segment { Info { TimecodeScale, Duration } }
+  const el = (id, body) => { const sz = body.length; return Buffer.concat([Buffer.from(id), Buffer.from([0x01, 0, 0, 0, (sz >>> 24) & 255, (sz >>> 16) & 255, (sz >>> 8) & 255, sz & 255]), body]); };
+  const dur = Buffer.alloc(8); dur.writeDoubleBE(2000);
+  const info = el([0x15, 0x49, 0xa9, 0x66], Buffer.concat([el([0x2a, 0xd7, 0xb1], Buffer.from([0x0f, 0x42, 0x40])), el([0x44, 0x89], dur)]));
+  const webm = Buffer.concat([el([0x1a, 0x45, 0xdf, 0xa3], el([0x42, 0x86], Buffer.from([1]))), el([0x18, 0x53, 0x80, 0x67], info)]);
+  const okW = await post('data:audio/webm;base64,' + webm.toString('base64'));
+  assert.equal(okW.status, 200, JSON.stringify(okW.body));
+  assert.equal(okW.body.duration_s, 2);
+  assert.equal((await post(withTail('audio/webm', webm))).status, 400, 'WebM payload larger than the declared Segment');
+  // MP4: ftyp + moov{mvhd} + mdat
+  const box = (type, body) => { const b = Buffer.alloc(8); b.writeUInt32BE(8 + body.length, 0); b.write(type, 4, 'latin1'); return Buffer.concat([b, body]); };
+  const mvhd = Buffer.alloc(20); mvhd.writeUInt32BE(1000, 12); mvhd.writeUInt32BE(2000, 16);
+  const mp4 = Buffer.concat([box('ftyp', Buffer.from('M4A \0\0\0\0', 'latin1')), box('moov', box('mvhd', mvhd)), box('mdat', Buffer.alloc(64, 7))]);
+  const okM = await post('data:audio/mp4;base64,' + mp4.toString('base64'));
+  assert.equal(okM.status, 200, JSON.stringify(okM.body));
+  assert.equal((await post(withTail('audio/mp4', mp4))).status, 400, 'MP4 with bytes after the last box');
 });

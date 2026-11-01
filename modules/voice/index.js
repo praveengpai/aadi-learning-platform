@@ -89,6 +89,28 @@ module.exports = function init(ctx) {
     return true;
   }
   const canManage = (u, c) => c.recorded_by === u.id || isReviewerFor(u, c) || (u.role === 'platform_admin');
+  // The speaker of an oral history (or the guardian of a minor speaker) — the only people who may WIDEN its licence.
+  function speakerRight(u, c) {
+    const sp = c.speaker_person_id;
+    if (!sp) return null;
+    if (u.person_id && u.person_id === sp) return 'speaker';
+    if (u.role === 'guardian' && u.person_id) { const p = brain.persons.raw(sp); if (p && p.guardian_id === u.person_id && brain.policy.isMinor(p)) return 'guardian'; }
+    return null;
+  }
+  const LIC_RANK = { community: 0, cc_by_nc: 1, public: 2 };
+  const inPerson = (b) => !!b && (b.in_person === true || b.in_person === 1 || b.in_person === '1');
+  // Personal content of a clip: removed from every past version in the event log when it is taken back.
+  const WITHDRAW_FIELDS = ['audio', 'transcript', 'transcript_ml', 'title', 'title_ml', 'credit_as', 'review_note'];
+  const WITHDRAWN_TITLE = 'Recording taken back by the speaker';
+  const WITHDRAWN_TITLE_ML = 'പറഞ്ഞയാൾ തിരിച്ചെടുത്ത റെക്കോർഡിംഗ്';
+  function withdrawClip(c, { via, reason = null, by, at = nowIso(), user }) {
+    return tx(() => {
+      // 1. scrub the audio and words from every version of this row on this node (and, via core.redact, on every node)
+      data.redact('voice_clips', c.id, WITHDRAW_FIELDS, user);
+      // 2. the current row records the withdrawal (no content in it)
+      return data.put('voice_clips', { id: c.id, status: 'withdrawn', withdrawn_at: at, withdrawn_via: via, withdrawn_by: by || null, withdrawn_reason: reason, title: WITHDRAWN_TITLE, title_ml: WITHDRAWN_TITLE_ML, audio: null, transcript: null, transcript_ml: null, credit_as: null, review_note: null, bytes: 0 }, user);
+    });
+  }
   function withdrawRight(u, c) {
     const ps = people(c);
     if (u.person_id && ps.includes(u.person_id)) return 'self';
@@ -114,6 +136,7 @@ module.exports = function init(ctx) {
       mine: c.recorded_by === u.id, can_edit: staff && c.recorded_by === u.id && ['draft', 'returned'].includes(c.status),
       can_review: isReviewerFor(u, c) && c.recorded_by !== u.id, can_publish: isReviewerFor(u, c),
       can_withdraw: !c.withdrawn_at && !!withdrawRight(u, c),
+      can_widen_licence: !c.withdrawn_at && (c.kind === 'oral_history' ? !!speakerRight(u, c) : canManage(u, c)),
     };
     if (staff) {
       out.review_note = c.review_note; out.reviewed_by_name = c.reviewed_by_name; out.reviewed_at = c.reviewed_at;
@@ -266,10 +289,15 @@ module.exports = function init(ctx) {
     row.speaker_person_id = speaker || null;
     row.featured_person_ids = ids.filter((x) => x !== speaker);
     row.no_identifiable = noOne ? 1 : 0;
-    // licence: for an oral history the SPEAKER chooses (default: community only)
-    const lic = LICENCES.includes(b.licence) ? b.licence : (existing ? existing.licence : 'community');
-    row.licence = lic;
-    row.licence_chosen_by = kind === 'oral_history' ? 'speaker' : 'recorder';
+    // licence: an oral history always starts "our hamlet only"; only the speaker (or a minor speaker's
+    // guardian) can widen it, from their own login (POST /clips/:id/licence). Staff cannot choose for them.
+    if (kind === 'oral_history') {
+      row.licence = existing ? existing.licence : 'community';
+      row.licence_chosen_by = existing ? existing.licence_chosen_by : 'default';
+    } else {
+      row.licence = LICENCES.includes(b.licence) ? b.licence : (existing ? existing.licence : 'community');
+      row.licence_chosen_by = 'recorder';
+    }
     const credit = S(b.credit_as ?? (existing && existing.credit_as), 120);
     row.credit_as = credit || null;
     // optional link to the text archive in the community module (same hamlet)
@@ -344,8 +372,10 @@ module.exports = function init(ctx) {
     if (c.withdrawn_at) return res.json(shape(u, c, relHamlets(u)));
     const via = withdrawRight(u, c);
     if (!via) throw httpError(403, 'Only the speaker, a child\'s guardian or the recording agency (on the speaker\'s request) can take this back');
-    // The audio and words are removed from the record itself, so every hub and phone drops them on next sync.
-    const row = data.put('voice_clips', { id: c.id, status: 'withdrawn', withdrawn_at: nowIso(), withdrawn_via: via, withdrawn_reason: S(req.body && req.body.reason, 300) || null, audio: null, transcript: null, transcript_ml: null, bytes: 0 }, u);
+    if (via === 'in_person' && !inPerson(req.body)) throw Object.assign(httpError(400, 'Staff can take a recording back only when the speaker asks in person at the centre — confirm that they did (in_person).'), { code: 'in_person_required' });
+    // The audio and words are removed from every past version in the event log (core.redact), so every hub
+    // and phone drops them on next sync and a fresh hub never receives them.
+    const row = withdrawClip(c, { via, reason: S(req.body && req.body.reason, 300) || null, by: u.id, user: u });
     // Pull it out of every playlist at once.
     for (const pl of data.find('voice_playlists', {})) if ((pl.items || []).includes(c.id)) data.put('voice_playlists', { id: pl.id, items: pl.items.filter((x) => x !== c.id) }, u);
     emit('voice.clip_withdrawn', { clip_id: c.id, via }, u, c.hamlet_id);
@@ -359,11 +389,23 @@ module.exports = function init(ctx) {
     if (c.withdrawn_at) throw httpError(409, 'This clip was taken back by the speaker');
     const lic = S(req.body && req.body.licence, 20);
     if (!LICENCES.includes(lic)) throw httpError(400, 'Unknown licence');
-    const via = withdrawRight(u, c);
-    const ok = c.kind === 'oral_history' ? !!via : (c.recorded_by === u.id || isReviewerFor(u, c));
-    if (!ok) throw httpError(403, c.kind === 'oral_history' ? 'Only the speaker (or a child\'s guardian, or staff on their request) can change who may listen' : 'Only the recorder or a reviewer can change this');
-    const row = data.put('voice_clips', { id: c.id, licence: lic, licence_chosen_by: c.kind === 'oral_history' ? 'speaker' : 'recorder' }, u);
-    brain.audit(u, 'clip.licence', c.id, { licence: lic, via });
+    let chosenBy, via = null;
+    if (c.kind === 'oral_history') {
+      const widen = LIC_RANK[lic] > LIC_RANK[c.licence || 'community'];
+      const sp = speakerRight(u, c);
+      if (sp) { chosenBy = sp; via = 'own_login'; }
+      else if (widen) throw httpError(403, 'Only the speaker (or the guardian of a child speaker) can let more people listen to their story.');
+      else if (u.role === 'platform_admin') { chosenBy = 'steward'; via = 'steward'; }
+      else if (STAFF.includes(u.role) && isStaffFor(u, c)) {
+        if (!inPerson(req.body)) throw Object.assign(httpError(400, 'Staff can narrow who may listen only when the speaker asks in person at the centre — confirm that they did (in_person).'), { code: 'in_person_required' });
+        chosenBy = 'staff_on_speaker_request'; via = 'in_person';
+      } else throw httpError(403, 'Only the speaker (or a child\'s guardian, or staff on their in-person request) can change who may listen');
+    } else {
+      if (!(c.recorded_by === u.id || isReviewerFor(u, c))) throw httpError(403, 'Only the recorder or a reviewer can change this');
+      chosenBy = 'recorder'; via = 'recorder';
+    }
+    const row = data.put('voice_clips', { id: c.id, licence: lic, licence_chosen_by: chosenBy, licence_changed_by: u.id, licence_changed_via: via, licence_changed_at: nowIso() }, u);
+    brain.audit(u, 'clip.licence', c.id, { licence: lic, via, chosen_by: chosenBy });
     res.json(shape(u, row, relHamlets(u)));
   });
 
@@ -373,6 +415,21 @@ module.exports = function init(ctx) {
     const id = playId(clipId, hamletId, day, channel);
     const cur = data.get('voice_plays', id);
     return data.put('voice_plays', { id, clip_id: clipId, hamlet_id: hamletId, day, channel, plays: (cur ? Number(cur.plays) || 0 : 0) + n }, u);
+  }
+  // One counted play per listener per clip per day. The dedup key is an HMAC of (user, clip, day)
+  // under a random key that lives only in this process's memory: it is never written to a table or the
+  // event log, never synced, and cannot be linked back to a person once the process restarts.
+  const PLAY_SECRET = crypto.randomBytes(32);
+  const MAX_HUB_GROUP = 50;
+  const counted = new Map(); // day -> Set(hmac)
+  function firstPlayToday(u, clipId, day) {
+    for (const d of counted.keys()) if (d !== day) counted.delete(d);
+    if (!counted.has(day)) counted.set(day, new Set());
+    const set = counted.get(day);
+    const k = crypto.createHmac('sha256', PLAY_SECRET).update([u.id, clipId, day].join('|')).digest('base64');
+    if (set.has(k)) return false;
+    set.add(k);
+    return true;
   }
   router.post('/clips/:id/play', authed, (req, res) => {
     const u = req.user;
@@ -387,11 +444,16 @@ module.exports = function init(ctx) {
       if (!hid) throw httpError(400, 'Which hamlet was this played in?');
     }
     const channel = b.channel === 'hub' ? 'hub' : 'phone';
-    if (channel === 'hub' && !servedHamlets(u).includes(hid)) throw httpError(403, 'Only staff at the hub count speaker plays');
-    const n = Math.max(1, Math.min(50, Math.floor(Number(b.count) || 1)));
-    const day = isDate(S(b.day, 10)) && S(b.day, 10) <= today() ? S(b.day, 10) : today();
+    if (channel === 'hub' && !(STAFF.includes(u.role) && servedHamlets(u).includes(hid))) throw httpError(403, 'Only staff at the hub count speaker plays');
+    // A phone is one listener: always 1. The hub speaker may report the group that heard it (bounded).
+    const n = channel === 'hub' ? Math.max(1, Math.min(MAX_HUB_GROUP, Math.floor(Number(b.count) || 1))) : 1;
+    const day = today(); // server time — never the client's
+    if (!firstPlayToday(u, c.id, day)) {
+      const cur = data.get('voice_plays', playId(c.id, hid, day, channel));
+      return res.json({ ok: true, counted: false, clip_id: c.id, hamlet_id: hid, day, channel, plays_today: cur ? Number(cur.plays) || 0 : 0 });
+    }
     const row = addPlays(c.id, hid, channel, n, day, null);
-    res.json({ ok: true, clip_id: c.id, hamlet_id: hid, day, channel, plays_today: row.plays });
+    res.json({ ok: true, counted: true, clip_id: c.id, hamlet_id: hid, day, channel, plays_today: row.plays });
   });
   router.get('/reach', requires('ops', 'agency.manage', 'hamlet.coordinate', 'content.review'), (req, res) => {
     const u = req.user;
@@ -676,7 +738,7 @@ module.exports = function init(ctx) {
       const h1Story = made[H.h1.id].find((c) => c.kind === 'oral_history' && c.status === 'published' && c.licence === 'community');
       if (h1Story && made[H.h1.id].filter((c) => c.kind === 'oral_history').length > 1) {
         const other = made[H.h1.id].filter((c) => c.kind === 'oral_history' && c.id !== h1Story.id)[0];
-        data.put('voice_clips', { id: other.id, status: 'withdrawn', withdrawn_at: ago(3), withdrawn_via: 'in_person', withdrawn_reason: 'Speaker asked at the centre (demo)', audio: null, transcript: null, transcript_ml: null, bytes: 0 }, fac[H.h1.id]);
+        withdrawClip(other, { via: 'in_person', reason: 'Speaker asked at the centre (demo)', by: fac[H.h1.id].id, at: ago(3), user: fac[H.h1.id] });
       }
       // playlists: today plus the last few visit days
       for (const h of [H.h1, H.h2, H.h11]) {
