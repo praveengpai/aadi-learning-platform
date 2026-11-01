@@ -1,0 +1,58 @@
+{
+  "status": "DRAFT — hazard lists, helplines, checklist and Malayalam wording PENDING REVIEW by the District Disaster Management Authority (DDMA) / KSDMA and a Malayalam editor",
+  "status_ml": "കരട് — അപകടസാധ്യതകൾ, ഹെൽപ്‌ലൈനുകൾ, ചെക്ക്‌ലിസ്റ്റ്, മലയാളം എന്നിവ ജില്ലാ ദുരന്ത നിവാരണ അതോറിറ്റി പരിശോധിക്കാനുണ്ട്",
+  "hazards": [
+    { "key": "landslide", "icon": "⛰️", "label": "Landslide", "label_ml": "ഉരുൾപൊട്ടൽ / മണ്ണിടിച്ചിൽ" },
+    { "key": "flood", "icon": "🌊", "label": "Flood", "label_ml": "വെള്ളപ്പൊക്കം" },
+    { "key": "wildfire", "icon": "🔥", "label": "Wildfire", "label_ml": "കാട്ടുതീ" },
+    { "key": "elephant", "icon": "🐘", "label": "Wild elephant", "label_ml": "കാട്ടാന" },
+    { "key": "road_cutoff", "icon": "🚧", "label": "Road cut off", "label_ml": "വഴി മുറിയൽ" }
+  ],
+  "hazard_levels": [
+    { "key": "low", "label": "Low", "label_ml": "കുറവ്" },
+    { "key": "medium", "label": "Medium", "label_ml": "ഇടത്തരം" },
+    { "key": "high", "label": "High", "label_ml": "കൂടുതൽ" }
+  ],
+  "point_kinds": [
+    { "key": "assembly", "icon": "🚩", "label": "Safe assembly point", "label_ml": "സുരക്ഷിത ഒത്തുചേരൽ സ്ഥലം" },
+    { "key": "shelter", "icon": "🏫", "label": "Shelter / relief camp", "label_ml": "അഭയകേന്ദ്രം / ദുരിതാശ്വാസ ക്യാമ്പ്" }
+  ],
+  "help_needs": [
+    { "key": "cannot_walk_far", "icon": "🚶", "label": "Cannot walk far", "label_ml": "ദൂരം നടക്കാൻ കഴിയില്ല" },
+    { "key": "needs_carrying", "icon": "🛏️", "label": "Needs to be carried", "label_ml": "എടുത്തുകൊണ്ടുപോകണം" },
+    { "key": "young_children", "icon": "👶", "label": "Very young children", "label_ml": "വളരെ ചെറിയ കുട്ടികൾ" },
+    { "key": "elderly_alone", "icon": "🧓", "label": "Elderly person living alone", "label_ml": "ഒറ്റയ്ക്ക് താമസിക്കുന്ന പ്രായമായവർ" },
+    { "key": "needs_medicines", "icon": "💊", "label": "Needs regular medicines", "label_ml": "സ്ഥിരം മരുന്ന് വേണം" },
+    { "key": "other", "icon": "❓", "label": "Other help", "label_ml": "മറ്റ് സഹായം" }
+  ],
+  "warning_levels": [
+    { "key": "green", "icon": "🟢", "label": "Green — no warning", "label_ml": "പച്ച — മുന്നറിയിപ്പില്ല", "advice": "No warning. Keep your family plan ready.", "advice_ml": "മുന്നറിയിപ്പില്ല. കുടുംബ പദ്ധതി തയ്യാറാക്കി വെക്കുക." },
+    { "key": "yellow", "icon": "🟡", "label": "Yellow — be aware", "label_ml": "മഞ്ഞ — ശ്രദ്ധിക്കുക", "advice": "Be aware. Check your torch, water and medicines.", "advice_ml": "ശ്രദ്ധിക്കുക. ടോർച്ച്, വെള്ളം, മരുന്ന് എന്നിവ പരിശോധിക്കുക." },
+    { "key": "orange", "icon": "🟠", "label": "Orange — be prepared", "label_ml": "ഓറഞ്ച് — തയ്യാറായിരിക്കുക", "advice": "Be prepared to move. Keep documents in a plastic cover. Know your assembly point.", "advice_ml": "മാറാൻ തയ്യാറായിരിക്കുക. രേഖകൾ പ്ലാസ്റ്റിക് കവറിൽ സൂക്ഷിക്കുക. ഒത്തുചേരൽ സ്ഥലം അറിയുക." },
+    { "key": "red", "icon": "🔴", "label": "Red — take action", "label_ml": "ചുവപ്പ് — ഉടൻ നടപടി", "advice": "Take action now. Follow the officials' instructions. Help those who cannot walk far.", "advice_ml": "ഉടൻ നടപടിയെടുക്കുക. ഉദ്യോഗസ്ഥരുടെ നിർദേശം പാലിക്കുക. നടക്കാൻ കഴിയാത്തവരെ സഹായിക്കുക." }
+  ],
+  "checklist": [
+    { "key": "drain_cleared", "icon": "🕳️", "label": "Drains and channels cleared", "label_ml": "ഓടകളും ചാലുകളും വൃത്തിയാക്കി" },
+    { "key": "shelters_stocked", "icon": "📦", "label": "Shelter stocked (water, dry food, torch, first aid)", "label_ml": "അഭയകേന്ദ്രത്തിൽ വെള്ളം, ഉണക്ക ഭക്ഷണം, ടോർച്ച്, പ്രഥമശുശ്രൂഷ" },
+    { "key": "contacts_checked", "icon": "☎️", "label": "Helpline numbers checked locally", "label_ml": "ഹെൽപ്‌ലൈൻ നമ്പറുകൾ നേരിട്ട് ഉറപ്പാക്കി" },
+    { "key": "assembly_marked", "icon": "🚩", "label": "Assembly point marked and known to all", "label_ml": "ഒത്തുചേരൽ സ്ഥലം അടയാളപ്പെടുത്തി, എല്ലാവർക്കും അറിയാം" },
+    { "key": "help_list_reviewed", "icon": "🤝", "label": "List of people needing help reviewed with the Oorukoottam", "label_ml": "സഹായം വേണ്ടവരുടെ പട്ടിക ഊരുകൂട്ടവുമായി പരിശോധിച്ചു" },
+    { "key": "drill_held", "icon": "🏃", "label": "Evacuation drill held", "label_ml": "ഒഴിപ്പിക്കൽ പരിശീലനം നടത്തി" }
+  ],
+  "default_contacts": [
+    { "label": "Emergency (police, fire, ambulance)", "label_ml": "അടിയന്തര സഹായം (പോലീസ്, ഫയർ, ആംബുലൻസ്)", "number": "112" },
+    { "label": "District Emergency Operations Centre (disaster control room)", "label_ml": "ജില്ലാ ദുരന്ത നിവാരണ കൺട്രോൾ റൂം", "number": "1077" },
+    { "label": "State Emergency Operations Centre (KSDMA)", "label_ml": "സംസ്ഥാന ദുരന്ത നിവാരണ കൺട്രോൾ റൂം", "number": "1070" },
+    { "label": "Fire and Rescue", "label_ml": "അഗ്നിരക്ഷാ സേന", "number": "101" },
+    { "label": "Ambulance", "label_ml": "ആംബുലൻസ്", "number": "108" }
+  ],
+  "verify_note": "Verify locally — confirm each number with the district office before the monsoon.",
+  "verify_note_ml": "നേരിട്ട് ഉറപ്പാക്കുക — മഴക്കാലത്തിന് മുമ്പ് ഓരോ നമ്പറും ജില്ലാ ഓഫീസിൽ നിന്ന് സ്ഥിരീകരിക്കുക.",
+  "incident_outcomes": [
+    { "key": "help_sent", "label": "Help is on the way", "label_ml": "സഹായം വരുന്നുണ്ട്" },
+    { "key": "road_team_informed", "label": "Road team informed", "label_ml": "റോഡ് വിഭാഗത്തെ അറിയിച്ചു" },
+    { "key": "relief_planned", "label": "Relief planned for the next visit", "label_ml": "അടുത്ത സന്ദർശനത്തിൽ ദുരിതാശ്വാസം" },
+    { "key": "advice", "label": "Advice given", "label_ml": "നിർദേശം നൽകി" },
+    { "key": "no_action", "label": "No action needed", "label_ml": "നടപടി വേണ്ട" }
+  ]
+}
