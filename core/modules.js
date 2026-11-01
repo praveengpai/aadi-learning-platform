@@ -30,7 +30,9 @@ const BREAKER = { threshold: 5, windowMs: 60_000, coolOffMs: 30_000 };
 // Modules allowed to read core personal tables directly (for aggregate-only work).
 const PRIVILEGED = { 'core.read': ['analytics', 'operations', 'community', 'safeguarding', 'marketplace', 'learning', 'exams', 'language', 'lifeskills', 'counselling', 'channels'] };
 const SAFE_CORE = ['hamlets', 'agencies', 'agency_presence', 'centres', 'programmes', 'competencies'];
-const PERSONAL_CORE = ['persons', 'enrolments', 'consents', 'passport_entries', 'notifications', 'users'];
+const PERSONAL_CORE = ['persons', 'enrolments', 'consents', 'passport_entries', 'notifications', 'users', 'households', 'form_submissions', 'module_scopes'];
+// Never readable by any module directly, even privileged ones: other modules' form answers (e.g. health).
+const SEALED = ['form_submissions'];
 
 class ModuleHost {
   constructor(brain, dir) {
@@ -86,6 +88,9 @@ class ModuleHost {
         for (const c of cols) if (!have.has(c)) db.exec(`ALTER TABLE ${t} ADD COLUMN ${c} ${manifest.types?.[c] || colType(c)}`);
         this.brain.store.registerTable(t, cols);
       }
+      // A module reads its OWN form answers through a view named <id>_form_rows; it can never read
+      // another module's answers (health answers stay sealed from education modules, and so on).
+      db.exec(`CREATE VIEW IF NOT EXISTS ${prefix}form_rows AS SELECT * FROM form_submissions WHERE module='${id.replace(/'/g, '')}'`);
       const st = db.prepare('SELECT enabled FROM module_state WHERE id=?').get(id);
       if (!st) db.prepare('INSERT INTO module_state (id, enabled, version, updated_at) VALUES (?,?,?,?)').run(id, manifest.enabled === false ? 0 : 1, manifest.version, new Date().toISOString());
       const r = express.Router();
@@ -194,6 +199,7 @@ class ModuleHost {
       const ids = [...sql.matchAll(/\b(?:FROM|JOIN)\s+([a-z_][a-z0-9_]*)/gi)].map((m) => m[1].toLowerCase());
       for (const t of ids) {
         if (own(t) || SAFE_CORE.includes(t)) continue;
+        if (SEALED.includes(t)) throw new Error(`module "${rec.id}" may not read "${t}" — use the view ${prefix}form_rows (your own forms only) or ctx.brain.forms`);
         if (PERSONAL_CORE.includes(t) && privileged) continue;
         if (brain.store.tables[t] && !PERSONAL_CORE.includes(t) && !SAFE_CORE.includes(t)) continue; // other modules' tables: read-only allowed
         throw new Error(`module "${rec.id}" may not read table "${t}" directly — use ctx.brain APIs`);

@@ -273,3 +273,16 @@ test('round trip across nodes: captured on a hub offline, answered in the cloud,
     assert.equal(back.body.status, 'replied');
   } finally { await hub.close(); }
 });
+
+test('form answers are sealed: a module reads only its own forms, never another module\'s (e.g. health)', () => {
+  const express = require('express');
+  const mk = (id) => N.host._ctx(N.host.modules.get(id), express.Router(), id + '_');
+  const learning = mk('learning');
+  assert.throws(() => learning.sql('SELECT * FROM form_submissions'), /may not read/);
+  assert.throws(() => learning.data.get('form_submissions', 'x'), /may not read/);
+  assert.throws(() => learning.sql('SELECT * FROM health_form_rows'), /may not read/);
+  const health = mk('health');
+  const rows = health.sql('SELECT module FROM health_form_rows WHERE deleted=0 LIMIT 50');
+  assert.ok(rows.length > 0 && rows.every((r) => r.module === 'health'));
+  assert.equal(mk('surveys').sql("SELECT COUNT(*) n FROM surveys_form_rows WHERE module='health'")[0].n, 0);
+});

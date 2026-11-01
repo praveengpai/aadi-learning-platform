@@ -219,7 +219,7 @@ module.exports = function init(ctx) {
     const u = req.user;
     const allAgencies = ['platform_admin', 'donor', 'govt_viewer'].includes(u.role);
     const since = new Date(Date.now() - (Number(req.query.days) || 180) * DAY).toISOString();
-    const rows = sql(`SELECT hamlet_id, form_key, person_id, priority, flags, status, agency_id FROM form_submissions WHERE deleted=0 AND module='health' AND captured_at>=?${allAgencies ? '' : ' AND agency_id=?'}`, since, ...(allAgencies ? [] : [u.agency_id || '-']));
+    const rows = sql(`SELECT hamlet_id, form_key, person_id, priority, flags, status, agency_id FROM health_form_rows WHERE deleted=0 AND module='health' AND captured_at>=?${allAgencies ? '' : ' AND agency_id=?'}`, since, ...(allAgencies ? [] : [u.agency_id || '-']));
     const priv = ['platform_admin', 'agency_admin', 'coordinator', 'cpo'].includes(u.role);
     const sup = (n) => brain.policy.suppress(n, u);
     // a percentage of a group smaller than k could single people out → hidden for external viewers
@@ -262,7 +262,7 @@ module.exports = function init(ctx) {
   ctx.on('forms.replied', (ev) => {
     const pl = ev.payload || {};
     if (pl.module !== 'health' || quiet.delete(pl.id)) return; // our own replies never queue the engine's message
-    const s = sqlOne('SELECT person_id FROM form_submissions WHERE id=?', pl.id);
+    const s = sqlOne('SELECT person_id FROM health_form_rows WHERE id=?', pl.id);
     if (!s || !s.person_id) return;
     let hit = false;
     for (const n of brain.notifications.queued(1000)) {

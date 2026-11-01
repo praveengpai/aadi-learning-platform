@@ -9,6 +9,8 @@ const { seed } = require('../scripts/seed');
 async function bootDemo({ node = 'test-' + process.pid + '-' + Math.random().toString(36).slice(2, 7), role = 'cloud', upstream = null, syncKey = 'test-key', hamlets = '', noSeed = false } = {}) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'aadi-'));
   process.env.AADI_DEMO = '1';
+  // Long demo boots must not race the channels outbox timer; tests drive the outbox themselves.
+  if (!process.env.AADI_OUTBOX_INTERVAL_MS) process.env.AADI_OUTBOX_INTERVAL_MS = '120000';
   const ctx = createApp({ dbFile: path.join(dir, node + '.db'), node, role, upstream, syncKey, hamlets });
   const demo = noSeed ? null : await seed(ctx);
   const server = await new Promise((res) => { const s = ctx.app.listen(0, () => res(s)); });

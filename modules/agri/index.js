@@ -292,8 +292,8 @@ module.exports = function init(ctx) {
     const where = allAgencies ? '' : ' AND agency_id=?';
     const args = allAgencies ? [] : [u.agency_id];
     const since = new Date(Date.now() - (Number(req.query.days) || 180) * 86400e3).toISOString();
-    const sales = sql(`SELECT hamlet_id, person_id, answers, flags FROM form_submissions WHERE deleted=0 AND module='agri' AND form_key=? AND captured_at>=?${where}`, SALE_FORM.key, since, ...args);
-    const pests = sql(`SELECT hamlet_id, person_id, answers, status FROM form_submissions WHERE deleted=0 AND module='agri' AND form_key=? AND captured_at>=?${where}`, PEST_FORM.key, since, ...args);
+    const sales = sql(`SELECT hamlet_id, person_id, answers, flags FROM agri_form_rows WHERE deleted=0 AND module='agri' AND form_key=? AND captured_at>=?${where}`, SALE_FORM.key, since, ...args);
+    const pests = sql(`SELECT hamlet_id, person_id, answers, status FROM agri_form_rows WHERE deleted=0 AND module='agri' AND form_key=? AND captured_at>=?${where}`, PEST_FORM.key, since, ...args);
     const hm = hamletMap();
     const sup = (n) => brain.policy.suppress(n, u);
     const small = (n) => typeof sup(n) === 'string';

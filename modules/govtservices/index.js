@@ -26,7 +26,7 @@ const stageInfo = (k) => OUTCOME[k] || STAGE[k] || { icon: '•', label: k, labe
 const DAY = 86400e3;
 
 module.exports = function init(ctx) {
-  const { router, requires, authed, data, sql, tx, on, brain, httpError, emit } = ctx;
+  const { router, requires, authed, data, sql, sqlOne, tx, on, brain, httpError, emit } = ctx;
   const P = brain.policy;
   const rule = E.makeRule(CAT);
 
@@ -130,11 +130,11 @@ module.exports = function init(ctx) {
   }
   const safe = (fn) => (ev) => { if (!ev.payload || ev.payload.module !== ctx.id) return; try { fn(ev); } catch (e) { if (!/not open|closed/i.test(e.message)) throw e; } };
   on('forms.submitted', safe((ev) => {
-    const s = data.get('form_submissions', ev.payload.id);
+    const s = sqlOne('SELECT * FROM govtservices_form_rows WHERE id=?', ev.payload.id);
     const sc = s && SCHEME[s.answers && s.answers.scheme];
     if (sc && sc.produces && s.person_id) setDoc(s.person_id, sc.produces, 'applied', { id: s.captured_by, agency_id: s.agency_id }, null, { onlyIfUnset: true });
   }));
-  on('forms.replied', safe((ev) => logReply(data.get('form_submissions', ev.payload.id), ev.actor)));
+  on('forms.replied', safe((ev) => logReply(sqlOne('SELECT * FROM govtservices_form_rows WHERE id=?', ev.payload.id), ev.actor)));
 
   const stageOf = (s) => (s.outcome && OUTCOME[s.outcome] ? s.outcome : s.status === 'closed' ? (s.outcome || 'closed') : s.status === 'replied' ? (s.outcome || 'submitted_to_office') : s.status);
   function timeline(s) {
@@ -314,7 +314,7 @@ module.exports = function init(ctx) {
   // Aggregate for donors / government: per hamlet, by scheme and outcome. Small counts suppressed; no names.
   router.get('/aggregate', requires('analytics.aggregate'), (req, res) => {
     const u = req.user;
-    const rows = sql('SELECT hamlet_id, answers, status, outcome FROM form_submissions WHERE deleted=0 AND module=? AND form_key=?', ctx.id, FORM_KEY);
+    const rows = sql('SELECT hamlet_id, answers, status, outcome FROM govtservices_form_rows WHERE deleted=0 AND module=? AND form_key=?', ctx.id, FORM_KEY);
     const by = {};
     const tot = { total: 0, by_scheme: {}, by_outcome: {} };
     for (const r of rows) {
