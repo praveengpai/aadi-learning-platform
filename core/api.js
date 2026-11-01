@@ -72,7 +72,14 @@ module.exports = function coreApi(brain, host) {
     const counts = Object.fromEntries(store.all('SELECT programme_id, COUNT(*) n FROM enrolments WHERE deleted=0 AND status=\'active\' GROUP BY programme_id').map((x) => [x.programme_id, x.n]));
     res.json(list.map((p) => ({ ...p, agency_name: ag[p.agency_id]?.name, agency_colour: ag[p.agency_id]?.colour, sponsor_name: p.sponsor_agency_id ? ag[p.sponsor_agency_id]?.name : null, enrolled: counts[p.id] || 0 })));
   }));
-  r.post('/programmes', need('agency.manage', 'hamlet.coordinate'), A((req, res) => res.json(ownedWrite('programmes', req, { status: 'active' }))));
+  r.post('/programmes', need('agency.manage', 'hamlet.coordinate'), A((req, res) => {
+    // Running a programme of a sealed service (health, disaster, wildlife …) grants authority over people's
+    // sensitive data and warnings, so only the platform steward may create or move such a programme.
+    const mod = req.body.module || (req.body.id && (store.get('programmes', req.body.id) || {}).module);
+    const m = mod && host.modules.get(mod);
+    if (m && m.manifest && m.manifest.sealed && req.user.role !== 'platform_admin') return res.status(403).json({ error: 'forbidden', message: 'Only the platform steward can set up this service for an agency.' });
+    res.json(ownedWrite('programmes', req, { status: 'active' }));
+  }));
   r.get('/competencies', brain.authed, A((req, res) => res.json(store.find('competencies', req.query.domain ? { domain: req.query.domain } : {}, { order: 'code' }))));
 
   // --- hamlet coordination: shared service map across agencies ---

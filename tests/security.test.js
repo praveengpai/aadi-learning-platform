@@ -209,3 +209,10 @@ test('W2-4: redaction removes withdrawn content from the whole log and the chain
   assert.equal(B().store.get('households', hh.id).notes, null);
   assert.equal(B().store.verifyChain().ok, true);
 });
+
+test('W2-5: only the steward can set up a sealed service (disaster, health …) for an agency', async () => {
+  const h1 = D.hamletByKey.h1.id;
+  assert.equal((await N.as('demo.vjt.admin').post('/api/core/programmes', { title: 'Our disaster cell', module: 'disaster', track: 'disaster', hamlet_id: h1 })).status, 403);
+  assert.equal((await N.as('demo.vjt.admin').post('/api/core/programmes', { title: 'Our health visits', module: 'health', track: 'health', hamlet_id: h1 })).status, 403);
+  assert.equal((await N.as('demo.vjt.admin').post('/api/core/programmes', { title: 'Evening tuition', module: 'learning', track: 'tuition', hamlet_id: h1 })).status, 200);
+});
