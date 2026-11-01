@@ -286,6 +286,9 @@ class Brain {
         queue: (user, opts = {}) => b.forms.queue(user, { ...opts, module: moduleId }),
         one: (user, id) => { const s = b.forms.one(user, id); if (s.module !== moduleId) throw Object.assign(new Error('Not found.'), { status: 404 }); return s; },
         reply: (user, id, args) => { const s = b.store.get('form_submissions', id); if (!s || s.module !== moduleId) throw Object.assign(new Error('Not found.'), { status: 404 }); return b.forms.reply(user, id, args); },
+        // A module's extra rule for who may decide one of its forms: fn(user, submission, def) → true | 'reason'.
+        decider: (key, fn) => { const d = b.forms.getDef(key); if (d && d.module !== moduleId) throw new Error(`form ${key} belongs to ${d.module}`); b.forms.decider(moduleId, key, fn); },
+        mayDecide: (user, id) => b.forms.mayDecide(user, id),
         markSeen: (user, id) => { const s = b.store.get('form_submissions', id); if (!s || s.module !== moduleId) throw Object.assign(new Error('Not found.'), { status: 404 }); return b.forms.markSeen(user, id); },
         close: (user, id, args) => { const s = b.store.get('form_submissions', id); if (!s || s.module !== moduleId) throw Object.assign(new Error('Not found.'), { status: 404 }); return b.forms.close(user, id, args); },
         validate: (key, answers) => { const d = b.forms.getDef(key); if (!d) throw new Error('no form ' + key); return b.forms.validate(d, answers); },

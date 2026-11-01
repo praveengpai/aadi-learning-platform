@@ -73,6 +73,8 @@ function migrateCore(db) {
     CREATE INDEX IF NOT EXISTS fs_ref ON form_submissions(client_ref);
     CREATE INDEX IF NOT EXISTS hh_hamlet ON households(hamlet_id);
   `);
+  // v2.2: events whose personal content was withdrawn (redacted) keep their place in the chain.
+  if (!db.prepare('PRAGMA table_info(events)').all().some((c) => c.name === 'redacted')) db.exec('ALTER TABLE events ADD COLUMN redacted INTEGER NOT NULL DEFAULT 0');
 }
 
 function colType(c) {

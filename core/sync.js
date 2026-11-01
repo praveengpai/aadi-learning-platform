@@ -18,7 +18,7 @@ module.exports = function makeSync(brain, { upstream = null, key = null, hamlets
   const saveCursor = (c) => db.prepare('INSERT OR REPLACE INTO sync_cursors (peer,pulled_seq,pushed_seq,last_ok,last_error) VALUES (?,?,?,?,?)').run(c.peer, c.pulled_seq, c.pushed_seq, c.last_ok || null, c.last_error || null);
 
   function eventsAfter(seq, { excludeNode = null, hamletList = null, limit = 2000 } = {}) {
-    let sql = 'SELECT seq,id,node,type,actor,hamlet_id,payload,ts,prev_hash,hash FROM events WHERE seq>?';
+    let sql = 'SELECT seq,id,node,type,actor,hamlet_id,payload,ts,prev_hash,hash,redacted FROM events WHERE seq>?';
     const p = [seq];
     if (excludeNode) { sql += ' AND node<>?'; p.push(excludeNode); }
     if (hamletList && hamletList.length) { sql += ` AND (hamlet_id IS NULL OR hamlet_id IN (${hamletList.map(() => '?').join(',')}))`; p.push(...hamletList); }
@@ -70,7 +70,7 @@ module.exports = function makeSync(brain, { upstream = null, key = null, hamlets
     const c = cursor('upstream');
     const headers = { 'content-type': 'application/json', 'x-sync-key': key || '' };
     // push our own events
-    const mine = db.prepare('SELECT seq,id,node,type,actor,hamlet_id,payload,ts,prev_hash,hash FROM events WHERE node=? AND seq>? ORDER BY seq LIMIT 2000').all(brain.nodeId, c.pushed_seq);
+    const mine = db.prepare('SELECT seq,id,node,type,actor,hamlet_id,payload,ts,prev_hash,hash,redacted FROM events WHERE node=? AND seq>? ORDER BY seq LIMIT 2000').all(brain.nodeId, c.pushed_seq);
     if (mine.length) {
       const pr = await fetch(state.upstream + '/api/sync/push', { method: 'POST', headers, body: JSON.stringify({ events: mine }), signal: AbortSignal.timeout(30_000) });
       if (!pr.ok) throw new Error('push HTTP ' + pr.status);

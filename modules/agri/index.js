@@ -463,7 +463,9 @@ module.exports = function init(ctx) {
         store.put('form_submissions', { ...store.get('form_submissions', s.id), captured_at: iso(now - ago * 86400e3) });
         if (ago > 10 && R.chance(0.7)) {
           const [en, ml] = REPLIES[problem];
-          B.forms.reply(officer, s.id, { reply: en, reply_ml: ml, outcome: problem === 'wild_animals' ? 'refer_forest_dept' : 'advice', close: false, notify: false });
+          // four eyes: whoever did not capture it gives the advice
+          const adviser = capturer.id === officer.id ? urow(kbUsers.admin) : officer;
+          B.forms.reply(adviser, s.id, { reply: en, reply_ml: ml, outcome: problem === 'wild_animals' ? 'refer_forest_dept' : 'advice', close: false, notify: false });
           const cur = store.get('form_submissions', s.id);
           store.put('form_submissions', { ...cur, replied_at: iso(now - (ago - R.int(3, 9)) * 86400e3), reply_seen_at: R.chance(0.6) ? iso(now - (ago - 10) * 86400e3) : null });
         }

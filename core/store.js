@@ -50,10 +50,12 @@ class Store {
     if (exists) return false;
     const payload = typeof ev.payload === 'string' ? JSON.parse(ev.payload) : ev.payload;
     const expect = sha(ev.prev_hash + '|' + ev.id + '|' + ev.type + '|' + JSON.stringify(payload) + '|' + ev.ts);
-    if (expect !== ev.hash) throw new Error('hash mismatch on event ' + ev.id);
+    // A redacted event (content withdrawn by the person) can no longer match its hash; it is accepted
+    // from an authenticated peer and keeps its link in the chain.
+    if (expect !== ev.hash && !ev.redacted) throw new Error('hash mismatch on event ' + ev.id);
     this.tx(() => {
-      this.db.prepare('INSERT INTO events (id,node,type,actor,hamlet_id,payload,ts,prev_hash,hash,local) VALUES (?,?,?,?,?,?,?,?,?,0)')
-        .run(ev.id, ev.node, ev.type, ev.actor, ev.hamlet_id, JSON.stringify(payload), ev.ts, ev.prev_hash, ev.hash);
+      this.db.prepare('INSERT INTO events (id,node,type,actor,hamlet_id,payload,ts,prev_hash,hash,local,redacted) VALUES (?,?,?,?,?,?,?,?,?,0,?)')
+        .run(ev.id, ev.node, ev.type, ev.actor, ev.hamlet_id, JSON.stringify(payload), ev.ts, ev.prev_hash, ev.hash, ev.redacted ? 1 : 0);
       this._apply({ ...ev, payload });
     });
     this._notify({ ...ev, payload, imported: true });
@@ -61,7 +63,33 @@ class Store {
   }
 
   // ---- projections ------------------------------------------------------
+  // Remove fields from every past version of one row in the log, and from the current row.
+  _redactLocal(table, id, fields) {
+    const rows = this.db.prepare("SELECT seq, payload FROM events WHERE type IN ('row.upsert','row.delete') AND json_extract(payload,'$.table')=? AND json_extract(payload,'$.row.id')=?").all(table, id);
+    for (const r of rows) {
+      const p = JSON.parse(r.payload);
+      for (const f of fields) if (p.row && f in p.row) p.row[f] = null;
+      this.db.prepare('UPDATE events SET payload=?, redacted=1 WHERE seq=?').run(JSON.stringify(p), r.seq);
+    }
+    if (this.tables[table]) {
+      const cols = this.tables[table].filter((c) => fields.includes(c));
+      if (cols.length) this.db.prepare(`UPDATE ${table} SET ${cols.map((c) => c + '=NULL').join(', ')} WHERE id=?`).run(id);
+    }
+    return rows.length;
+  }
+  redactRow(table, id, fields, { actor = null } = {}) {
+    if (!this.tables[table]) throw new Error('Unknown table ' + table);
+    const bad = fields.filter((f) => !this.tables[table].includes(f));
+    if (bad.length || !fields.length) throw new Error('cannot redact ' + bad.join(','));
+    return this.tx(() => {
+      const n = this._redactLocal(table, id, fields);
+      this.emit('core.redact', { table, id, fields }, { actor });
+      return n;
+    });
+  }
+
   _apply(ev) {
+    if (ev.type === 'core.redact') return this._redactLocal(ev.payload.table, ev.payload.id, ev.payload.fields || []);
     if (ev.type === 'row.upsert') return this._applyUpsert(ev.payload.table, ev.payload.row);
     if (ev.type === 'row.delete') return this._applyUpsert(ev.payload.table, { ...ev.payload.row, deleted: 1 });
   }
@@ -137,7 +165,7 @@ class Store {
     let prev = 'GENESIS', n = 0;
     for (const ev of this.db.prepare('SELECT * FROM events WHERE node=? ORDER BY seq').iterate(node)) {
       const expect = sha(ev.prev_hash + '|' + ev.id + '|' + ev.type + '|' + ev.payload + '|' + ev.ts);
-      if (ev.prev_hash !== prev || expect !== ev.hash) return { ok: false, brokenAt: ev.seq, checked: n };
+      if (ev.prev_hash !== prev || (expect !== ev.hash && !ev.redacted)) return { ok: false, brokenAt: ev.seq, checked: n };
       prev = ev.hash; n++;
     }
     return { ok: true, checked: n };

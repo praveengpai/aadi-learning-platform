@@ -219,6 +219,8 @@ class ModuleHost {
     const checkSql = (sql) => {
       if (!/^\s*(SELECT|WITH)\b/i.test(sql)) throw new Error('ctx.sql is read-only (SELECT/WITH)');
       if (/;\s*\S/.test(sql)) throw new Error('ctx.sql takes one statement');
+      // No schema-qualified names (main.x, temp.x, attached dbs), no pragma table functions, no ATTACH.
+      if (/(^|[^A-Za-z0-9_])["`\[]?(main|temp|temporary)["`\]]?\s*\./i.test(sql.replace(/'(?:[^']|'')*'/g, "''")) || /\bpragma_|\battach\b|\bload_extension\b/i.test(sql)) throw new Error(`module "${rec.id}" may not use schema-qualified names, pragmas or ATTACH`);
       const noStrings = sql.replace(/'(?:[^']|'')*'/g, "''");
       const names = new Set();
       for (const m of noStrings.matchAll(/"([^"]+)"|`([^`]+)`|\[([^\]]+)\]|(\.)?\b([A-Za-z_][A-Za-z0-9_]*)\b/g)) {
@@ -248,9 +250,11 @@ class ModuleHost {
       // module-owned replicated data (event-sourced, synced to hubs)
       data: {
         put: (t, row, user) => { if (!own(t)) throw new Error('not your table: ' + t); return brain.store.put(t, row, { actor: user && user.id }); },
+        // Permanently remove fields (e.g. withdrawn audio) from this row's whole history on every node.
+        redact: (t, id, fields, user) => { if (!own(t)) throw new Error('not your table: ' + t); return brain.store.redactRow(t, id, fields, { actor: user && user.id }); },
         del: (t, id, user) => { if (!own(t)) throw new Error('not your table: ' + t); return brain.store.del(t, id, { actor: user && user.id }); },
-        get: (t, id) => { checkSql('SELECT 1 FROM ' + t); return brain.store.get(t, id); },
-        find: (t, where, opts) => { checkSql('SELECT 1 FROM ' + t); return brain.store.find(t, where, opts); },
+        get: (t, id) => { if (!/^[a-z][a-z0-9_]*$/.test(t)) throw new Error('bad table name'); checkSql('SELECT 1 FROM ' + t); return brain.store.get(t, id); },
+        find: (t, where, opts) => { if (!/^[a-z][a-z0-9_]*$/.test(t)) throw new Error('bad table name'); checkSql('SELECT 1 FROM ' + t); return brain.store.find(t, where, opts); },
       },
       sql: (sql, ...params) => { checkSql(sql); return brain.store.all(sql, ...params); },
       sqlOne: (sql, ...params) => { checkSql(sql); return brain.store.one(sql, ...params); },

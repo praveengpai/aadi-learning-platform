@@ -159,7 +159,7 @@ function makeForms(brain) {
     if (!user || !sub || !def) return false;
     if (sub.person_id) {
       if (user.person_id && user.person_id === sub.person_id) return true;
-      if (user.role === 'guardian') { const p = store.get('persons', sub.person_id); return !!(p && p.guardian_id === user.person_id); }
+      if (user.role === 'guardian') { const p = store.get('persons', sub.person_id); return !!(p && p.guardian_id === user.person_id && policy.isMinor(p)); }
       if (outsideArea(user, sub)) return false;
       const v = policy.canSee(user, sub.person_id, def.scope);
       if (v.ok && (v.reason === 'steward' || sub.agency_id === user.agency_id)) return canCapture(user, def) || canReview(user, def) || v.reason === 'steward';
@@ -278,7 +278,7 @@ function makeForms(brain) {
     if (!visible(user, s, def)) throw err(403, 'Not permitted.');
     if (switchedOff(user, s)) throw err(403, 'This service is switched off in this hamlet.', 'module_off_here');
     if (user.role === 'platform_admin' && s.person_id && user.person_id !== s.person_id) brain.audit(user, 'steward.form_read', s.person_id, policy.RESTRICTED[def.scope] ? { scope: 'restricted' } : { form: s.form_key });
-    return { ...familySafe(user, decorate(s, def), def), form: familySafe(user, {}, def).family_view ? { ...def, fields: [] } : def, can_reply: canReview(user, def) && !['closed'].includes(s.status) };
+    return { ...familySafe(user, decorate(s, def), def), form: familySafe(user, {}, def).family_view ? { ...def, fields: [] } : def, can_reply: mayDecide(user, s, def).ok && !['closed'].includes(s.status) };
   }
 
   function list(user, { form_key = null, module = null, status = null, mine = false, person_id = null, hamlet_id = null, limit = 200 } = {}) {
@@ -309,14 +309,30 @@ function makeForms(brain) {
 
   // Reviewer's queue: open items this user may answer, most urgent first.
   function queue(user, opts = {}) {
-    return list(user, { ...opts, status: 'submitted,in_review' }).filter((s) => canReview(user, getDef(s.form_key)));
+    return list(user, { ...opts, status: 'submitted,in_review' }).filter((s) => mayDecide(user, store.get('form_submissions', s.id), getDef(s.form_key)).ok);
+  }
+
+  // Who may decide (reply to / close) a submission. Everywhere — module routes AND generic core routes:
+  //  - a forwarded form is decided only by the agency it is forwarded to (or a steward);
+  //  - nobody decides a form they captured themselves (four eyes);
+  //  - a module may add its own rule (deciders), e.g. "only the range office".
+  const deciders = new Map();
+  function mayDecide(user, s, def) {
+    if (!visible(user, s, def) || !canReview(user, def)) return { ok: false, why: 'You cannot answer this form.' };
+    if (user.role === 'platform_admin') return { ok: true };
+    if (def.review && def.review.agency_id && user.agency_id !== def.review.agency_id) return { ok: false, why: 'Only the agency this form was sent to can decide it.' };
+    if (s.captured_by && s.captured_by === user.id) return { ok: false, why: 'Someone else must review what you captured.' };
+    const fn = deciders.get(def.module + '|' + def.key);
+    if (fn) { let r; try { r = fn(user, s, def); } catch (_) { r = false; } if (r !== true) return { ok: false, why: typeof r === 'string' ? r : 'Not permitted to decide this form.' }; }
+    return { ok: true };
   }
 
   function reply(user, id, { reply: text, reply_ml = null, outcome = null, close = false, notify = true } = {}) {
     const s = store.get('form_submissions', id);
     if (!s) throw err(404, 'Not found.');
     const def = getDef(s.form_key);
-    if (!visible(user, s, def) || !canReview(user, def)) throw err(403, 'You cannot answer this form.');
+    const md = mayDecide(user, s, def);
+    if (!md.ok) throw err(403, md.why);
     if (switchedOff(user, s)) throw err(403, 'This service is switched off in this hamlet.', 'module_off_here');
     if (s.status === 'closed') throw err(409, 'Already closed.');
     if (!text || String(text).trim().length < 2) throw err(400, 'Write a reply.');
@@ -333,7 +349,8 @@ function makeForms(brain) {
     const s = store.get('form_submissions', id);
     if (!s) throw err(404, 'Not found.');
     const def = getDef(s.form_key);
-    if (!visible(user, s, def) || !canReview(user, def)) throw err(403, 'You cannot review this form.');
+    const md = mayDecide(user, s, def);
+    if (!md.ok) throw err(403, md.why);
     if (s.status !== 'submitted') return s;
     return store.put('form_submissions', { ...s, status: 'in_review', assigned_to: user.id }, { actor: user.id });
   }
@@ -350,9 +367,13 @@ function makeForms(brain) {
     const s = store.get('form_submissions', id);
     if (!s) throw err(404, 'Not found.');
     const def = getDef(s.form_key);
-    if (!visible(user, s, def) || !(canReview(user, def) || s.captured_by === user.id)) throw err(403, 'Not permitted.');
+    if (!visible(user, s, def)) throw err(403, 'Not permitted.');
     if (s.status === 'closed') return s;
-    return store.put('form_submissions', { ...s, status: 'closed', outcome: outcome || s.outcome, closed_at: nowIso() }, { actor: user.id });
+    const md = mayDecide(user, s, def);
+    // The capturer may close only what needs no decision (no review, or already answered) and never sets the outcome.
+    const capturerClose = s.captured_by === user.id && (!def.review || s.status === 'replied');
+    if (!md.ok && !capturerClose) throw err(403, md.ok ? 'Not permitted.' : md.why);
+    return store.put('form_submissions', { ...s, status: 'closed', outcome: md.ok ? (outcome || s.outcome) : s.outcome, closed_at: nowIso() }, { actor: user.id });
   }
 
   // CSV export of what this user may see (photos omitted). ODK Central-style column order.
@@ -411,6 +432,8 @@ function makeForms(brain) {
     TYPES, STATUSES, basic, define, getDef, defsFor, canCapture, canReview, validate, visible, submit, one, list, queue, reply, claim, markSeen, close, exportCsv, fromXlsform,
     rule: (module, key, fn) => rules.set(module + '|' + key, fn),
     setModuleSwitch: (fn) => { moduleOff = fn; },
+    decider: (module, key, fn) => deciders.set(module + '|' + key, fn),
+    mayDecide: (user, id) => { const s = store.get('form_submissions', id); if (!s) return { ok: false, why: 'Not found.' }; return mayDecide(user, s, getDef(s.form_key)); },
   };
 }
 
